@@ -11,12 +11,21 @@ export class UserService {
     const salt = bcrypt.genSaltSync(10);
     const hashPassword = bcrypt.hashSync(signupInput.password, salt);
 
-    const user = await this.prisma.users.create({
-      data: {
-        email: signupInput.email,
-        password: hashPassword,
-      },
-    });
+    let user = null;
+
+    if (signupInput.email && hashPassword) {
+      user = await this.prisma.users.create({
+        data: {
+          email: signupInput.email,
+          password: hashPassword,
+        },
+        include: {
+          folders: true,
+          notes: true,
+        },
+      });
+    }
+
     return user;
   }
 
@@ -24,6 +33,10 @@ export class UserService {
     const users = await this.prisma.users.findMany({
       orderBy: {
         created_at: 'desc',
+      },
+      include: {
+        folders: true,
+        notes: true,
       },
     });
     return users;

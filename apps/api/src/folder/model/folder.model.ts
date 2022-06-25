@@ -1,17 +1,14 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Folder } from '../../folder/model/folder.model';
+import { User } from '../../user/model/user.model';
 import { Note } from '../../note/model/note.model';
 
 @ObjectType()
-export class User {
+export class Folder {
   @Field()
   id: string;
 
   @Field()
-  email: string;
-
-  @Field()
-  password: string;
+  name: string;
 
   @Field()
   created_at: Date;
@@ -19,8 +16,8 @@ export class User {
   @Field()
   updated_at: Date;
 
-  @Field(() => [Folder], { nullable: true })
-  folders?: Folder[];
+  @Field(() => User, { nullable: true })
+  users?: User;
 
   @Field(() => [Note], { nullable: true })
   notes?: Note[];

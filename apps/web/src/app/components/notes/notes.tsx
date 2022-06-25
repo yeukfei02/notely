@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { gql, useMutation, useLazyQuery } from '@apollo/client';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -18,6 +19,339 @@ import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import _ from 'lodash';
 
+const CREATE_FOLDER = gql`
+  mutation createFolder($input: CreateFolderInput!) {
+    createFolder(input: $input) {
+      created_at
+      id
+      name
+      notes {
+        content
+        created_at
+        folder {
+          created_at
+          id
+          name
+          notes {
+            content
+            created_at
+            id
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          updated_at
+          users {
+            created_at
+            email
+            folders {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            password
+            updated_at
+          }
+        }
+        id
+        updated_at
+        users {
+          created_at
+          email
+          folders {
+            created_at
+            id
+            name
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          notes {
+            content
+            created_at
+            folder {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            updated_at
+          }
+          password
+          updated_at
+        }
+      }
+      updated_at
+      users {
+        created_at
+        email
+        folders {
+          created_at
+          id
+          name
+          notes {
+            content
+            created_at
+            folder {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          updated_at
+          users {
+            created_at
+            email
+            id
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            password
+            updated_at
+          }
+        }
+        id
+        notes {
+          content
+          created_at
+          folder {
+            created_at
+            id
+            name
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          updated_at
+          users {
+            created_at
+            email
+            folders {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            password
+            updated_at
+          }
+        }
+        password
+        updated_at
+      }
+    }
+  }
+`;
+
+const GET_FOLDERS = gql`
+  query folders {
+    folders {
+      created_at
+      id
+      name
+      notes {
+        content
+        created_at
+        folder {
+          created_at
+          id
+          name
+          notes {
+            content
+            created_at
+            id
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          updated_at
+          users {
+            created_at
+            email
+            folders {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            password
+            updated_at
+          }
+        }
+        id
+        updated_at
+        users {
+          created_at
+          email
+          folders {
+            created_at
+            id
+            name
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          notes {
+            content
+            created_at
+            folder {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            updated_at
+          }
+          password
+          updated_at
+        }
+      }
+      updated_at
+      users {
+        created_at
+        email
+        folders {
+          created_at
+          id
+          name
+          notes {
+            content
+            created_at
+            folder {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          updated_at
+        }
+        id
+        notes {
+          content
+          created_at
+          folder {
+            created_at
+            id
+            name
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          updated_at
+          users {
+            created_at
+            email
+            folders {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            password
+            updated_at
+          }
+        }
+        password
+        updated_at
+      }
+    }
+  }
+`;
+
 function Notes() {
   const navigate = useNavigate();
 
@@ -33,9 +367,44 @@ function Notes() {
   const [newFolderDialogStatus, setNewFolderDialogStatus] = useState(false);
   const [editFolderDialogStatus, setEditFolderDialogStatus] = useState(false);
 
+  const [createFolder, createFolderResult] = useMutation(CREATE_FOLDER);
+
+  const [getFolders, getFoldersResult] = useLazyQuery(GET_FOLDERS);
+
+  console.log('createFolderResult.data = ', createFolderResult.data);
+  console.log('createFolderResult.loading = ', createFolderResult.loading);
+  console.log('createFolderResult.error = ', createFolderResult.error);
+
+  console.log('getFoldersResult.data = ', getFoldersResult.data);
+  console.log('getFoldersResult.loading = ', getFoldersResult.loading);
+  console.log('getFoldersResult.error = ', getFoldersResult.error);
+
+  useEffect(() => {
+    getFolders({
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    });
+  }, [getFolders]);
+
+  useEffect(() => {
+    if (getFoldersResult.data) {
+      setFolders(getFoldersResult.data.folders);
+    }
+  }, [getFoldersResult.data]);
+
+  useEffect(() => {
+    if (createFolderResult.data) {
+      window.location.reload();
+    }
+  }, [createFolderResult.data]);
+
   const handleLogoutClick = () => {
     localStorage.clear();
     navigate('/');
+    window.location.reload();
   };
 
   const handleNewFolderNameClick = () => {
@@ -66,6 +435,20 @@ function Notes() {
 
   const handleCreateFolderName = () => {
     setNewFolderDialogStatus(false);
+
+    createFolder({
+      variables: {
+        input: {
+          name: newFolderName,
+          users_id: localStorage.getItem('users_id'),
+        },
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    });
   };
 
   const handleEditDialogClose = () => {
@@ -103,7 +486,7 @@ function Notes() {
     let newFoldersView = null;
 
     if (folders) {
-      newFoldersView = folders.map((folder, i) => {
+      newFoldersView = folders.map((folder: any, i) => {
         return (
           <div
             key={i}
@@ -112,7 +495,7 @@ function Notes() {
             <div>
               <FolderIcon />
             </div>
-            <div>{folder}</div>
+            <div>{folder.name}</div>
             <div>0</div>
           </div>
         );

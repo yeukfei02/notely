@@ -52,6 +52,7 @@ function SignupAndLogin() {
   useEffect(() => {
     if (loginResult.data) {
       localStorage.setItem('token', loginResult.data.login.token);
+      localStorage.setItem('users_id', loginResult.data.login.users_id);
       navigate('/notes');
     }
   }, [loginResult.data, navigate]);

@@ -24,7 +24,7 @@ model users {
 
 model folder {
   id         String   @id @default(uuid()) @db.Uuid
-  name       String?  @unique
+  name       String
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @db.Timestamptz(6)
   users_id   String?  @db.Uuid
@@ -39,7 +39,7 @@ model folder {
 
 model note {
   id         String   @id @default(uuid()) @db.Uuid
-  content    String?
+  content    String
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @db.Timestamptz(6)
   users_id   String?  @db.Uuid
