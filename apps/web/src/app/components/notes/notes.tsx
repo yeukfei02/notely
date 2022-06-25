@@ -1,21 +1,102 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import FolderIcon from '@mui/icons-material/Folder';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import LogoutIcon from '@mui/icons-material/Logout';
 import GridViewIcon from '@mui/icons-material/GridView';
 import CreateIcon from '@mui/icons-material/Create';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import _ from 'lodash';
 
 function Notes() {
-  const [folders, setFolders] = useState<string[]>([]);
-  const [notes, setNotes] = useState(['notes']);
+  const navigate = useNavigate();
 
-  const handleNewFolderClick = () => {
-    const foldersList = folders.concat(`Folder ${folders.length + 1}`);
-    setFolders(foldersList);
+  const [folders, setFolders] = useState([]);
+  const [notes, setNotes] = useState([]);
+
+  const [searchNotesValue, setSearchNotesValue] = useState('');
+  const [textareaValue, setTextareaValue] = useState('');
+
+  const [newFolderName, setNewFolderName] = useState('');
+  const [editFolderName, setEditFolderName] = useState('');
+
+  const [newFolderDialogStatus, setNewFolderDialogStatus] = useState(false);
+  const [editFolderDialogStatus, setEditFolderDialogStatus] = useState(false);
+
+  const handleLogoutClick = () => {
+    localStorage.clear();
+    navigate('/');
+  };
+
+  const handleNewFolderNameClick = () => {
+    if (!newFolderDialogStatus) {
+      setNewFolderDialogStatus(true);
+    } else {
+      setNewFolderDialogStatus(false);
+    }
+  };
+
+  const handleEditFolderNameClick = () => {
+    if (!editFolderDialogStatus) {
+      setEditFolderDialogStatus(true);
+    } else {
+      setEditFolderDialogStatus(false);
+    }
+  };
+
+  const handleNewDialogClose = () => {
+    setNewFolderDialogStatus(false);
+  };
+
+  const handleNewFolderNameChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setNewFolderName(e.target.value);
+  };
+
+  const handleCreateFolderName = () => {
+    setNewFolderDialogStatus(false);
+  };
+
+  const handleEditDialogClose = () => {
+    setEditFolderDialogStatus(false);
+  };
+
+  const handleEditFolderName = () => {
+    setEditFolderDialogStatus(false);
+  };
+
+  const handleEditFolderNameChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setEditFolderName(e.target.value);
+  };
+
+  const handleSearchNotesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchNotesValue(e.target.value);
+  };
+
+  const handleCreateNotesClick = () => {
+    const textarea = document.querySelector('#textarea');
+    if (textarea) {
+      (textarea as any).value = '';
+    }
+
+    setTextareaValue('');
+  };
+
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTextareaValue(e.target.value);
   };
 
   const renderNewFolders = () => {
@@ -68,9 +149,17 @@ function Notes() {
 
   return (
     <div>
-      <div className="row" style={{ height: '100vh', overflowY: 'auto' }}>
+      <div
+        className="row"
+        style={{
+          height: '100vh',
+          overflowY: 'auto',
+          maxWidth: '100%',
+          overflowX: 'hidden',
+        }}
+      >
         <div
-          className="col-sm-3 d-none d-sm-block p-0"
+          className="col-sm-3 d-none d-sm-block"
           style={{ backgroundColor: '#fb9698' }}
         >
           <div className="d-flex flex-row align-items-center justify-content-around pointer my-4">
@@ -97,7 +186,16 @@ function Notes() {
           className="col-sm-3 d-none d-sm-block"
           style={{ backgroundColor: '#e9e9e9' }}
         >
-          <div className="d-flex flex-row my-4">
+          <div className="d-flex justify-content-end my-3">
+            <div>
+              <LogoutIcon
+                className="pointer"
+                onClick={() => handleLogoutClick()}
+              />
+            </div>
+          </div>
+
+          <div className="d-flex flex-row my-3">
             <div>
               <FormatListBulletedIcon className="pointer" />
             </div>
@@ -110,9 +208,19 @@ function Notes() {
             <Button
               variant="outlined"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={() => handleNewFolderClick()}
+              onClick={() => handleNewFolderNameClick()}
             >
               New folder
+            </Button>
+          </div>
+
+          <div className="my-3">
+            <Button
+              variant="contained"
+              startIcon={<CreateIcon />}
+              onClick={() => handleEditFolderNameClick()}
+            >
+              Edit folder name
             </Button>
           </div>
 
@@ -121,26 +229,85 @@ function Notes() {
               type="text"
               className="form-control"
               placeholder="Search notes"
+              onChange={(e) => handleSearchNotesChange(e)}
             />
             <div className="mx-2">
-              <CreateIcon className="pointer" />
+              <BorderColorIcon
+                className="pointer"
+                onClick={() => handleCreateNotesClick()}
+              />
             </div>
           </div>
 
           {renderNotes()}
         </div>
-        <div className="col-sm-6 p-0">
+        <div className="col-sm-6">
           <textarea
-            className="form-control p-4"
+            id="textarea"
+            className="form-control px-3 py-4"
             placeholder="Write something..."
             style={{
-              height: '100%',
+              width: '100vw',
+              height: '100vh',
               border: 'none',
               outline: 'none',
+              boxShadow: 'none',
+              resize: 'none',
             }}
+            onChange={(e) => handleTextareaChange(e)}
           ></textarea>
         </div>
       </div>
+
+      <Dialog
+        open={newFolderDialogStatus}
+        onClose={() => handleNewDialogClose()}
+      >
+        <DialogTitle>Create New folder</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Create new folder name below and click create button
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Folder name"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(e) => handleNewFolderNameChange(e)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleNewDialogClose()}>Cancel</Button>
+          <Button onClick={() => handleCreateFolderName()}>Create</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={editFolderDialogStatus}
+        onClose={() => handleEditDialogClose()}
+      >
+        <DialogTitle>Edit folder name</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Edit folder name below and click edit button
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Folder name"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(e) => handleEditFolderNameChange(e)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleEditDialogClose()}>Cancel</Button>
+          <Button onClick={() => handleEditFolderName()}>Edit</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

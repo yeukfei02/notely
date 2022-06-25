@@ -1,9 +1,10 @@
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { getUrl } from './helpers/helpers';
+import Notes from './app/components/notes/notes';
 
 import App from './app/app';
 
@@ -33,7 +34,10 @@ root.render(
     <ThemeProvider theme={theme}>
       <ApolloProvider client={client}>
         <BrowserRouter>
-          <App />
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/notes" element={<Notes />} />
+          </Routes>
         </BrowserRouter>
       </ApolloProvider>
     </ThemeProvider>
