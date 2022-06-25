@@ -6,7 +6,8 @@ function App() {
     let view = <SignupAndLogin />;
 
     const token = localStorage.getItem('token');
-    if (token) {
+    const users_id = localStorage.getItem('users_id');
+    if (token && users_id) {
       view = <Notes />;
     }
 
