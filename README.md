@@ -1,2 +1,113 @@
-# notely
+<p align="center">
+  <img width="200px" src="https://github.com/yeukfei02/notely/blob/main/readme-icon.png"><br/>
+  <h2 align="center">notely</h2>
+</p>
+
 free, open source notes in web (notes mac app alternative)
+
+documentation: <>
+
+api url: <>
+
+web url: <>
+
+## Requirement
+
+- install yarn
+- install node (v14+)
+- install nx (<https://github.com/nrwl/nx>)
+
+## Testing and run
+
+```zsh
+// install node dependencies
+$ yarn
+
+// run api in local
+$ yarn run dev:api
+
+// run web in local
+$ yarn run dev:web
+
+// production
+$ yarn run start
+
+// build dist for both api and web
+$ yarn run build
+
+// build dist only api
+$ yarn run build:api
+
+// build dist only web
+$ yarn run build:web
+
+// run test case for both api and web
+$ yarn run test
+
+// run test case only api
+$ yarn run test:api
+
+// run test case only web
+$ yarn run test:web
+
+// format code
+$ yarn run format
+```
+
+```zsh
+// create module
+$ nx g @nrwl/nest:module <module-name>
+
+// create resolver
+$ nx g @nrwl/nest:resolver <resolver-name>
+
+// create service
+$ nx g @nrwl/nest:service <service-name>
+
+// generate schema.prisma and prisma client
+$ yarn run prisma:generate
+
+// create migration file if schema.prisma changed
+$ yarn run prisma:migrate:dev
+
+// reset database
+$ yarn run prisma:migrate:reset
+
+// apply pending migrations in the production/staging database
+$ yarn run prisma:migrate:deploy
+
+// check migrations status in the production/staging database
+$ yarn run prisma:migrate:status
+
+// push schema.prisma state to database
+$ yarn run prisma:db:push
+
+// seed data to database
+$ yarn run prisma:db:seed
+
+// format schema.prisma
+$ yarn run prisma:format
+
+// open prisma studio
+$ yarn run prisma:studio
+```
+
+```zsh
+// check for un-formatted files
+$ nx format:check
+
+// overwrite un-formatted files
+$ nx format:write
+
+// check nx graph
+$ nx graph
+
+// lists installed plugins, capabilities of installed plugins and other available plugins.
+$ nx list
+
+// makes sure the workspace is connected to Nx Cloud
+$ nx connect-to-nx-cloud
+
+// check more nx commands
+$ nx --help
+```
