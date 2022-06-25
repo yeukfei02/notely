@@ -51,7 +51,7 @@ export class UserResolver {
     return data;
   }
 
-  @Query(() => [User])
+  @Query(() => [User], { nullable: true })
   async users(): Promise<User[]> {
     const users = await this.userService.getUsers();
     return users;
