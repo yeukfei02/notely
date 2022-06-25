@@ -1,4 +1,7 @@
-# notely
+<p align="center">
+  <img width="200px" src="https://github.com/yeukfei02/notely/blob/main/readme-icon.png"><br/>
+  <h2 align="center">notely</h2>
+</p>
 
 free, open source notes in web (notes mac app alternative)
 
