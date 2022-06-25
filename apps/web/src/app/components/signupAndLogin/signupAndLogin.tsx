@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import logo from '../../../images/logo.png';
 
@@ -32,6 +33,8 @@ const LOGIN = gql`
 `;
 
 function SignupAndLogin() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -49,8 +52,9 @@ function SignupAndLogin() {
   useEffect(() => {
     if (loginResult.data) {
       localStorage.setItem('token', loginResult.data.login.token);
+      navigate('/notes');
     }
-  }, [loginResult.data]);
+  }, [loginResult.data, navigate]);
 
   const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -67,8 +71,8 @@ function SignupAndLogin() {
       signup({
         variables: {
           input: {
-            email,
-            password,
+            email: email,
+            password: password,
           },
         },
       });
@@ -80,12 +84,23 @@ function SignupAndLogin() {
       login({
         variables: {
           input: {
-            email,
-            password,
+            email: email,
+            password: password,
           },
         },
       });
     }
+  };
+
+  const handleJoinAsAGuestClick = () => {
+    login({
+      variables: {
+        input: {
+          email: 'admin@admin.com',
+          password: 'admin',
+        },
+      },
+    });
   };
 
   return (
@@ -127,6 +142,19 @@ function SignupAndLogin() {
           onClick={() => handleSignupClick()}
         >
           Signup
+        </Button>
+      </div>
+
+      <hr />
+
+      <div>
+        <Button
+          className="w-100 my-2"
+          variant="contained"
+          color="info"
+          onClick={() => handleJoinAsAGuestClick()}
+        >
+          Join as a Guest
         </Button>
       </div>
     </div>

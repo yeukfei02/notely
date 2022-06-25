@@ -13,7 +13,9 @@ function App() {
     return view;
   };
 
-  return <div style={{ overflow: 'hidden' }}>{renderView()}</div>;
+  return (
+    <div style={{ maxWidth: '100%', overflowX: 'hidden' }}>{renderView()}</div>
+  );
 }
 
 export default App;
