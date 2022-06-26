@@ -910,6 +910,11 @@ function Notes() {
     }
   };
 
+  const handleFolderClick = (id: string) => {
+    console.log('id = ', id);
+    localStorage.setItem('folder_id', id);
+  };
+
   const renderNewFolders = () => {
     let newFoldersView = null;
 
@@ -919,6 +924,7 @@ function Notes() {
           <div
             key={i}
             className="d-flex flex-row align-items-center justify-content-around pointer my-4"
+            onClick={() => handleFolderClick(folder.id)}
           >
             <div>
               <FolderIcon />

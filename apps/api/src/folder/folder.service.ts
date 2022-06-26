@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateFolderInput } from './dto/create-folder.dto';
 import { GetFoldersInput } from './dto/get-folders.dto';
+import { DeleteFolderByIdInput } from './dto/delete-folder-by-id.dto';
 
 @Injectable()
 export class FolderService {
@@ -37,6 +38,16 @@ export class FolderService {
       include: {
         users: true,
         notes: true,
+      },
+    });
+    return folders;
+  }
+
+  async deleteFolderById(deleteFolderByIdInput: DeleteFolderByIdInput) {
+    const folders = await this.prisma.folder.deleteMany({
+      where: {
+        id: deleteFolderByIdInput.id,
+        users_id: deleteFolderByIdInput.users_id,
       },
     });
     return folders;

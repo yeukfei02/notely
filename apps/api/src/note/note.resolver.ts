@@ -58,7 +58,7 @@ export class NoteResolver {
     console.log('notes = ', notes);
 
     let result = 0;
-    if (notes.count > 0) {
+    if (notes && notes.count > 0) {
       result = notes.count;
     }
 
