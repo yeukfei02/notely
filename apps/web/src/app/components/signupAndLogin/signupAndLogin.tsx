@@ -134,13 +134,16 @@ function SignupAndLogin() {
   };
 
   return (
-    <div>
-      <div className="container w-50 my-5">
+    <div className="d-flex justify-content-center">
+      <div
+        className="container my-5"
+        style={{ width: window.innerWidth > 1000 ? '25%' : '50%' }}
+      >
         <div className="d-flex justify-content-center">
           <img src={logo} alt="" width="55%" height="55%" />
         </div>
 
-        <div>
+        <div className="my-1">
           <div>
             <label className="form-label">Email address</label>
             <input

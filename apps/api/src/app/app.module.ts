@@ -5,6 +5,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserModule } from '../user/user.module';
 import { FolderModule } from '../folder/folder.module';
 import { NoteModule } from '../note/note.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -24,6 +25,10 @@ import { NoteModule } from '../note/note.module';
     UserModule,
     FolderModule,
     NoteModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'web'),
+      exclude: ['/api*'],
+    }),
   ],
 })
 export class AppModule {}

@@ -1045,7 +1045,9 @@ function Notes() {
                   onClick={() => handleDeleteNoteById(note.id)}
                 />
               </div>
-              <h5 className="card-title">{cardTitle || note.content}</h5>
+              <h5 className="card-title">
+                <b>{cardTitle || note.content}</b>
+              </h5>
               <p className="card-text">
                 {content.length < 100
                   ? content

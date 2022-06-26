@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "license": "MIT",
   "private": true,
+  "engines": {
+    "node": ">=14.18.0",
+    "npm": ">=6.14.15",
+    "yarn": ">=1.22.18"
+  },
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@emotion/react": "^11.9.3",
@@ -14,6 +19,7 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/graphql": "^10.0.16",
     "@nestjs/platform-express": "^8.0.0",
+    "@nestjs/serve-static": "^2.2.2",
     "@prisma/client": "^3.15.2",
     "apollo-server-express": "^3.9.0",
     "bcryptjs": "^2.4.3",
@@ -81,7 +87,7 @@
   "scripts": {
     "dev:api": "nx serve api",
     "dev:web": "nx serve web",
-    "start": "nx serve",
+    "start": "node ./dist/apps/api/main.js",
     "prebuild": "rimraf ./dist",
     "build": "yarn run build:api && yarn run build:web",
     "build:api": "nx build api && cp ./apps/api/prisma/schema.prisma ./dist/apps/api",
@@ -101,6 +107,7 @@
     "prisma:studio": "npx prisma studio --schema=./apps/api/prisma/schema.prisma",
     "commit": "git-cz",
     "release": "standard-version",
+    "heroku-postbuild": "yarn run build",
     "prepare": "husky install"
   },
   "prisma": {
