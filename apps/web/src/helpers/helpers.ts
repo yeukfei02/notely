@@ -7,7 +7,7 @@ export const getUrl = () => {
   ) {
     url = 'http://localhost:3333/graphql';
   } else if (process.env['NODE_ENV'] === 'production') {
-    url = 'http://localhost:3333/graphql';
+    url = 'https://notely-web.herokuapp.com/graphql';
   }
 
   return url;

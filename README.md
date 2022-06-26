@@ -5,11 +5,11 @@
 
 free, open source notes in web (notes mac app alternative)
 
-documentation: <>
+documentation: <https://documenter.getpostman.com/view/3827865/UzBsH4d5>
 
-api url: <>
+api url: <https://notely-web.herokuapp.com/graphql>
 
-web url: <>
+web url: <https://notely-web.herokuapp.com/>
 
 ## Requirement
 
