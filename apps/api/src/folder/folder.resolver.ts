@@ -2,6 +2,7 @@ import { Resolver, Mutation, Query, Args, Context } from '@nestjs/graphql';
 import { FolderService } from './folder.service';
 import { Folder } from './model/folder.model';
 import { CreateFolderInput } from './dto/create-folder.dto';
+import { GetFoldersInput } from './dto/get-folders.dto';
 import { authorize } from '../helpers/helpers';
 
 @Resolver()
@@ -25,13 +26,16 @@ export class FolderResolver {
   }
 
   @Query(() => [Folder], { nullable: true })
-  async folders(@Context() context): Promise<Folder[]> {
+  async folders(
+    @Args('input') getFoldersInput: GetFoldersInput,
+    @Context() context
+  ): Promise<Folder[]> {
     const authorizeStatus = authorize(context.token);
 
     let folders = [];
 
     if (authorizeStatus) {
-      folders = await this.folderService.getFolders();
+      folders = await this.folderService.getFolders(getFoldersInput);
     }
 
     return folders;

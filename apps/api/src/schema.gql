@@ -9,7 +9,7 @@ input CreateFolderInput {
 
 input CreateNoteInput {
   content: String!
-  folder_id: String!
+  folder_id: String
   users_id: String!
 }
 
@@ -18,6 +18,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input DeleteNoteByIdInput {
+  id: String!
+  users_id: String!
+}
+
 type Folder {
   created_at: DateTime!
   id: String!
@@ -25,6 +30,14 @@ type Folder {
   notes: [Note!]
   updated_at: DateTime!
   users: User
+}
+
+input GetFoldersInput {
+  users_id: String!
+}
+
+input GetNotesInput {
+  users_id: String!
 }
 
 type Login {
@@ -41,6 +54,7 @@ input LoginInput {
 type Mutation {
   createFolder(input: CreateFolderInput!): Folder!
   createNote(input: CreateNoteInput!): Note!
+  deleteNoteById(input: DeleteNoteByIdInput!): Int!
   login(input: LoginInput!): Login!
   signup(input: SignupInput!): User!
 }
@@ -55,8 +69,8 @@ type Note {
 }
 
 type Query {
-  folders: [Folder!]
-  notes: [Note!]
+  folders(input: GetFoldersInput!): [Folder!]
+  notes(input: GetNotesInput!): [Note!]
   users: [User!]
 }
 

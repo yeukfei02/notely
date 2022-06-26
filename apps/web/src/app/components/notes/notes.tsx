@@ -195,9 +195,192 @@ const CREATE_FOLDER = gql`
   }
 `;
 
+const CREATE_NOTE = gql`
+  mutation createNote($input: CreateNoteInput!) {
+    createNote(input: $input) {
+      content
+      created_at
+      folder {
+        created_at
+        id
+        name
+        notes {
+          content
+          created_at
+          folder {
+            created_at
+            id
+            name
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          updated_at
+          users {
+            created_at
+            email
+            folders {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            password
+            updated_at
+          }
+        }
+        updated_at
+        users {
+          created_at
+          email
+          folders {
+            created_at
+            id
+            name
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          notes {
+            content
+            created_at
+            folder {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          password
+          updated_at
+        }
+      }
+      id
+      updated_at
+      users {
+        created_at
+        email
+        folders {
+          created_at
+          id
+          name
+          notes {
+            content
+            created_at
+            folder {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          updated_at
+          users {
+            created_at
+            email
+            id
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            password
+            updated_at
+          }
+        }
+        id
+        notes {
+          content
+          created_at
+          folder {
+            created_at
+            id
+            name
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          updated_at
+          users {
+            created_at
+            email
+            folders {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            password
+            updated_at
+          }
+        }
+        password
+        updated_at
+      }
+    }
+  }
+`;
+
 const GET_FOLDERS = gql`
-  query folders {
-    folders {
+  query folders($input: GetFoldersInput!) {
+    folders(input: $input) {
       created_at
       id
       name
@@ -352,6 +535,156 @@ const GET_FOLDERS = gql`
   }
 `;
 
+const GET_NOTES = gql`
+  query notes($input: GetNotesInput!) {
+    notes(input: $input) {
+      content
+      created_at
+      folder {
+        created_at
+        id
+        name
+        notes {
+          content
+          created_at
+          id
+          updated_at
+          users {
+            created_at
+            email
+            folders {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            password
+            updated_at
+          }
+        }
+        updated_at
+        users {
+          created_at
+          email
+          folders {
+            created_at
+            id
+            name
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          notes {
+            content
+            created_at
+            id
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          password
+          updated_at
+        }
+      }
+      id
+      updated_at
+      users {
+        created_at
+        email
+        folders {
+          created_at
+          id
+          name
+          notes {
+            content
+            created_at
+            folder {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            updated_at
+          }
+          updated_at
+          users {
+            created_at
+            email
+            id
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            password
+            updated_at
+          }
+        }
+        id
+        notes {
+          content
+          created_at
+          folder {
+            created_at
+            id
+            name
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          updated_at
+        }
+        password
+        updated_at
+      }
+    }
+  }
+`;
+
+const DELETE_NOTE_BY_ID = gql`
+  mutation deleteNoteById($input: DeleteNoteByIdInput!) {
+    deleteNoteById(input: $input)
+  }
+`;
+
 function Notes() {
   const navigate = useNavigate();
 
@@ -368,26 +701,58 @@ function Notes() {
   const [editFolderDialogStatus, setEditFolderDialogStatus] = useState(false);
 
   const [createFolder, createFolderResult] = useMutation(CREATE_FOLDER);
-
+  const [createNote, createNoteResult] = useMutation(CREATE_NOTE);
   const [getFolders, getFoldersResult] = useLazyQuery(GET_FOLDERS);
+  const [getNotes, getNotesResult] = useLazyQuery(GET_NOTES);
+  const [deleteNoteById, deleteNoteByIdResult] = useMutation(DELETE_NOTE_BY_ID);
 
   console.log('createFolderResult.data = ', createFolderResult.data);
   console.log('createFolderResult.loading = ', createFolderResult.loading);
   console.log('createFolderResult.error = ', createFolderResult.error);
 
+  console.log('createNoteResult.data = ', createNoteResult.data);
+  console.log('createNoteResult.loading = ', createNoteResult.loading);
+  console.log('createNoteResult.error = ', createNoteResult.error);
+
   console.log('getFoldersResult.data = ', getFoldersResult.data);
   console.log('getFoldersResult.loading = ', getFoldersResult.loading);
   console.log('getFoldersResult.error = ', getFoldersResult.error);
 
+  console.log('getNotesResult.data = ', getNotesResult.data);
+  console.log('getNotesResult.loading = ', getNotesResult.loading);
+  console.log('getNotesResult.error = ', getNotesResult.error);
+
+  console.log('deleteNoteByIdResult.data = ', deleteNoteByIdResult.data);
+  console.log('deleteNoteByIdResult.loading = ', deleteNoteByIdResult.loading);
+  console.log('deleteNoteByIdResult.error = ', deleteNoteByIdResult.error);
+
   useEffect(() => {
     getFolders({
+      variables: {
+        input: {
+          users_id: localStorage.getItem('users_id'),
+        },
+      },
       context: {
         headers: {
           authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       },
     });
-  }, [getFolders]);
+
+    getNotes({
+      variables: {
+        input: {
+          users_id: localStorage.getItem('users_id'),
+        },
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    });
+  }, [getFolders, getNotes]);
 
   useEffect(() => {
     if (getFoldersResult.data) {
@@ -396,10 +761,55 @@ function Notes() {
   }, [getFoldersResult.data]);
 
   useEffect(() => {
+    if (getNotesResult.data) {
+      setNotes(getNotesResult.data.notes);
+    }
+  }, [getNotesResult.data]);
+
+  useEffect(() => {
     if (createFolderResult.data) {
       window.location.reload();
     }
   }, [createFolderResult.data]);
+
+  useEffect(() => {
+    if (createNoteResult.data) {
+      window.location.reload();
+    }
+  }, [createNoteResult.data]);
+
+  useEffect(() => {
+    if (deleteNoteByIdResult.data) {
+      window.location.reload();
+    }
+  }, [deleteNoteByIdResult.data]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      const input: any = {
+        content: textareaValue,
+        users_id: localStorage.getItem('users_id'),
+      };
+      if (localStorage.getItem('folder_id')) {
+        input['folder_id'] = localStorage.getItem('folder_id');
+      }
+
+      if (textareaValue) {
+        createNote({
+          variables: {
+            input: input,
+          },
+          context: {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
+        });
+      }
+    }, 1500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [textareaValue, createNote]);
 
   const handleLogoutClick = () => {
     localStorage.clear();
@@ -482,6 +892,24 @@ function Notes() {
     setTextareaValue(e.target.value);
   };
 
+  const handleDeleteNoteById = (id: string) => {
+    if (id) {
+      deleteNoteById({
+        variables: {
+          input: {
+            id: id,
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }
+  };
+
   const renderNewFolders = () => {
     let newFoldersView = null;
 
@@ -509,18 +937,26 @@ function Notes() {
     let notesView = null;
 
     if (notes) {
-      notesView = notes.map((note, i) => {
+      notesView = notes.map((note: any, i) => {
+        const cardTitle = note.content.substring(0, note.content.indexOf('\n'));
+        console.log('cardTitle = ', cardTitle);
+
+        const content = note.content
+          .substring(note.content.indexOf('\n'))
+          .trim();
+        console.log('content = ', content);
+
         return (
           <div key={i} className="card my-4">
             <div className="card-body">
               <div className="d-flex justify-content-end">
-                <ClearIcon className="pointer" />
+                <ClearIcon
+                  className="pointer"
+                  onClick={() => handleDeleteNoteById(note.id)}
+                />
               </div>
-              <h5 className="card-title">Card title</h5>
-              <p className="card-text">
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
-              </p>
+              <h5 className="card-title">{cardTitle || note.content}</h5>
+              <p className="card-text">{content}</p>
             </div>
           </div>
         );
