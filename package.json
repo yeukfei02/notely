@@ -107,7 +107,7 @@
     "prisma:studio": "npx prisma studio --schema=./apps/api/prisma/schema.prisma",
     "commit": "git-cz",
     "release": "standard-version",
-    "heroku-postbuild": "yarn run build",
+    "heroku-postbuild": "yarn run build && yarn run prisma:generate",
     "prepare": "husky install"
   },
   "prisma": {
