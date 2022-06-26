@@ -52,9 +52,14 @@ export class NoteService {
 
     const notes = await this.prisma.note.findMany({
       where: where,
-      orderBy: {
-        created_at: 'desc',
-      },
+      orderBy: [
+        {
+          updated_at: 'desc',
+        },
+        {
+          created_at: 'desc',
+        },
+      ],
       include: {
         users: true,
         folder: true,
@@ -77,6 +82,7 @@ export class NoteService {
       where: where,
       data: {
         content: updateNoteByIdInput.content,
+        updated_at: new Date(),
       },
     });
     return note;
