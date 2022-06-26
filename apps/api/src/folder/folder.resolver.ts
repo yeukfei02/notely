@@ -3,6 +3,7 @@ import { FolderService } from './folder.service';
 import { Folder } from './model/folder.model';
 import { CreateFolderInput } from './dto/create-folder.dto';
 import { GetFoldersInput } from './dto/get-folders.dto';
+import { UpdateFolderByIdInput } from './dto/update-folder-by-id.dto';
 import { DeleteFolderByIdInput } from './dto/delete-folder-by-id.dto';
 import { authorize } from '../helpers/helpers';
 
@@ -40,6 +41,31 @@ export class FolderResolver {
     }
 
     return folders;
+  }
+
+  @Mutation(() => Int)
+  async updateFolderById(
+    @Args('input') updateFolderByIdInput: UpdateFolderByIdInput,
+    @Context() context
+  ): Promise<number> {
+    const authorizeStatus = authorize(context.token);
+
+    let folders = null;
+
+    if (authorizeStatus) {
+      folders = await this.folderService.updateFolderById(
+        updateFolderByIdInput
+      );
+    }
+
+    console.log('folders = ', folders);
+
+    let result = 0;
+    if (folders && folders.count > 0) {
+      result = folders.count;
+    }
+
+    return result;
   }
 
   @Mutation(() => Int)

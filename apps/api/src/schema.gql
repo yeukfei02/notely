@@ -66,6 +66,7 @@ type Mutation {
   deleteNoteById(input: DeleteNoteByIdInput!): Int!
   login(input: LoginInput!): Login!
   signup(input: SignupInput!): User!
+  updateFolderById(input: UpdateFolderByIdInput!): Int!
   updateNoteById(input: UpdateNoteByIdInput!): Int!
 }
 
@@ -87,6 +88,12 @@ type Query {
 input SignupInput {
   email: String!
   password: String!
+}
+
+input UpdateFolderByIdInput {
+  id: String!
+  name: String!
+  users_id: String!
 }
 
 input UpdateNoteByIdInput {
