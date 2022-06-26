@@ -34,10 +34,23 @@ export class NoteService {
   }
 
   async getNotes(getNotesInput: GetNotesInput) {
+    const where = {
+      users_id: getNotesInput.users_id,
+    };
+
+    if (getNotesInput.folder_id) {
+      where['folder_id'] = getNotesInput.folder_id;
+    }
+    if (getNotesInput.search_notes_value) {
+      where['content'] = {
+        contains: getNotesInput.search_notes_value,
+        mode: 'insensitive',
+      };
+    }
+    console.log('where = ', where);
+
     const notes = await this.prisma.note.findMany({
-      where: {
-        users_id: getNotesInput.users_id,
-      },
+      where: where,
       orderBy: {
         created_at: 'desc',
       },

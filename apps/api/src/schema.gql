@@ -42,6 +42,8 @@ input GetFoldersInput {
 }
 
 input GetNotesInput {
+  folder_id: String
+  search_notes_value: String
   users_id: String!
 }
 

@@ -785,6 +785,37 @@ function Notes() {
   }, [deleteNoteByIdResult.data]);
 
   useEffect(() => {
+    if (searchNotesValue) {
+      getNotes({
+        variables: {
+          input: {
+            users_id: localStorage.getItem('users_id'),
+            search_notes_value: searchNotesValue,
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    } else {
+      getNotes({
+        variables: {
+          input: {
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }
+  }, [searchNotesValue, getNotes]);
+
+  useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       const input: any = {
         content: textareaValue,
@@ -806,7 +837,7 @@ function Notes() {
           },
         });
       }
-    }, 1500);
+    }, 2000);
 
     return () => clearTimeout(delayDebounceFn);
   }, [textareaValue, createNote]);
@@ -915,6 +946,15 @@ function Notes() {
     localStorage.setItem('folder_id', id);
   };
 
+  const handlerCardItemClick = (id: string, content: string) => {
+    localStorage.setItem('note_id', id);
+
+    const textarea = document.querySelector('#textarea');
+    if (textarea && content) {
+      (textarea as any).value = content;
+    }
+  };
+
   const renderNewFolders = () => {
     let newFoldersView = null;
 
@@ -929,7 +969,9 @@ function Notes() {
             <div>
               <FolderIcon />
             </div>
-            <div>{folder.name}</div>
+            <div>
+              <b>{folder.name}</b>
+            </div>
             <div>0</div>
           </div>
         );
@@ -953,7 +995,11 @@ function Notes() {
         console.log('content = ', content);
 
         return (
-          <div key={i} className="card my-4">
+          <div
+            key={i}
+            className="card pointer my-4"
+            onClick={() => handlerCardItemClick(note.id, note.content)}
+          >
             <div className="card-body">
               <div className="d-flex justify-content-end">
                 <ClearIcon
@@ -991,15 +1037,23 @@ function Notes() {
             <div>
               <FolderIcon />
             </div>
-            <div>Notes</div>
-            <div>0</div>
+            <div>
+              <b>Notes</b>
+            </div>
+            <div>
+              {getNotesResult.data && getNotesResult.data.notes
+                ? getNotesResult.data.notes.length
+                : 0}
+            </div>
           </div>
 
           <div className="d-flex flex-row align-items-center justify-content-around pointer my-4">
             <div>
               <DeleteIcon />
             </div>
-            <div>Trash</div>
+            <div>
+              <b>Trash</b>
+            </div>
             <div>0</div>
           </div>
 
