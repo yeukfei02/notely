@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import logo from '../../../images/logo.png';
 
@@ -32,6 +34,13 @@ const LOGIN = gql`
   }
 `;
 
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 function SignupAndLogin() {
   const navigate = useNavigate();
 
@@ -40,6 +49,9 @@ function SignupAndLogin() {
 
   const [signup, signupResult] = useMutation(SIGNUP);
   const [login, loginResult] = useMutation(LOGIN);
+
+  const [openSignupSuccess, setOpenSignupSuccess] = useState(false);
+  const [openLoginSuccess, setOpenLoginSuccess] = useState(false);
 
   console.log('signupResult.data = ', signupResult.data);
   console.log('signupResult.loading = ', signupResult.loading);
@@ -50,10 +62,19 @@ function SignupAndLogin() {
   console.log('loginResult.error = ', loginResult.error);
 
   useEffect(() => {
+    if (signupResult.data) {
+      setOpenSignupSuccess(true);
+    }
+  }, [signupResult.data]);
+
+  useEffect(() => {
     if (loginResult.data) {
       localStorage.setItem('token', loginResult.data.login.token);
       localStorage.setItem('users_id', loginResult.data.login.users_id);
-      navigate('/notes');
+      setOpenLoginSuccess(true);
+      setTimeout(() => {
+        navigate('/notes');
+      }, 1000);
     }
   }, [loginResult.data, navigate]);
 
@@ -104,60 +125,100 @@ function SignupAndLogin() {
     });
   };
 
+  const handleSignupSuccessClose = () => {
+    setOpenSignupSuccess(false);
+  };
+
+  const handleLoginSuccessClose = () => {
+    setOpenLoginSuccess(false);
+  };
+
   return (
-    <div className="container w-50 my-5">
-      <div className="d-flex justify-content-center">
-        <img src={logo} alt="" width="55%" height="55%" />
-      </div>
+    <div>
+      <div className="container w-50 my-5">
+        <div className="d-flex justify-content-center">
+          <img src={logo} alt="" width="55%" height="55%" />
+        </div>
 
-      <div>
         <div>
-          <label className="form-label">Email address</label>
-          <input
-            type="email"
-            className="form-control"
-            aria-describedby="emailHelp"
-            onChange={(e) => handleEmailInputChange(e)}
-          />
+          <div>
+            <label className="form-label">Email address</label>
+            <input
+              type="email"
+              className="form-control"
+              aria-describedby="emailHelp"
+              onChange={(e) => handleEmailInputChange(e)}
+            />
+          </div>
+          <div className="my-3">
+            <label className="form-label">Password</label>
+            <input
+              type="password"
+              className="form-control"
+              onChange={(e) => handlePasswordInputChange(e)}
+            />
+          </div>
+          <Button
+            className="w-100 my-2"
+            variant="contained"
+            color="primary"
+            onClick={() => handleLoginClick()}
+          >
+            Login
+          </Button>
+          <Button
+            className="w-100 my-2"
+            variant="outlined"
+            color="error"
+            onClick={() => handleSignupClick()}
+          >
+            Signup
+          </Button>
         </div>
-        <div className="my-3">
-          <label className="form-label">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            onChange={(e) => handlePasswordInputChange(e)}
-          />
+
+        <hr />
+
+        <div>
+          <Button
+            className="w-100 my-2"
+            variant="contained"
+            color="info"
+            onClick={() => handleJoinAsAGuestClick()}
+          >
+            Join as a Guest
+          </Button>
         </div>
-        <Button
-          className="w-100 my-2"
-          variant="contained"
-          color="primary"
-          onClick={() => handleLoginClick()}
-        >
-          Login
-        </Button>
-        <Button
-          className="w-100 my-2"
-          variant="outlined"
-          color="error"
-          onClick={() => handleSignupClick()}
-        >
-          Signup
-        </Button>
       </div>
 
-      <hr />
-
-      <div>
-        <Button
-          className="w-100 my-2"
-          variant="contained"
-          color="info"
-          onClick={() => handleJoinAsAGuestClick()}
+      <Snackbar
+        open={openSignupSuccess}
+        autoHideDuration={2000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => handleSignupSuccessClose()}
+      >
+        <Alert
+          onClose={() => handleSignupSuccessClose()}
+          severity="success"
+          sx={{ width: '100%' }}
         >
-          Join as a Guest
-        </Button>
-      </div>
+          Signup success
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={openLoginSuccess}
+        autoHideDuration={2000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => handleLoginSuccessClose()}
+      >
+        <Alert
+          onClose={() => handleLoginSuccessClose()}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          Login success
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
