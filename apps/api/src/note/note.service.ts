@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateNoteInput } from './dto/create-note.dto';
 import { GetNotesInput } from './dto/get-notes.dto';
+import { UpdateNoteByIdInput } from './dto/update-note-by-id.dto';
 import { DeleteNoteByIdInput } from './dto/delete-note-by-id.dto';
 
 @Injectable()
@@ -62,12 +63,37 @@ export class NoteService {
     return notes;
   }
 
-  async deleteNoteById(deleteNoteByIdInput: DeleteNoteByIdInput) {
-    const notes = await this.prisma.note.deleteMany({
-      where: {
-        id: deleteNoteByIdInput.id,
-        users_id: deleteNoteByIdInput.users_id,
+  async updateNoteById(updateNoteByIdInput: UpdateNoteByIdInput) {
+    const where = {
+      id: updateNoteByIdInput.id,
+      users_id: updateNoteByIdInput.users_id,
+    };
+    if (updateNoteByIdInput.folder_id) {
+      where['folder_id'] = updateNoteByIdInput.folder_id;
+    }
+    console.log('where = ', where);
+
+    const note = await this.prisma.note.updateMany({
+      where: where,
+      data: {
+        content: updateNoteByIdInput.content,
       },
+    });
+    return note;
+  }
+
+  async deleteNoteById(deleteNoteByIdInput: DeleteNoteByIdInput) {
+    const where = {
+      id: deleteNoteByIdInput.id,
+      users_id: deleteNoteByIdInput.users_id,
+    };
+    if (deleteNoteByIdInput.folder_id) {
+      where['folder_id'] = deleteNoteByIdInput.folder_id;
+    }
+    console.log('where = ', where);
+
+    const notes = await this.prisma.note.deleteMany({
+      where: where,
     });
     return notes;
   }

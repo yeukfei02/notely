@@ -679,6 +679,12 @@ const GET_NOTES = gql`
   }
 `;
 
+const UPDATE_NOTE_BY_ID = gql`
+  mutation updateNoteById($input: UpdateNoteByIdInput!) {
+    updateNoteById(input: $input)
+  }
+`;
+
 const DELETE_NOTE_BY_ID = gql`
   mutation deleteNoteById($input: DeleteNoteByIdInput!) {
     deleteNoteById(input: $input)
@@ -704,6 +710,7 @@ function Notes() {
   const [createNote, createNoteResult] = useMutation(CREATE_NOTE);
   const [getFolders, getFoldersResult] = useLazyQuery(GET_FOLDERS);
   const [getNotes, getNotesResult] = useLazyQuery(GET_NOTES);
+  const [updateNoteById, updateNoteByIdResult] = useMutation(UPDATE_NOTE_BY_ID);
   const [deleteNoteById, deleteNoteByIdResult] = useMutation(DELETE_NOTE_BY_ID);
 
   console.log('createFolderResult.data = ', createFolderResult.data);
@@ -721,6 +728,10 @@ function Notes() {
   console.log('getNotesResult.data = ', getNotesResult.data);
   console.log('getNotesResult.loading = ', getNotesResult.loading);
   console.log('getNotesResult.error = ', getNotesResult.error);
+
+  console.log('updateNoteByIdResult.data = ', updateNoteByIdResult.data);
+  console.log('updateNoteByIdResult.loading = ', updateNoteByIdResult.loading);
+  console.log('updateNoteByIdResult.error = ', updateNoteByIdResult.error);
 
   console.log('deleteNoteByIdResult.data = ', deleteNoteByIdResult.data);
   console.log('deleteNoteByIdResult.loading = ', deleteNoteByIdResult.loading);
@@ -779,6 +790,12 @@ function Notes() {
   }, [createNoteResult.data]);
 
   useEffect(() => {
+    if (updateNoteByIdResult.data) {
+      window.location.reload();
+    }
+  }, [updateNoteByIdResult.data]);
+
+  useEffect(() => {
     if (deleteNoteByIdResult.data) {
       window.location.reload();
     }
@@ -821,26 +838,45 @@ function Notes() {
         content: textareaValue,
         users_id: localStorage.getItem('users_id'),
       };
-      if (localStorage.getItem('folder_id')) {
-        input['folder_id'] = localStorage.getItem('folder_id');
-      }
+
+      // const folderId = localStorage.getItem('folder_id')
+      // if (!_.isEmpty(folderId)) {
+      //   input['folder_id'] = folderId;
+      // }
+
+      const noteId = localStorage.getItem('note_id');
 
       if (textareaValue) {
-        createNote({
-          variables: {
-            input: input,
-          },
-          context: {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
+        if (_.isEmpty(noteId)) {
+          createNote({
+            variables: {
+              input: input,
             },
-          },
-        });
+            context: {
+              headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            },
+          });
+        } else {
+          input['id'] = noteId;
+
+          updateNoteById({
+            variables: {
+              input: input,
+            },
+            context: {
+              headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            },
+          });
+        }
       }
     }, 2000);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [textareaValue, createNote]);
+  }, [textareaValue, createNote, updateNoteById]);
 
   const handleLogoutClick = () => {
     localStorage.clear();
@@ -917,6 +953,8 @@ function Notes() {
     }
 
     setTextareaValue('');
+    localStorage.removeItem('folder_id');
+    localStorage.removeItem('note_id');
   };
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -1008,7 +1046,11 @@ function Notes() {
                 />
               </div>
               <h5 className="card-title">{cardTitle || note.content}</h5>
-              <p className="card-text">{content}</p>
+              <p className="card-text">
+                {content.length < 100
+                  ? content
+                  : content.substring(0, 100) + '...'}
+              </p>
             </div>
           </div>
         );

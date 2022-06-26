@@ -2,9 +2,12 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 
 @InputType()
-export class DeleteNoteByIdInput {
+export class UpdateNoteByIdInput {
   @Field()
   id: string;
+
+  @Field()
+  content: string;
 
   @Field()
   users_id: string;
