@@ -33,7 +33,7 @@ export class FolderService {
         users_id: getFolderInput.users_id,
       },
       orderBy: {
-        created_at: 'desc',
+        created_at: 'asc',
       },
       include: {
         users: true,

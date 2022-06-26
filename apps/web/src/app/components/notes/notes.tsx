@@ -18,6 +18,7 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import _ from 'lodash';
+import dayjs from 'dayjs';
 
 const CREATE_FOLDER = gql`
   mutation createFolder($input: CreateFolderInput!) {
@@ -697,6 +698,7 @@ function Notes() {
   const [folders, setFolders] = useState([]);
   const [notes, setNotes] = useState([]);
 
+  const [currentTab, setCurrentTab] = useState('');
   const [searchNotesValue, setSearchNotesValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
 
@@ -979,9 +981,10 @@ function Notes() {
     }
   };
 
-  const handleFolderClick = (id: string) => {
+  const handleFolderClick = (id: string, name: string) => {
     console.log('id = ', id);
     localStorage.setItem('folder_id', id);
+    setCurrentTab(name);
   };
 
   const handlerCardItemClick = (id: string, content: string) => {
@@ -1001,8 +1004,14 @@ function Notes() {
         return (
           <div
             key={i}
-            className="d-flex flex-row align-items-center justify-content-around pointer my-4"
-            onClick={() => handleFolderClick(folder.id)}
+            className={`${
+              currentTab === folder.name
+                ? 'd-flex flex-row align-items-center justify-content-between pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
+                : 'd-flex flex-row align-items-center justify-content-between pointer w-full p-2 m-4 rounded'
+            }`}
+            onClick={() => handleFolderClick(folder.id, folder.name)}
+            onMouseEnter={(e) => handleMouseEnter(e)}
+            onMouseLeave={(e) => handleMouseLeave(e)}
           >
             <div>
               <FolderIcon />
@@ -1019,6 +1028,23 @@ function Notes() {
     return newFoldersView;
   };
 
+  const handleFolderItemClick = (currentTab: string) => {
+    localStorage.removeItem('folder_id');
+    setCurrentTab(currentTab);
+  };
+
+  const handleMouseEnter = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    (e.target as any).classList.add('bg-white', 'bg-opacity-25');
+  };
+
+  const handleMouseLeave = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    (e.target as any).classList.remove('bg-white', 'bg-opacity-25');
+  };
+
   const renderNotes = () => {
     let notesView = null;
 
@@ -1031,6 +1057,11 @@ function Notes() {
           .substring(note.content.indexOf('\n'))
           .trim();
         console.log('content = ', content);
+
+        const now = dayjs();
+        const minuteDiff = now.diff(note.updated_at, 'minute');
+        const minuteDiffStr =
+          minuteDiff < 1 ? 'just now' : `${minuteDiff} minutes ago`;
 
         return (
           <div
@@ -1053,6 +1084,7 @@ function Notes() {
                   ? content
                   : content.substring(0, 100) + '...'}
               </p>
+              <div>{minuteDiffStr}</div>
             </div>
           </div>
         );
@@ -1074,10 +1106,19 @@ function Notes() {
         }}
       >
         <div
-          className="col-sm-3 d-none d-sm-block"
+          className="col-sm-3 d-none d-sm-block p-0"
           style={{ backgroundColor: '#fb9698' }}
         >
-          <div className="d-flex flex-row align-items-center justify-content-around pointer my-4">
+          <div
+            className={`${
+              currentTab === 'notes'
+                ? 'd-flex flex-row align-items-center justify-content-between pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
+                : 'd-flex flex-row align-items-center justify-content-between pointer w-full p-2 m-4 rounded'
+            }`}
+            onClick={() => handleFolderItemClick('notes')}
+            onMouseEnter={(e) => handleMouseEnter(e)}
+            onMouseLeave={(e) => handleMouseLeave(e)}
+          >
             <div>
               <FolderIcon />
             </div>
@@ -1091,7 +1132,16 @@ function Notes() {
             </div>
           </div>
 
-          <div className="d-flex flex-row align-items-center justify-content-around pointer my-4">
+          <div
+            className={`${
+              currentTab === 'trash'
+                ? 'd-flex flex-row align-items-center justify-content-between pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
+                : 'd-flex flex-row align-items-center justify-content-between pointer w-full p-2 m-4 rounded'
+            }`}
+            onClick={() => handleFolderItemClick('trash')}
+            onMouseEnter={(e) => handleMouseEnter(e)}
+            onMouseLeave={(e) => handleMouseLeave(e)}
+          >
             <div>
               <DeleteIcon />
             </div>

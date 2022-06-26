@@ -25,6 +25,7 @@
     "bcryptjs": "^2.4.3",
     "class-validator": "^0.13.2",
     "core-js": "^3.6.5",
+    "dayjs": "^1.11.3",
     "graphql": "^16.5.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
