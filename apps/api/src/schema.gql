@@ -18,7 +18,13 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input DeleteFolderByIdInput {
+  id: String!
+  users_id: String!
+}
+
 input DeleteNoteByIdInput {
+  folder_id: String
   id: String!
   users_id: String!
 }
@@ -37,6 +43,8 @@ input GetFoldersInput {
 }
 
 input GetNotesInput {
+  folder_id: String
+  search_notes_value: String
   users_id: String!
 }
 
@@ -54,9 +62,11 @@ input LoginInput {
 type Mutation {
   createFolder(input: CreateFolderInput!): Folder!
   createNote(input: CreateNoteInput!): Note!
+  deleteFolderById(input: DeleteFolderByIdInput!): Int!
   deleteNoteById(input: DeleteNoteByIdInput!): Int!
   login(input: LoginInput!): Login!
   signup(input: SignupInput!): User!
+  updateNoteById(input: UpdateNoteByIdInput!): Int!
 }
 
 type Note {
@@ -77,6 +87,13 @@ type Query {
 input SignupInput {
   email: String!
   password: String!
+}
+
+input UpdateNoteByIdInput {
+  content: String!
+  folder_id: String
+  id: String!
+  users_id: String!
 }
 
 type User {

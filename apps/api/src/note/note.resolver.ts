@@ -3,6 +3,7 @@ import { NoteService } from './note.service';
 import { Note } from './model/note.model';
 import { CreateNoteInput } from './dto/create-note.dto';
 import { GetNotesInput } from './dto/get-notes.dto';
+import { UpdateNoteByIdInput } from './dto/update-note-by-id.dto';
 import { DeleteNoteByIdInput } from './dto/delete-note-by-id.dto';
 import { authorize } from '../helpers/helpers';
 
@@ -43,6 +44,29 @@ export class NoteResolver {
   }
 
   @Mutation(() => Int)
+  async updateNoteById(
+    @Args('input') updateNoteByIdInput: UpdateNoteByIdInput,
+    @Context() context
+  ): Promise<number> {
+    const authorizeStatus = authorize(context.token);
+
+    let notes = null;
+
+    if (authorizeStatus) {
+      notes = await this.noteService.updateNoteById(updateNoteByIdInput);
+    }
+
+    console.log('notes = ', notes);
+
+    let result = 0;
+    if (notes && notes.count > 0) {
+      result = notes.count;
+    }
+
+    return result;
+  }
+
+  @Mutation(() => Int)
   async deleteNoteById(
     @Args('input') deleteNoteByIdInput: DeleteNoteByIdInput,
     @Context() context
@@ -58,7 +82,7 @@ export class NoteResolver {
     console.log('notes = ', notes);
 
     let result = 0;
-    if (notes.count > 0) {
+    if (notes && notes.count > 0) {
       result = notes.count;
     }
 
