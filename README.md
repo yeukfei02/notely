@@ -23,6 +23,9 @@ web url: <https://notely-web.herokuapp.com/>
 // install node dependencies
 $ yarn
 
+// run api and web in local
+$ yarn run dev
+
 // run api in local
 $ yarn run dev:api
 
@@ -104,6 +107,9 @@ $ nx graph
 
 // lists installed plugins, capabilities of installed plugins and other available plugins.
 $ nx list
+
+// reports useful version numbers to copy into the Nx issue template
+$ nx report
 
 // makes sure the workspace is connected to Nx Cloud
 $ nx connect-to-nx-cloud
