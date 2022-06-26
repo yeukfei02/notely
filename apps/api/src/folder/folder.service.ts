@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateFolderInput } from './dto/create-folder.dto';
+import { GetFoldersInput } from './dto/get-folders.dto';
 
 @Injectable()
 export class FolderService {
@@ -25,8 +26,11 @@ export class FolderService {
     return folder;
   }
 
-  async getFolders() {
+  async getFolders(getFolderInput: GetFoldersInput) {
     const folders = await this.prisma.folder.findMany({
+      where: {
+        users_id: getFolderInput.users_id,
+      },
       orderBy: {
         created_at: 'desc',
       },

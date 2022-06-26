@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { IsOptional } from 'class-validator';
 
 @InputType()
 export class CreateNoteInput {
@@ -8,6 +9,7 @@ export class CreateNoteInput {
   @Field()
   users_id: string;
 
-  @Field()
-  folder_id: string;
+  @Field({ nullable: true })
+  @IsOptional()
+  folder_id?: string;
 }
