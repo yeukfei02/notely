@@ -448,6 +448,20 @@ function Notes() {
           },
         },
       });
+
+      getNotes({
+        variables: {
+          input: {
+            folder_id: id,
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
     }
   };
 
@@ -508,6 +522,21 @@ function Notes() {
   const handleFolderItemClick = (currentTab: string) => {
     localStorage.removeItem('folder_id');
     setCurrentTab(currentTab);
+
+    if (currentTab === 'notes') {
+      getNotes({
+        variables: {
+          input: {
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }
   };
 
   const handleMouseEnter = (
