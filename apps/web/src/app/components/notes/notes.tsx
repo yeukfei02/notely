@@ -56,6 +56,7 @@ function Notes() {
 
   const [newFolderName, setNewFolderName] = useState('');
   const [editFolderName, setEditFolderName] = useState('');
+  const [addNoteToFolderId, setAddNoteToFolderId] = useState('');
 
   const [newFolderDialogStatus, setNewFolderDialogStatus] = useState(false);
   const [editFolderDialogStatus, setEditFolderDialogStatus] = useState(false);
@@ -124,19 +125,6 @@ function Notes() {
   console.log('deleteNoteByIdResult.error = ', deleteNoteByIdResult.error);
 
   useEffect(() => {
-    getFolders({
-      variables: {
-        input: {
-          users_id: localStorage.getItem('users_id'),
-        },
-      },
-      context: {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      },
-    });
-
     getNotes({
       variables: {
         input: {
@@ -149,7 +137,22 @@ function Notes() {
         },
       },
     });
-  }, [getFolders, getNotes]);
+
+    setTimeout(() => {
+      getFolders({
+        variables: {
+          input: {
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }, 1000);
+  }, [getNotes, getFolders]);
 
   useEffect(() => {
     if (getFoldersResult.data) {
@@ -233,11 +236,6 @@ function Notes() {
         users_id: localStorage.getItem('users_id'),
       };
 
-      // const folderId = localStorage.getItem('folder_id')
-      // if (!_.isEmpty(folderId)) {
-      //   input['folder_id'] = folderId;
-      // }
-
       const noteId = localStorage.getItem('note_id');
 
       if (textareaValue) {
@@ -302,14 +300,13 @@ function Notes() {
   const handleAddNoteToFolderClick = () => {
     if (
       !addNoteToFolderDialogStatus &&
-      !_.isEmpty(localStorage.getItem('folder_id')) &&
       !_.isEmpty(localStorage.getItem('note_id'))
     ) {
       setAddNoteToFolderDialogStatus(true);
     } else {
       setAddNoteToFolderDialogStatus(false);
       setOpenErrorSnackbar(true);
-      setErrorSnackbarMessage('Please select folder and note');
+      setErrorSnackbarMessage('Please select note');
     }
   };
 
@@ -375,7 +372,7 @@ function Notes() {
           id: localStorage.getItem('note_id'),
           content: (note as any).content,
           users_id: localStorage.getItem('users_id'),
-          folder_id: localStorage.getItem('folder_id'),
+          folder_id: addNoteToFolderId,
         },
       },
       context: {
@@ -394,6 +391,12 @@ function Notes() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setEditFolderName(e.target.value);
+  };
+
+  const handleSelectDropdownChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setAddNoteToFolderId(e.target.value);
   };
 
   const handleSearchNotesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -438,17 +441,6 @@ function Notes() {
     setCurrentTab(name);
 
     if (id) {
-      getFolderById({
-        variables: {
-          id: id,
-        },
-        context: {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        },
-      });
-
       getNotes({
         variables: {
           input: {
@@ -462,6 +454,19 @@ function Notes() {
           },
         },
       });
+
+      setTimeout(() => {
+        getFolderById({
+          variables: {
+            id: id,
+          },
+          context: {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
+        });
+      }, 1000);
     }
   };
 
@@ -484,6 +489,21 @@ function Notes() {
           },
         },
       });
+
+      setTimeout(() => {
+        getFolders({
+          variables: {
+            input: {
+              users_id: localStorage.getItem('users_id'),
+            },
+          },
+          context: {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
+        });
+      }, 1000);
     }
   };
 
@@ -510,7 +530,7 @@ function Notes() {
             <div>
               <b>{folder.name}</b>
             </div>
-            <div>0</div>
+            <div>{folder.notes ? folder.notes.length : 0}</div>
           </div>
         );
       });
@@ -536,6 +556,21 @@ function Notes() {
           },
         },
       });
+
+      setTimeout(() => {
+        getFolders({
+          variables: {
+            input: {
+              users_id: localStorage.getItem('users_id'),
+            },
+          },
+          context: {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
+        });
+      }, 1000);
     }
   };
 
@@ -549,6 +584,19 @@ function Notes() {
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     (e.target as any).classList.remove('bg-white', 'bg-opacity-25');
+  };
+
+  const renderSelectDropdown = () => {
+    let selectDropdown = null;
+
+    if (folders) {
+      selectDropdown = folders.map((folder: any, i) => {
+        const item = <option value={folder.id}>{folder.name}</option>;
+        return item;
+      });
+    }
+
+    return selectDropdown;
   };
 
   const renderNotes = () => {
@@ -806,10 +854,16 @@ function Notes() {
         <DialogTitle>Add note to folder</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {folder && note ? (
+            {note ? (
               <div>
-                Add note <b>{(note as any).content}</b> to folder{' '}
-                <b>{(folder as any).name}</b>
+                Add note <b>{(note as any).content}</b> to folder below
+                <select
+                  className="form-select mt-3"
+                  aria-label=""
+                  onChange={(e) => handleSelectDropdownChange(e)}
+                >
+                  {renderSelectDropdown()}
+                </select>
               </div>
             ) : null}
           </DialogContentText>

@@ -2,7 +2,12 @@ import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  DefaultOptions,
+} from '@apollo/client';
 import { getUrl } from './helpers/helpers';
 import App from './app/app';
 import Notes from './app/components/notes/notes';
@@ -20,9 +25,21 @@ const theme = createTheme({
 
 const url = getUrl();
 
+const defaultOptions: DefaultOptions = {
+  watchQuery: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'ignore',
+  },
+  query: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  },
+};
+
 const client = new ApolloClient({
   uri: url,
   cache: new InMemoryCache(),
+  defaultOptions: defaultOptions,
 });
 
 const root = ReactDOM.createRoot(
