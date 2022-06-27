@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gql, useMutation, useLazyQuery } from '@apollo/client';
 import TextField from '@mui/material/TextField';
@@ -7,6 +7,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import FolderIcon from '@mui/icons-material/Folder';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -17,6 +19,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddLinkIcon from '@mui/icons-material/AddLink';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 
@@ -692,6 +695,13 @@ const DELETE_NOTE_BY_ID = gql`
   }
 `;
 
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 function Notes() {
   const navigate = useNavigate();
 
@@ -707,6 +717,10 @@ function Notes() {
 
   const [newFolderDialogStatus, setNewFolderDialogStatus] = useState(false);
   const [editFolderDialogStatus, setEditFolderDialogStatus] = useState(false);
+  const [addNoteToFolderDialogStatus, setAddNoteToFolderDialogStatus] =
+    useState(false);
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+  const [errorSnackbarMessage, setErrorSnackbarMessage] = useState('');
 
   const [createFolder, createFolderResult] = useMutation(CREATE_FOLDER);
   const [createNote, createNoteResult] = useMutation(CREATE_NOTE);
@@ -780,28 +794,20 @@ function Notes() {
   }, [getNotesResult.data]);
 
   useEffect(() => {
-    if (createFolderResult.data) {
+    if (
+      createFolderResult.data ||
+      createNoteResult.data ||
+      updateNoteByIdResult.data ||
+      deleteNoteByIdResult.data
+    ) {
       window.location.reload();
     }
-  }, [createFolderResult.data]);
-
-  useEffect(() => {
-    if (createNoteResult.data) {
-      window.location.reload();
-    }
-  }, [createNoteResult.data]);
-
-  useEffect(() => {
-    if (updateNoteByIdResult.data) {
-      window.location.reload();
-    }
-  }, [updateNoteByIdResult.data]);
-
-  useEffect(() => {
-    if (deleteNoteByIdResult.data) {
-      window.location.reload();
-    }
-  }, [deleteNoteByIdResult.data]);
+  }, [
+    createFolderResult.data,
+    createNoteResult.data,
+    updateNoteByIdResult.data,
+    deleteNoteByIdResult.data,
+  ]);
 
   useEffect(() => {
     if (searchNotesValue) {
@@ -895,10 +901,29 @@ function Notes() {
   };
 
   const handleEditFolderNameClick = () => {
-    if (!editFolderDialogStatus) {
+    if (
+      !editFolderDialogStatus &&
+      !_.isEmpty(localStorage.getItem('folder_id'))
+    ) {
       setEditFolderDialogStatus(true);
     } else {
       setEditFolderDialogStatus(false);
+      setOpenErrorSnackbar(true);
+      setErrorSnackbarMessage('Please select a folder to edit');
+    }
+  };
+
+  const handleAddNoteToFolderClick = () => {
+    if (
+      !addNoteToFolderDialogStatus &&
+      !_.isEmpty(localStorage.getItem('folder_id')) &&
+      !_.isEmpty(localStorage.getItem('note_id'))
+    ) {
+      setAddNoteToFolderDialogStatus(true);
+    } else {
+      setAddNoteToFolderDialogStatus(false);
+      setOpenErrorSnackbar(true);
+      setErrorSnackbarMessage('Please select folder and note');
     }
   };
 
@@ -936,6 +961,18 @@ function Notes() {
 
   const handleEditFolderName = () => {
     setEditFolderDialogStatus(false);
+  };
+
+  const handleAddNoteToFolderClose = () => {
+    setAddNoteToFolderDialogStatus(false);
+  };
+
+  const handleAddNoteToFolder = () => {
+    setAddNoteToFolderDialogStatus(false);
+  };
+
+  const handleErrorSnackbarClose = () => {
+    setOpenErrorSnackbar(false);
   };
 
   const handleEditFolderNameChange = (
@@ -1189,11 +1226,21 @@ function Notes() {
 
           <div className="my-3">
             <Button
-              variant="contained"
+              variant="outlined"
               startIcon={<CreateIcon />}
               onClick={() => handleEditFolderNameClick()}
             >
               Edit folder name
+            </Button>
+          </div>
+
+          <div className="my-3">
+            <Button
+              variant="outlined"
+              startIcon={<AddLinkIcon />}
+              onClick={() => handleAddNoteToFolderClick()}
+            >
+              Add note to folder
             </Button>
           </div>
 
@@ -1281,6 +1328,35 @@ function Notes() {
           <Button onClick={() => handleEditFolderName()}>Edit</Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog
+        open={addNoteToFolderDialogStatus}
+        onClose={() => handleAddNoteToFolderClose()}
+      >
+        <DialogTitle>Add note to folder</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Add this note to folder?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleAddNoteToFolderClose()}>Cancel</Button>
+          <Button onClick={() => handleAddNoteToFolder()}>Add</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={openErrorSnackbar}
+        autoHideDuration={2000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => handleErrorSnackbarClose()}
+      >
+        <Alert
+          onClose={() => handleErrorSnackbarClose()}
+          severity="warning"
+          sx={{ width: '100%' }}
+        >
+          {errorSnackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

@@ -4,9 +4,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { getUrl } from './helpers/helpers';
-import Notes from './app/components/notes/notes';
-
 import App from './app/app';
+import Notes from './app/components/notes/notes';
 
 const theme = createTheme({
   palette: {
