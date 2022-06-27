@@ -125,19 +125,6 @@ function Notes() {
   console.log('deleteNoteByIdResult.error = ', deleteNoteByIdResult.error);
 
   useEffect(() => {
-    getFolders({
-      variables: {
-        input: {
-          users_id: localStorage.getItem('users_id'),
-        },
-      },
-      context: {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      },
-    });
-
     getNotes({
       variables: {
         input: {
@@ -150,7 +137,22 @@ function Notes() {
         },
       },
     });
-  }, [getFolders, getNotes]);
+
+    setTimeout(() => {
+      getFolders({
+        variables: {
+          input: {
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }, 1000);
+  }, [getNotes, getFolders]);
 
   useEffect(() => {
     if (getFoldersResult.data) {
@@ -439,17 +441,6 @@ function Notes() {
     setCurrentTab(name);
 
     if (id) {
-      getFolderById({
-        variables: {
-          id: id,
-        },
-        context: {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        },
-      });
-
       getNotes({
         variables: {
           input: {
@@ -463,6 +454,19 @@ function Notes() {
           },
         },
       });
+
+      setTimeout(() => {
+        getFolderById({
+          variables: {
+            id: id,
+          },
+          context: {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
+        });
+      }, 1000);
     }
   };
 
@@ -485,6 +489,21 @@ function Notes() {
           },
         },
       });
+
+      setTimeout(() => {
+        getFolders({
+          variables: {
+            input: {
+              users_id: localStorage.getItem('users_id'),
+            },
+          },
+          context: {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
+        });
+      }, 1000);
     }
   };
 
@@ -511,7 +530,7 @@ function Notes() {
             <div>
               <b>{folder.name}</b>
             </div>
-            <div>0</div>
+            <div>{folder.notes ? folder.notes.length : 0}</div>
           </div>
         );
       });
@@ -537,6 +556,21 @@ function Notes() {
           },
         },
       });
+
+      setTimeout(() => {
+        getFolders({
+          variables: {
+            input: {
+              users_id: localStorage.getItem('users_id'),
+            },
+          },
+          context: {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
+        });
+      }, 1000);
     }
   };
 
