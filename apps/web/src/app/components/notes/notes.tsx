@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { gql, useMutation, useLazyQuery } from '@apollo/client';
+import { useMutation, useLazyQuery } from '@apollo/client';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import FolderIcon from '@mui/icons-material/Folder';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -17,686 +19,36 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddLinkIcon from '@mui/icons-material/AddLink';
 import _ from 'lodash';
 import dayjs from 'dayjs';
+import {
+  CREATE_FOLDER,
+  CREATE_NOTE,
+  GET_FOLDERS,
+  GET_FOLDER_BY_ID,
+  UPDATE_FOLDER_BY_ID,
+  DELETE_FOLDER_BY_ID,
+  GET_NOTES,
+  GET_NOTES_BY_ID,
+  UPDATE_NOTE_BY_ID,
+  DELETE_NOTE_BY_ID,
+} from '../../../helpers/gqlHelper';
 
-const CREATE_FOLDER = gql`
-  mutation createFolder($input: CreateFolderInput!) {
-    createFolder(input: $input) {
-      created_at
-      id
-      name
-      notes {
-        content
-        created_at
-        folder {
-          created_at
-          id
-          name
-          notes {
-            content
-            created_at
-            id
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          updated_at
-          users {
-            created_at
-            email
-            folders {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            password
-            updated_at
-          }
-        }
-        id
-        updated_at
-        users {
-          created_at
-          email
-          folders {
-            created_at
-            id
-            name
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          id
-          notes {
-            content
-            created_at
-            folder {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            updated_at
-          }
-          password
-          updated_at
-        }
-      }
-      updated_at
-      users {
-        created_at
-        email
-        folders {
-          created_at
-          id
-          name
-          notes {
-            content
-            created_at
-            folder {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          updated_at
-          users {
-            created_at
-            email
-            id
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            password
-            updated_at
-          }
-        }
-        id
-        notes {
-          content
-          created_at
-          folder {
-            created_at
-            id
-            name
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          id
-          updated_at
-          users {
-            created_at
-            email
-            folders {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            password
-            updated_at
-          }
-        }
-        password
-        updated_at
-      }
-    }
-  }
-`;
-
-const CREATE_NOTE = gql`
-  mutation createNote($input: CreateNoteInput!) {
-    createNote(input: $input) {
-      content
-      created_at
-      folder {
-        created_at
-        id
-        name
-        notes {
-          content
-          created_at
-          folder {
-            created_at
-            id
-            name
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          id
-          updated_at
-          users {
-            created_at
-            email
-            folders {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            password
-            updated_at
-          }
-        }
-        updated_at
-        users {
-          created_at
-          email
-          folders {
-            created_at
-            id
-            name
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          id
-          notes {
-            content
-            created_at
-            folder {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          password
-          updated_at
-        }
-      }
-      id
-      updated_at
-      users {
-        created_at
-        email
-        folders {
-          created_at
-          id
-          name
-          notes {
-            content
-            created_at
-            folder {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          updated_at
-          users {
-            created_at
-            email
-            id
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            password
-            updated_at
-          }
-        }
-        id
-        notes {
-          content
-          created_at
-          folder {
-            created_at
-            id
-            name
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          id
-          updated_at
-          users {
-            created_at
-            email
-            folders {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            password
-            updated_at
-          }
-        }
-        password
-        updated_at
-      }
-    }
-  }
-`;
-
-const GET_FOLDERS = gql`
-  query folders($input: GetFoldersInput!) {
-    folders(input: $input) {
-      created_at
-      id
-      name
-      notes {
-        content
-        created_at
-        folder {
-          created_at
-          id
-          name
-          notes {
-            content
-            created_at
-            id
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          updated_at
-          users {
-            created_at
-            email
-            folders {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            password
-            updated_at
-          }
-        }
-        id
-        updated_at
-        users {
-          created_at
-          email
-          folders {
-            created_at
-            id
-            name
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          id
-          notes {
-            content
-            created_at
-            folder {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            updated_at
-          }
-          password
-          updated_at
-        }
-      }
-      updated_at
-      users {
-        created_at
-        email
-        folders {
-          created_at
-          id
-          name
-          notes {
-            content
-            created_at
-            folder {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          updated_at
-        }
-        id
-        notes {
-          content
-          created_at
-          folder {
-            created_at
-            id
-            name
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          id
-          updated_at
-          users {
-            created_at
-            email
-            folders {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            password
-            updated_at
-          }
-        }
-        password
-        updated_at
-      }
-    }
-  }
-`;
-
-const GET_NOTES = gql`
-  query notes($input: GetNotesInput!) {
-    notes(input: $input) {
-      content
-      created_at
-      folder {
-        created_at
-        id
-        name
-        notes {
-          content
-          created_at
-          id
-          updated_at
-          users {
-            created_at
-            email
-            folders {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            password
-            updated_at
-          }
-        }
-        updated_at
-        users {
-          created_at
-          email
-          folders {
-            created_at
-            id
-            name
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          id
-          notes {
-            content
-            created_at
-            id
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          password
-          updated_at
-        }
-      }
-      id
-      updated_at
-      users {
-        created_at
-        email
-        folders {
-          created_at
-          id
-          name
-          notes {
-            content
-            created_at
-            folder {
-              created_at
-              id
-              name
-              updated_at
-            }
-            id
-            updated_at
-          }
-          updated_at
-          users {
-            created_at
-            email
-            id
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            password
-            updated_at
-          }
-        }
-        id
-        notes {
-          content
-          created_at
-          folder {
-            created_at
-            id
-            name
-            notes {
-              content
-              created_at
-              id
-              updated_at
-            }
-            updated_at
-            users {
-              created_at
-              email
-              id
-              password
-              updated_at
-            }
-          }
-          id
-          updated_at
-        }
-        password
-        updated_at
-      }
-    }
-  }
-`;
-
-const UPDATE_NOTE_BY_ID = gql`
-  mutation updateNoteById($input: UpdateNoteByIdInput!) {
-    updateNoteById(input: $input)
-  }
-`;
-
-const DELETE_NOTE_BY_ID = gql`
-  mutation deleteNoteById($input: DeleteNoteByIdInput!) {
-    deleteNoteById(input: $input)
-  }
-`;
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function Notes() {
   const navigate = useNavigate();
 
   const [folders, setFolders] = useState([]);
+  const [folder, setFolder] = useState({});
   const [notes, setNotes] = useState([]);
+  const [note, setNote] = useState({});
 
   const [currentTab, setCurrentTab] = useState('');
   const [searchNotesValue, setSearchNotesValue] = useState('');
@@ -707,11 +59,21 @@ function Notes() {
 
   const [newFolderDialogStatus, setNewFolderDialogStatus] = useState(false);
   const [editFolderDialogStatus, setEditFolderDialogStatus] = useState(false);
+  const [addNoteToFolderDialogStatus, setAddNoteToFolderDialogStatus] =
+    useState(false);
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+  const [errorSnackbarMessage, setErrorSnackbarMessage] = useState('');
 
   const [createFolder, createFolderResult] = useMutation(CREATE_FOLDER);
   const [createNote, createNoteResult] = useMutation(CREATE_NOTE);
   const [getFolders, getFoldersResult] = useLazyQuery(GET_FOLDERS);
+  const [getFolderById, getFolderByIdResult] = useLazyQuery(GET_FOLDER_BY_ID);
+  const [updateFolderById, updateFolderByIdResult] =
+    useMutation(UPDATE_FOLDER_BY_ID);
+  const [deleteFolderById, deleteFolderByIdResult] =
+    useMutation(DELETE_FOLDER_BY_ID);
   const [getNotes, getNotesResult] = useLazyQuery(GET_NOTES);
+  const [getNoteById, getNoteByIdResult] = useLazyQuery(GET_NOTES_BY_ID);
   const [updateNoteById, updateNoteByIdResult] = useMutation(UPDATE_NOTE_BY_ID);
   const [deleteNoteById, deleteNoteByIdResult] = useMutation(DELETE_NOTE_BY_ID);
 
@@ -727,9 +89,31 @@ function Notes() {
   console.log('getFoldersResult.loading = ', getFoldersResult.loading);
   console.log('getFoldersResult.error = ', getFoldersResult.error);
 
+  console.log('getFolderByIdResult.data = ', getFolderByIdResult.data);
+  console.log('getFolderByIdResult.loading = ', getFolderByIdResult.loading);
+  console.log('getFolderByIdResult.error = ', getFolderByIdResult.error);
+
+  console.log('updateFolderByIdResult.data = ', updateFolderByIdResult.data);
+  console.log(
+    'updateFolderByIdResult.loading = ',
+    updateFolderByIdResult.loading
+  );
+  console.log('updateFolderByIdResult.error = ', updateFolderByIdResult.error);
+
+  console.log('deleteFolderByIdResult.data = ', deleteFolderByIdResult.data);
+  console.log(
+    'deleteFolderByIdResult.loading = ',
+    deleteFolderByIdResult.loading
+  );
+  console.log('deleteFolderByIdResult.error = ', deleteFolderByIdResult.error);
+
   console.log('getNotesResult.data = ', getNotesResult.data);
   console.log('getNotesResult.loading = ', getNotesResult.loading);
   console.log('getNotesResult.error = ', getNotesResult.error);
+
+  console.log('getNoteByIdResult.data = ', getNoteByIdResult.data);
+  console.log('getNoteByIdResult.loading = ', getNoteByIdResult.loading);
+  console.log('getNoteByIdResult.error = ', getNoteByIdResult.error);
 
   console.log('updateNoteByIdResult.data = ', updateNoteByIdResult.data);
   console.log('updateNoteByIdResult.loading = ', updateNoteByIdResult.loading);
@@ -774,34 +158,42 @@ function Notes() {
   }, [getFoldersResult.data]);
 
   useEffect(() => {
+    if (getFolderByIdResult.data) {
+      setFolder(getFolderByIdResult.data.folder);
+    }
+  }, [getFolderByIdResult.data]);
+
+  useEffect(() => {
     if (getNotesResult.data) {
       setNotes(getNotesResult.data.notes);
     }
   }, [getNotesResult.data]);
 
   useEffect(() => {
-    if (createFolderResult.data) {
-      window.location.reload();
+    if (getNoteByIdResult.data) {
+      setNote(getNoteByIdResult.data.note);
     }
-  }, [createFolderResult.data]);
+  }, [getNoteByIdResult.data]);
 
   useEffect(() => {
-    if (createNoteResult.data) {
+    if (
+      createFolderResult.data ||
+      createNoteResult.data ||
+      updateFolderByIdResult.data ||
+      deleteFolderByIdResult.data ||
+      updateNoteByIdResult.data ||
+      deleteNoteByIdResult.data
+    ) {
       window.location.reload();
     }
-  }, [createNoteResult.data]);
-
-  useEffect(() => {
-    if (updateNoteByIdResult.data) {
-      window.location.reload();
-    }
-  }, [updateNoteByIdResult.data]);
-
-  useEffect(() => {
-    if (deleteNoteByIdResult.data) {
-      window.location.reload();
-    }
-  }, [deleteNoteByIdResult.data]);
+  }, [
+    createFolderResult.data,
+    createNoteResult.data,
+    updateFolderByIdResult.data,
+    deleteFolderByIdResult.data,
+    updateNoteByIdResult.data,
+    deleteNoteByIdResult.data,
+  ]);
 
   useEffect(() => {
     if (searchNotesValue) {
@@ -895,10 +287,29 @@ function Notes() {
   };
 
   const handleEditFolderNameClick = () => {
-    if (!editFolderDialogStatus) {
+    if (
+      !editFolderDialogStatus &&
+      !_.isEmpty(localStorage.getItem('folder_id'))
+    ) {
       setEditFolderDialogStatus(true);
     } else {
       setEditFolderDialogStatus(false);
+      setOpenErrorSnackbar(true);
+      setErrorSnackbarMessage('Please select a folder to edit');
+    }
+  };
+
+  const handleAddNoteToFolderClick = () => {
+    if (
+      !addNoteToFolderDialogStatus &&
+      !_.isEmpty(localStorage.getItem('folder_id')) &&
+      !_.isEmpty(localStorage.getItem('note_id'))
+    ) {
+      setAddNoteToFolderDialogStatus(true);
+    } else {
+      setAddNoteToFolderDialogStatus(false);
+      setOpenErrorSnackbar(true);
+      setErrorSnackbarMessage('Please select folder and note');
     }
   };
 
@@ -936,6 +347,47 @@ function Notes() {
 
   const handleEditFolderName = () => {
     setEditFolderDialogStatus(false);
+    updateFolderById({
+      variables: {
+        input: {
+          id: localStorage.getItem('folder_id'),
+          name: editFolderName,
+          users_id: localStorage.getItem('users_id'),
+        },
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    });
+  };
+
+  const handleAddNoteToFolderClose = () => {
+    setAddNoteToFolderDialogStatus(false);
+  };
+
+  const handleAddNoteToFolder = () => {
+    setAddNoteToFolderDialogStatus(false);
+    updateNoteById({
+      variables: {
+        input: {
+          id: localStorage.getItem('note_id'),
+          content: (note as any).content,
+          users_id: localStorage.getItem('users_id'),
+          folder_id: localStorage.getItem('folder_id'),
+        },
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    });
+  };
+
+  const handleErrorSnackbarClose = () => {
+    setOpenErrorSnackbar(false);
   };
 
   const handleEditFolderNameChange = (
@@ -982,21 +434,46 @@ function Notes() {
   };
 
   const handleFolderClick = (id: string, name: string) => {
-    console.log('id = ', id);
     localStorage.setItem('folder_id', id);
     setCurrentTab(name);
+
+    if (id) {
+      getFolderById({
+        variables: {
+          id: id,
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }
   };
 
-  const handlerCardItemClick = (id: string, content: string) => {
+  const handleNoteClick = (id: string, content: string) => {
     localStorage.setItem('note_id', id);
 
     const textarea = document.querySelector('#textarea');
     if (textarea && content) {
       (textarea as any).value = content;
     }
+
+    if (id) {
+      getNoteById({
+        variables: {
+          id: id,
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }
   };
 
-  const renderNewFolders = () => {
+  const renderFolders = () => {
     let newFoldersView = null;
 
     if (folders) {
@@ -1051,12 +528,12 @@ function Notes() {
     if (notes) {
       notesView = notes.map((note: any, i) => {
         const cardTitle = note.content.substring(0, note.content.indexOf('\n'));
-        console.log('cardTitle = ', cardTitle);
+        // console.log('cardTitle = ', cardTitle);
 
         const content = note.content
           .substring(note.content.indexOf('\n'))
           .trim();
-        console.log('content = ', content);
+        // console.log('content = ', content);
 
         const now = dayjs();
         const minuteDiff = now.diff(note.updated_at, 'minute');
@@ -1067,7 +544,7 @@ function Notes() {
           <div
             key={i}
             className="card pointer my-4"
-            onClick={() => handlerCardItemClick(note.id, note.content)}
+            onClick={() => handleNoteClick(note.id, note.content)}
           >
             <div className="card-body">
               <div className="d-flex justify-content-end">
@@ -1153,7 +630,7 @@ function Notes() {
 
           {!_.isEmpty(folders) ? <hr /> : null}
 
-          {renderNewFolders()}
+          {renderFolders()}
         </div>
         <div
           className="col-sm-3 d-none d-sm-block"
@@ -1189,11 +666,21 @@ function Notes() {
 
           <div className="my-3">
             <Button
-              variant="contained"
+              variant="outlined"
               startIcon={<CreateIcon />}
               onClick={() => handleEditFolderNameClick()}
             >
               Edit folder name
+            </Button>
+          </div>
+
+          <div className="my-3">
+            <Button
+              variant="outlined"
+              startIcon={<AddLinkIcon />}
+              onClick={() => handleAddNoteToFolderClick()}
+            >
+              Add note to folder
             </Button>
           </div>
 
@@ -1238,9 +725,7 @@ function Notes() {
       >
         <DialogTitle>Create New folder</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Create new folder name below and click create button
-          </DialogContentText>
+          <DialogContentText>Create new folder name below</DialogContentText>
           <TextField
             autoFocus
             margin="dense"
@@ -1264,7 +749,10 @@ function Notes() {
         <DialogTitle>Edit folder name</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Edit folder name below and click edit button
+            <div>
+              Edit folder name <b>{(folder as any).name}</b> with new folder
+              name below
+            </div>
           </DialogContentText>
           <TextField
             autoFocus
@@ -1281,6 +769,42 @@ function Notes() {
           <Button onClick={() => handleEditFolderName()}>Edit</Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog
+        open={addNoteToFolderDialogStatus}
+        onClose={() => handleAddNoteToFolderClose()}
+      >
+        <DialogTitle>Add note to folder</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {folder && note ? (
+              <div>
+                Add note <b>{(note as any).content}</b> to folder{' '}
+                <b>{(folder as any).name}</b>
+              </div>
+            ) : null}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleAddNoteToFolderClose()}>Cancel</Button>
+          <Button onClick={() => handleAddNoteToFolder()}>Add</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={openErrorSnackbar}
+        autoHideDuration={2000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => handleErrorSnackbarClose()}
+      >
+        <Alert
+          onClose={() => handleErrorSnackbarClose()}
+          severity="warning"
+          sx={{ width: '100%' }}
+        >
+          {errorSnackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

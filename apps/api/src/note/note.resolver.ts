@@ -43,6 +43,19 @@ export class NoteResolver {
     return notes;
   }
 
+  @Query(() => Note, { nullable: true })
+  async note(@Args('id') id: string, @Context() context): Promise<Note> {
+    const authorizeStatus = authorize(context.token);
+
+    let note = null;
+
+    if (authorizeStatus) {
+      note = await this.noteService.getNoteById(id);
+    }
+
+    return note;
+  }
+
   @Mutation(() => Int)
   async updateNoteById(
     @Args('input') updateNoteByIdInput: UpdateNoteByIdInput,

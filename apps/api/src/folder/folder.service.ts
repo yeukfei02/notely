@@ -44,6 +44,19 @@ export class FolderService {
     return folders;
   }
 
+  async getFolderById(id: string) {
+    const folder = await this.prisma.folder.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        users: true,
+        notes: true,
+      },
+    });
+    return folder;
+  }
+
   async updateFolderById(updateFolderByIdInput: UpdateFolderByIdInput) {
     const folders = await this.prisma.folder.updateMany({
       where: {

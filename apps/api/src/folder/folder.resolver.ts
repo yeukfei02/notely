@@ -43,6 +43,19 @@ export class FolderResolver {
     return folders;
   }
 
+  @Query(() => Folder, { nullable: true })
+  async folder(@Args('id') id: string, @Context() context): Promise<Folder> {
+    const authorizeStatus = authorize(context.token);
+
+    let folder = null;
+
+    if (authorizeStatus) {
+      folder = await this.folderService.getFolderById(id);
+    }
+
+    return folder;
+  }
+
   @Mutation(() => Int)
   async updateFolderById(
     @Args('input') updateFolderByIdInput: UpdateFolderByIdInput,

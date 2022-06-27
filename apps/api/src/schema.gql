@@ -80,7 +80,9 @@ type Note {
 }
 
 type Query {
+  folder(id: String!): Folder
   folders(input: GetFoldersInput!): [Folder!]
+  note(id: String!): Note
   notes(input: GetNotesInput!): [Note!]
   users: [User!]
 }
