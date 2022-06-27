@@ -56,6 +56,7 @@ function Notes() {
 
   const [newFolderName, setNewFolderName] = useState('');
   const [editFolderName, setEditFolderName] = useState('');
+  const [addNoteToFolderId, setAddNoteToFolderId] = useState('');
 
   const [newFolderDialogStatus, setNewFolderDialogStatus] = useState(false);
   const [editFolderDialogStatus, setEditFolderDialogStatus] = useState(false);
@@ -233,11 +234,6 @@ function Notes() {
         users_id: localStorage.getItem('users_id'),
       };
 
-      // const folderId = localStorage.getItem('folder_id')
-      // if (!_.isEmpty(folderId)) {
-      //   input['folder_id'] = folderId;
-      // }
-
       const noteId = localStorage.getItem('note_id');
 
       if (textareaValue) {
@@ -302,14 +298,13 @@ function Notes() {
   const handleAddNoteToFolderClick = () => {
     if (
       !addNoteToFolderDialogStatus &&
-      !_.isEmpty(localStorage.getItem('folder_id')) &&
       !_.isEmpty(localStorage.getItem('note_id'))
     ) {
       setAddNoteToFolderDialogStatus(true);
     } else {
       setAddNoteToFolderDialogStatus(false);
       setOpenErrorSnackbar(true);
-      setErrorSnackbarMessage('Please select folder and note');
+      setErrorSnackbarMessage('Please select note');
     }
   };
 
@@ -375,7 +370,7 @@ function Notes() {
           id: localStorage.getItem('note_id'),
           content: (note as any).content,
           users_id: localStorage.getItem('users_id'),
-          folder_id: localStorage.getItem('folder_id'),
+          folder_id: addNoteToFolderId,
         },
       },
       context: {
@@ -394,6 +389,12 @@ function Notes() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setEditFolderName(e.target.value);
+  };
+
+  const handleSelectDropdownChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setAddNoteToFolderId(e.target.value);
   };
 
   const handleSearchNotesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -549,6 +550,19 @@ function Notes() {
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     (e.target as any).classList.remove('bg-white', 'bg-opacity-25');
+  };
+
+  const renderSelectDropdown = () => {
+    let selectDropdown = null;
+
+    if (folders) {
+      selectDropdown = folders.map((folder: any, i) => {
+        const item = <option value={folder.id}>{folder.name}</option>;
+        return item;
+      });
+    }
+
+    return selectDropdown;
   };
 
   const renderNotes = () => {
@@ -806,10 +820,16 @@ function Notes() {
         <DialogTitle>Add note to folder</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {folder && note ? (
+            {note ? (
               <div>
-                Add note <b>{(note as any).content}</b> to folder{' '}
-                <b>{(folder as any).name}</b>
+                Add note <b>{(note as any).content}</b> to folder below
+                <select
+                  className="form-select mt-3"
+                  aria-label=""
+                  onChange={(e) => handleSelectDropdownChange(e)}
+                >
+                  {renderSelectDropdown()}
+                </select>
               </div>
             ) : null}
           </DialogContentText>
