@@ -86,15 +86,13 @@ export class NoteService {
       id: updateNoteByIdInput.id,
       users_id: updateNoteByIdInput.users_id,
     };
-    if (updateNoteByIdInput.folder_id) {
-      where['folder_id'] = updateNoteByIdInput.folder_id;
-    }
     console.log('where = ', where);
 
     const note = await this.prisma.note.updateMany({
       where: where,
       data: {
         content: updateNoteByIdInput.content,
+        folder_id: updateNoteByIdInput.folder_id,
         updated_at: new Date(),
       },
     });

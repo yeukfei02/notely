@@ -369,6 +369,21 @@ function Notes() {
 
   const handleAddNoteToFolder = () => {
     setAddNoteToFolderDialogStatus(false);
+    updateNoteById({
+      variables: {
+        input: {
+          id: localStorage.getItem('note_id'),
+          content: (note as any).content,
+          users_id: localStorage.getItem('users_id'),
+          folder_id: localStorage.getItem('folder_id'),
+        },
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    });
   };
 
   const handleErrorSnackbarClose = () => {
