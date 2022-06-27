@@ -27,6 +27,8 @@ import {
   CREATE_NOTE,
   GET_FOLDERS,
   GET_FOLDER_BY_ID,
+  UPDATE_FOLDER_BY_ID,
+  DELETE_FOLDER_BY_ID,
   GET_NOTES,
   GET_NOTES_BY_ID,
   UPDATE_NOTE_BY_ID,
@@ -66,6 +68,10 @@ function Notes() {
   const [createNote, createNoteResult] = useMutation(CREATE_NOTE);
   const [getFolders, getFoldersResult] = useLazyQuery(GET_FOLDERS);
   const [getFolderById, getFolderByIdResult] = useLazyQuery(GET_FOLDER_BY_ID);
+  const [updateFolderById, updateFolderByIdResult] =
+    useMutation(UPDATE_FOLDER_BY_ID);
+  const [deleteFolderById, deleteFolderByIdResult] =
+    useMutation(DELETE_FOLDER_BY_ID);
   const [getNotes, getNotesResult] = useLazyQuery(GET_NOTES);
   const [getNoteById, getNoteByIdResult] = useLazyQuery(GET_NOTES_BY_ID);
   const [updateNoteById, updateNoteByIdResult] = useMutation(UPDATE_NOTE_BY_ID);
@@ -86,6 +92,20 @@ function Notes() {
   console.log('getFolderByIdResult.data = ', getFolderByIdResult.data);
   console.log('getFolderByIdResult.loading = ', getFolderByIdResult.loading);
   console.log('getFolderByIdResult.error = ', getFolderByIdResult.error);
+
+  console.log('updateFolderByIdResult.data = ', updateFolderByIdResult.data);
+  console.log(
+    'updateFolderByIdResult.loading = ',
+    updateFolderByIdResult.loading
+  );
+  console.log('updateFolderByIdResult.error = ', updateFolderByIdResult.error);
+
+  console.log('deleteFolderByIdResult.data = ', deleteFolderByIdResult.data);
+  console.log(
+    'deleteFolderByIdResult.loading = ',
+    deleteFolderByIdResult.loading
+  );
+  console.log('deleteFolderByIdResult.error = ', deleteFolderByIdResult.error);
 
   console.log('getNotesResult.data = ', getNotesResult.data);
   console.log('getNotesResult.loading = ', getNotesResult.loading);
@@ -159,6 +179,8 @@ function Notes() {
     if (
       createFolderResult.data ||
       createNoteResult.data ||
+      updateFolderByIdResult.data ||
+      deleteFolderByIdResult.data ||
       updateNoteByIdResult.data ||
       deleteNoteByIdResult.data
     ) {
@@ -167,6 +189,8 @@ function Notes() {
   }, [
     createFolderResult.data,
     createNoteResult.data,
+    updateFolderByIdResult.data,
+    deleteFolderByIdResult.data,
     updateNoteByIdResult.data,
     deleteNoteByIdResult.data,
   ]);
@@ -323,6 +347,20 @@ function Notes() {
 
   const handleEditFolderName = () => {
     setEditFolderDialogStatus(false);
+    updateFolderById({
+      variables: {
+        input: {
+          id: localStorage.getItem('folder_id'),
+          name: editFolderName,
+          users_id: localStorage.getItem('users_id'),
+        },
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    });
   };
 
   const handleAddNoteToFolderClose = () => {
@@ -696,9 +734,10 @@ function Notes() {
         <DialogTitle>Edit folder name</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {`Edit folder name ${
-              (folder as any).name
-            } with new folder name below`}
+            <div>
+              Edit folder name <b>{(folder as any).name}</b> with new folder
+              name below
+            </div>
           </DialogContentText>
           <TextField
             autoFocus
@@ -723,11 +762,12 @@ function Notes() {
         <DialogTitle>Add note to folder</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {folder && note
-              ? `Add note ${(note as any).content} to folder ${
-                  (folder as any).name
-                }`
-              : ''}
+            {folder && note ? (
+              <div>
+                Add note <b>{(note as any).content}</b> to folder{' '}
+                <b>{(folder as any).name}</b>
+              </div>
+            ) : null}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

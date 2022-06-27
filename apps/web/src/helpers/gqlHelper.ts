@@ -672,6 +672,18 @@ export const GET_FOLDER_BY_ID = gql`
   }
 `;
 
+export const UPDATE_FOLDER_BY_ID = gql`
+  mutation updateFolderById($input: UpdateFolderByIdInput!) {
+    updateFolderById(input: $input)
+  }
+`;
+
+export const DELETE_FOLDER_BY_ID = gql`
+  mutation deleteFolderById($input: DeleteFolderByIdInput!) {
+    deleteFolderById(input: $input)
+  }
+`;
+
 export const GET_NOTES = gql`
   query notes($input: GetNotesInput!) {
     notes(input: $input) {
