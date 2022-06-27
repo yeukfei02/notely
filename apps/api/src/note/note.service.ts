@@ -68,6 +68,19 @@ export class NoteService {
     return notes;
   }
 
+  async getNoteById(id: string) {
+    const note = await this.prisma.note.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        users: true,
+        folder: true,
+      },
+    });
+    return note;
+  }
+
   async updateNoteById(updateNoteByIdInput: UpdateNoteByIdInput) {
     const where = {
       id: updateNoteByIdInput.id,
