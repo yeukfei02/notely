@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import NoteIcon from '@mui/icons-material/Note';
 import FolderIcon from '@mui/icons-material/Folder';
+import Badge from '@mui/material/Badge';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GridViewIcon from '@mui/icons-material/GridView';
@@ -37,6 +38,7 @@ import {
   UPDATE_NOTE_BY_ID,
   DELETE_NOTE_BY_ID,
   HARD_DELETE_NOTE_BY_ID,
+  HARD_DELETE_ALL_NOTES,
 } from '../../../helpers/gqlHelper';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -88,6 +90,9 @@ function Notes() {
   const [deleteNoteById, deleteNoteByIdResult] = useMutation(DELETE_NOTE_BY_ID);
   const [hardDeleteNoteById, hardDeleteNoteByIdResult] = useMutation(
     HARD_DELETE_NOTE_BY_ID
+  );
+  const [hardDeleteAllNotes, hardDeleteAllNotesResult] = useMutation(
+    HARD_DELETE_ALL_NOTES
   );
 
   console.log('createFolderResult.data = ', createFolderResult.data);
@@ -151,6 +156,19 @@ function Notes() {
   console.log(
     'hardDeleteNoteByIdResult.error = ',
     hardDeleteNoteByIdResult.error
+  );
+
+  console.log(
+    'hardDeleteAllNotesResult.data = ',
+    hardDeleteAllNotesResult.data
+  );
+  console.log(
+    'hardDeleteAllNotesResult.loading = ',
+    hardDeleteAllNotesResult.loading
+  );
+  console.log(
+    'hardDeleteAllNotesResult.error = ',
+    hardDeleteAllNotesResult.error
   );
 
   useEffect(() => {
@@ -234,7 +252,8 @@ function Notes() {
       deleteFolderByIdResult.data ||
       updateNoteByIdResult.data ||
       deleteNoteByIdResult.data ||
-      hardDeleteNoteByIdResult.data
+      hardDeleteNoteByIdResult.data ||
+      hardDeleteAllNotesResult.data
     ) {
       window.location.reload();
     }
@@ -246,6 +265,7 @@ function Notes() {
     updateNoteByIdResult.data,
     deleteNoteByIdResult.data,
     hardDeleteNoteByIdResult.data,
+    hardDeleteAllNotesResult.data,
   ]);
 
   useEffect(() => {
@@ -591,6 +611,24 @@ function Notes() {
     }
   };
 
+  const handleFolderDelete = (id: string) => {
+    if (id) {
+      deleteFolderById({
+        variables: {
+          input: {
+            id: id,
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }
+  };
+
   const renderFolders = () => {
     let newFoldersView = null;
 
@@ -601,20 +639,31 @@ function Notes() {
             key={i}
             className={`${
               currentTab === folder.name
-                ? 'd-flex flex-row align-items-center justify-content-between pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
-                : 'd-flex flex-row align-items-center justify-content-between pointer w-full p-2 m-4 rounded'
+                ? 'd-flex flex-row align-items-center justify-content-around pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
+                : 'd-flex flex-row align-items-center justify-content-around pointer w-full p-2 m-4 rounded'
             }`}
             onClick={() => handleFolderClick(folder.id, folder.name)}
             onMouseEnter={(e) => handleMouseEnter(e)}
             onMouseLeave={(e) => handleMouseLeave(e)}
           >
             <div>
-              <FolderIcon />
+              <Badge
+                badgeContent={folder.notes ? folder.notes.length : 0}
+                color="info"
+                showZero
+              >
+                <FolderIcon />
+              </Badge>
             </div>
             <div>
               <b>{folder.name}</b>
             </div>
-            <div>{folder.notes ? folder.notes.length : 0}</div>
+            <div>
+              <ClearIcon
+                className="pointer"
+                onClick={() => handleFolderDelete(folder.id)}
+              />
+            </div>
           </div>
         );
       });
@@ -649,6 +698,8 @@ function Notes() {
                 </Tooltip>
               </div>
             </div>
+
+            {renderDeleteAllNotes()}
 
             {renderNotes()}
           </div>
@@ -884,6 +935,47 @@ function Notes() {
     return selectDropdown;
   };
 
+  const renderDeleteAllNotes = () => {
+    let deleteAllNotesView = null;
+
+    if (currentTab === 'trash' && !_.isEmpty(notes)) {
+      deleteAllNotesView = (
+        <div className="my-4">
+          <Button
+            className="w-100"
+            variant="outlined"
+            onClick={() => handleDeleteAllNotes()}
+          >
+            Delete All Notes
+          </Button>
+        </div>
+      );
+    }
+
+    return deleteAllNotesView;
+  };
+
+  const handleDeleteAllNotes = () => {
+    if (notes) {
+      const notesIds = notes.map((note: any) => {
+        return note.id;
+      });
+      hardDeleteAllNotes({
+        variables: {
+          input: {
+            ids: notesIds,
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }
+  };
+
   const renderNotes = () => {
     let notesView = null;
 
@@ -1041,39 +1133,51 @@ function Notes() {
           <div
             className={`${
               currentTab === 'notes'
-                ? 'd-flex flex-row align-items-center justify-content-between pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
-                : 'd-flex flex-row align-items-center justify-content-between pointer w-full p-2 m-4 rounded'
+                ? 'd-flex flex-row align-items-center justify-content-around pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
+                : 'd-flex flex-row align-items-center justify-content-around pointer w-full p-2 m-4 rounded'
             }`}
             onClick={() => handleFolderItemClick('notes')}
             onMouseEnter={(e) => handleMouseEnter(e)}
             onMouseLeave={(e) => handleMouseLeave(e)}
           >
             <div>
-              <NoteIcon />
+              <Badge
+                badgeContent={notes ? notes.length : 0}
+                color="primary"
+                showZero
+              >
+                <NoteIcon />
+              </Badge>
             </div>
             <div>
               <b>Notes</b>
             </div>
-            <div>{notes ? notes.length : 0}</div>
+            <div></div>
           </div>
 
           <div
             className={`${
               currentTab === 'trash'
-                ? 'd-flex flex-row align-items-center justify-content-between pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
-                : 'd-flex flex-row align-items-center justify-content-between pointer w-full p-2 m-4 rounded'
+                ? 'd-flex flex-row align-items-center justify-content-around pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
+                : 'd-flex flex-row align-items-center justify-content-around pointer w-full p-2 m-4 rounded'
             }`}
             onClick={() => handleFolderItemClick('trash')}
             onMouseEnter={(e) => handleMouseEnter(e)}
             onMouseLeave={(e) => handleMouseLeave(e)}
           >
             <div>
-              <DeleteIcon />
+              <Badge
+                badgeContent={trashs ? trashs.length : 0}
+                color="secondary"
+                showZero
+              >
+                <DeleteIcon />
+              </Badge>
             </div>
             <div>
               <b>Trash</b>
             </div>
-            <div>{trashs ? trashs.length : 0}</div>
+            <div></div>
           </div>
 
           {!_.isEmpty(folders) ? <hr /> : null}
