@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import EmailValidator from 'email-validator';
 import logo from '../../../images/logo.png';
 import { SIGNUP, LOGIN } from '../../../helpers/gqlHelper';
 
@@ -78,7 +79,8 @@ function Signup() {
   };
 
   const handleSignupClick = () => {
-    if (email && password && password === confirmPassword) {
+    const isEmailValid = EmailValidator.validate(email);
+    if (email && password && isEmailValid && password === confirmPassword) {
       signup({
         variables: {
           input: {

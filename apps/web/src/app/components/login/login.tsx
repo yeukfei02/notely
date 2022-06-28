@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import EmailValidator from 'email-validator';
 import logo from '../../../images/logo.png';
 import { LOGIN } from '../../../helpers/gqlHelper';
 
@@ -50,7 +51,8 @@ function Login() {
   };
 
   const handleLoginClick = () => {
-    if (email && password) {
+    const isEmailValid = EmailValidator.validate(email);
+    if (email && password && isEmailValid) {
       login({
         variables: {
           input: {
