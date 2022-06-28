@@ -11,6 +11,18 @@ api url: <https://notely-web.herokuapp.com/graphql>
 
 web url: <https://notely-web.herokuapp.com/>
 
+## Tech Stack
+
+- Node.js
+- React
+- Typescript
+- Nestjs
+- Graphql
+- Prisma
+- Postgres
+- Apollo Client
+- Nx workspace
+
 ## Requirement
 
 - install yarn
