@@ -54,6 +54,7 @@ function Notes() {
 
   const [currentView, setCurrentView] = useState('listView');
   const [currentTab, setCurrentTab] = useState('');
+  const [currentNote, setCurrentNote] = useState('');
   const [searchNotesValue, setSearchNotesValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
 
@@ -412,9 +413,11 @@ function Notes() {
       (textarea as any).value = '';
     }
 
-    setTextareaValue('');
     localStorage.removeItem('folder_id');
     localStorage.removeItem('note_id');
+    setTextareaValue('');
+    setCurrentTab('');
+    setCurrentNote('');
   };
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -475,6 +478,7 @@ function Notes() {
 
   const handleNoteClick = (id: string, content: string) => {
     localStorage.setItem('note_id', id);
+    setCurrentNote(id);
 
     const textarea = document.querySelector('#textarea');
     if (textarea && content) {
@@ -796,7 +800,11 @@ function Notes() {
         return (
           <div
             key={i}
-            className="card pointer my-4"
+            className={`${
+              currentNote === note.id
+                ? 'card pointer bg-info bg-opacity-10 my-4'
+                : 'card pointer my-4'
+            }`}
             onClick={() => handleNoteClick(note.id, note.content)}
           >
             <div className="card-body">
@@ -853,7 +861,11 @@ function Notes() {
           <div className="col-sm-4">
             <div
               key={i}
-              className="card pointer my-4"
+              className={`${
+                currentNote === note.id
+                  ? 'card pointer bg-info bg-opacity-10 my-4'
+                  : 'card pointer my-4'
+              }`}
               onClick={() => handleNoteClick(note.id, note.content)}
             >
               <div className="card-body">
