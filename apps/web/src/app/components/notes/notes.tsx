@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import NoteIcon from '@mui/icons-material/Note';
 import FolderIcon from '@mui/icons-material/Folder';
+import Badge from '@mui/material/Badge';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GridViewIcon from '@mui/icons-material/GridView';
@@ -591,6 +592,24 @@ function Notes() {
     }
   };
 
+  const handleFolderDelete = (id: string) => {
+    if (id) {
+      deleteFolderById({
+        variables: {
+          input: {
+            id: id,
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }
+  };
+
   const renderFolders = () => {
     let newFoldersView = null;
 
@@ -601,20 +620,31 @@ function Notes() {
             key={i}
             className={`${
               currentTab === folder.name
-                ? 'd-flex flex-row align-items-center justify-content-between pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
-                : 'd-flex flex-row align-items-center justify-content-between pointer w-full p-2 m-4 rounded'
+                ? 'd-flex flex-row align-items-center justify-content-around pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
+                : 'd-flex flex-row align-items-center justify-content-around pointer w-full p-2 m-4 rounded'
             }`}
             onClick={() => handleFolderClick(folder.id, folder.name)}
             onMouseEnter={(e) => handleMouseEnter(e)}
             onMouseLeave={(e) => handleMouseLeave(e)}
           >
             <div>
-              <FolderIcon />
+              <Badge
+                badgeContent={folder.notes ? folder.notes.length : 0}
+                color="info"
+                showZero
+              >
+                <FolderIcon />
+              </Badge>
             </div>
             <div>
               <b>{folder.name}</b>
             </div>
-            <div>{folder.notes ? folder.notes.length : 0}</div>
+            <div>
+              <ClearIcon
+                className="pointer"
+                onClick={() => handleFolderDelete(folder.id)}
+              />
+            </div>
           </div>
         );
       });
@@ -1041,39 +1071,51 @@ function Notes() {
           <div
             className={`${
               currentTab === 'notes'
-                ? 'd-flex flex-row align-items-center justify-content-between pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
-                : 'd-flex flex-row align-items-center justify-content-between pointer w-full p-2 m-4 rounded'
+                ? 'd-flex flex-row align-items-center justify-content-around pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
+                : 'd-flex flex-row align-items-center justify-content-around pointer w-full p-2 m-4 rounded'
             }`}
             onClick={() => handleFolderItemClick('notes')}
             onMouseEnter={(e) => handleMouseEnter(e)}
             onMouseLeave={(e) => handleMouseLeave(e)}
           >
             <div>
-              <NoteIcon />
+              <Badge
+                badgeContent={notes ? notes.length : 0}
+                color="primary"
+                showZero
+              >
+                <NoteIcon />
+              </Badge>
             </div>
             <div>
               <b>Notes</b>
             </div>
-            <div>{notes ? notes.length : 0}</div>
+            <div></div>
           </div>
 
           <div
             className={`${
               currentTab === 'trash'
-                ? 'd-flex flex-row align-items-center justify-content-between pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
-                : 'd-flex flex-row align-items-center justify-content-between pointer w-full p-2 m-4 rounded'
+                ? 'd-flex flex-row align-items-center justify-content-around pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
+                : 'd-flex flex-row align-items-center justify-content-around pointer w-full p-2 m-4 rounded'
             }`}
             onClick={() => handleFolderItemClick('trash')}
             onMouseEnter={(e) => handleMouseEnter(e)}
             onMouseLeave={(e) => handleMouseLeave(e)}
           >
             <div>
-              <DeleteIcon />
+              <Badge
+                badgeContent={trashs ? trashs.length : 0}
+                color="secondary"
+                showZero
+              >
+                <DeleteIcon />
+              </Badge>
             </div>
             <div>
               <b>Trash</b>
             </div>
-            <div>{trashs ? trashs.length : 0}</div>
+            <div></div>
           </div>
 
           {!_.isEmpty(folders) ? <hr /> : null}
