@@ -10,6 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
 import NoteIcon from '@mui/icons-material/Note';
 import FolderIcon from '@mui/icons-material/Folder';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -277,7 +278,7 @@ function Notes() {
     window.location.reload();
   };
 
-  const handleNewFolderNameClick = () => {
+  const handleCreateNewFolder = () => {
     if (!newFolderDialogStatus) {
       setNewFolderDialogStatus(true);
     } else {
@@ -615,8 +616,15 @@ function Notes() {
 
         const now = dayjs();
         const minuteDiff = now.diff(note.updated_at, 'minute');
-        const minuteDiffStr =
-          minuteDiff < 1 ? 'just now' : `${minuteDiff} minutes ago`;
+
+        let diffStr = '';
+        if (minuteDiff < 60) {
+          diffStr = minuteDiff < 1 ? 'just now' : `${minuteDiff} minutes ago`;
+        } else {
+          const hourDiff = now.diff(note.updated_at, 'hour');
+          diffStr =
+            hourDiff > 1 ? `${hourDiff} hours ago` : `${hourDiff} hour ago`;
+        }
 
         return (
           <div
@@ -639,7 +647,7 @@ function Notes() {
                   ? content
                   : content.substring(0, 100) + '...'}
               </p>
-              <div>{minuteDiffStr}</div>
+              <div>{diffStr}</div>
             </div>
           </div>
         );
@@ -714,15 +722,6 @@ function Notes() {
           className="col-sm-3 d-none d-sm-block"
           style={{ backgroundColor: '#e9e9e9' }}
         >
-          <div className="d-flex justify-content-end my-3">
-            <div>
-              <LogoutIcon
-                className="pointer"
-                onClick={() => handleLogoutClick()}
-              />
-            </div>
-          </div>
-
           <div className="d-flex flex-row my-3">
             <div>
               <FormatListBulletedIcon className="pointer" />
@@ -740,10 +739,12 @@ function Notes() {
               onChange={(e) => handleSearchNotesChange(e)}
             />
             <div className="mx-2">
-              <BorderColorIcon
-                className="pointer"
-                onClick={() => handleCreateNotesClick()}
-              />
+              <Tooltip title="Create New Note" placement="bottom">
+                <BorderColorIcon
+                  className="pointer"
+                  onClick={() => handleCreateNotesClick()}
+                />
+              </Tooltip>
             </div>
           </div>
 
@@ -752,22 +753,36 @@ function Notes() {
         <div className="col-sm-6">
           <div className="d-flex justify-content-end my-3">
             <div>
-              <CreateNewFolderIcon
-                className="pointer mx-1"
-                onClick={() => handleNewFolderNameClick()}
-              />
+              <Tooltip title="Create New Folder" placement="bottom">
+                <CreateNewFolderIcon
+                  className="pointer mx-1"
+                  onClick={() => handleCreateNewFolder()}
+                />
+              </Tooltip>
             </div>
             <div>
-              <CreateIcon
-                className="pointer mx-1"
-                onClick={() => handleEditFolderNameClick()}
-              />
+              <Tooltip title="Edit Folder Name" placement="bottom">
+                <CreateIcon
+                  className="pointer mx-1"
+                  onClick={() => handleEditFolderNameClick()}
+                />
+              </Tooltip>
             </div>
             <div>
-              <AddLinkIcon
-                className="pointer mx-1"
-                onClick={() => handleAddNoteToFolderClick()}
-              />
+              <Tooltip title="Add Note To Folder" placement="bottom">
+                <AddLinkIcon
+                  className="pointer mx-1"
+                  onClick={() => handleAddNoteToFolderClick()}
+                />
+              </Tooltip>
+            </div>
+            <div>
+              <Tooltip title="Logout" placement="bottom">
+                <LogoutIcon
+                  className="pointer mx-1"
+                  onClick={() => handleLogoutClick()}
+                />
+              </Tooltip>
             </div>
           </div>
           <textarea
