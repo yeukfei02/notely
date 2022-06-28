@@ -10,12 +10,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import NoteIcon from '@mui/icons-material/Note';
 import FolderIcon from '@mui/icons-material/Folder';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GridViewIcon from '@mui/icons-material/GridView';
 import CreateIcon from '@mui/icons-material/Create';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -587,12 +588,12 @@ function Notes() {
   };
 
   const renderSelectDropdown = () => {
-    let selectDropdown = null;
+    const selectDropdown: any[] = [<option value="">Select folder</option>];
 
     if (folders) {
-      selectDropdown = folders.map((folder: any, i) => {
+      folders.forEach((folder: any, i) => {
         const item = <option value={folder.id}>{folder.name}</option>;
-        return item;
+        selectDropdown.push(item);
       });
     }
 
@@ -674,7 +675,7 @@ function Notes() {
             onMouseLeave={(e) => handleMouseLeave(e)}
           >
             <div>
-              <FolderIcon />
+              <NoteIcon />
             </div>
             <div>
               <b>Notes</b>
@@ -731,36 +732,6 @@ function Notes() {
             </div>
           </div>
 
-          <div>
-            <Button
-              variant="outlined"
-              startIcon={<AddCircleOutlineIcon />}
-              onClick={() => handleNewFolderNameClick()}
-            >
-              New folder
-            </Button>
-          </div>
-
-          <div className="my-3">
-            <Button
-              variant="outlined"
-              startIcon={<CreateIcon />}
-              onClick={() => handleEditFolderNameClick()}
-            >
-              Edit folder name
-            </Button>
-          </div>
-
-          <div className="my-3">
-            <Button
-              variant="outlined"
-              startIcon={<AddLinkIcon />}
-              onClick={() => handleAddNoteToFolderClick()}
-            >
-              Add note to folder
-            </Button>
-          </div>
-
           <div className="d-flex flex-row align-items-center my-4">
             <input
               type="text"
@@ -779,6 +750,26 @@ function Notes() {
           {renderNotes()}
         </div>
         <div className="col-sm-6">
+          <div className="d-flex justify-content-end my-3">
+            <div>
+              <CreateNewFolderIcon
+                className="pointer mx-1"
+                onClick={() => handleNewFolderNameClick()}
+              />
+            </div>
+            <div>
+              <CreateIcon
+                className="pointer mx-1"
+                onClick={() => handleEditFolderNameClick()}
+              />
+            </div>
+            <div>
+              <AddLinkIcon
+                className="pointer mx-1"
+                onClick={() => handleAddNoteToFolderClick()}
+              />
+            </div>
+          </div>
           <textarea
             id="textarea"
             className="form-control px-3 py-4"
