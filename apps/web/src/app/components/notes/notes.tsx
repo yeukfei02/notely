@@ -10,12 +10,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import NoteIcon from '@mui/icons-material/Note';
 import FolderIcon from '@mui/icons-material/Folder';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GridViewIcon from '@mui/icons-material/GridView';
 import CreateIcon from '@mui/icons-material/Create';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -30,9 +32,11 @@ import {
   UPDATE_FOLDER_BY_ID,
   DELETE_FOLDER_BY_ID,
   GET_NOTES,
+  GET_TRASHS,
   GET_NOTES_BY_ID,
   UPDATE_NOTE_BY_ID,
   DELETE_NOTE_BY_ID,
+  HARD_DELETE_NOTE_BY_ID,
 } from '../../../helpers/gqlHelper';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -48,11 +52,15 @@ function Notes() {
   const [folders, setFolders] = useState([]);
   const [folder, setFolder] = useState({});
   const [notes, setNotes] = useState([]);
+  const [trashs, setTrashs] = useState([]);
   const [note, setNote] = useState({});
 
+  const [currentView, setCurrentView] = useState('listView');
   const [currentTab, setCurrentTab] = useState('');
+  const [currentNote, setCurrentNote] = useState('');
   const [searchNotesValue, setSearchNotesValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
+  const [showTextarea, setShowTextarea] = useState(false);
 
   const [newFolderName, setNewFolderName] = useState('');
   const [editFolderName, setEditFolderName] = useState('');
@@ -74,9 +82,13 @@ function Notes() {
   const [deleteFolderById, deleteFolderByIdResult] =
     useMutation(DELETE_FOLDER_BY_ID);
   const [getNotes, getNotesResult] = useLazyQuery(GET_NOTES);
+  const [getTrashs, getTrashsResult] = useLazyQuery(GET_TRASHS);
   const [getNoteById, getNoteByIdResult] = useLazyQuery(GET_NOTES_BY_ID);
   const [updateNoteById, updateNoteByIdResult] = useMutation(UPDATE_NOTE_BY_ID);
   const [deleteNoteById, deleteNoteByIdResult] = useMutation(DELETE_NOTE_BY_ID);
+  const [hardDeleteNoteById, hardDeleteNoteByIdResult] = useMutation(
+    HARD_DELETE_NOTE_BY_ID
+  );
 
   console.log('createFolderResult.data = ', createFolderResult.data);
   console.log('createFolderResult.loading = ', createFolderResult.loading);
@@ -112,6 +124,10 @@ function Notes() {
   console.log('getNotesResult.loading = ', getNotesResult.loading);
   console.log('getNotesResult.error = ', getNotesResult.error);
 
+  console.log('getTrashsResult.data = ', getTrashsResult.data);
+  console.log('getTrashsResult.loading = ', getTrashsResult.loading);
+  console.log('getTrashsResult.error = ', getTrashsResult.error);
+
   console.log('getNoteByIdResult.data = ', getNoteByIdResult.data);
   console.log('getNoteByIdResult.loading = ', getNoteByIdResult.loading);
   console.log('getNoteByIdResult.error = ', getNoteByIdResult.error);
@@ -124,8 +140,34 @@ function Notes() {
   console.log('deleteNoteByIdResult.loading = ', deleteNoteByIdResult.loading);
   console.log('deleteNoteByIdResult.error = ', deleteNoteByIdResult.error);
 
+  console.log(
+    'hardDeleteNoteByIdResult.data = ',
+    hardDeleteNoteByIdResult.data
+  );
+  console.log(
+    'hardDeleteNoteByIdResult.loading = ',
+    hardDeleteNoteByIdResult.loading
+  );
+  console.log(
+    'hardDeleteNoteByIdResult.error = ',
+    hardDeleteNoteByIdResult.error
+  );
+
   useEffect(() => {
     getNotes({
+      variables: {
+        input: {
+          users_id: localStorage.getItem('users_id'),
+        },
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    });
+
+    getTrashs({
       variables: {
         input: {
           users_id: localStorage.getItem('users_id'),
@@ -152,7 +194,7 @@ function Notes() {
         },
       });
     }, 1000);
-  }, [getNotes, getFolders]);
+  }, [getNotes, getTrashs, getFolders]);
 
   useEffect(() => {
     if (getFoldersResult.data) {
@@ -173,6 +215,12 @@ function Notes() {
   }, [getNotesResult.data]);
 
   useEffect(() => {
+    if (getTrashsResult.data) {
+      setTrashs(getTrashsResult.data.trashs);
+    }
+  }, [getTrashsResult.data]);
+
+  useEffect(() => {
     if (getNoteByIdResult.data) {
       setNote(getNoteByIdResult.data.note);
     }
@@ -185,7 +233,8 @@ function Notes() {
       updateFolderByIdResult.data ||
       deleteFolderByIdResult.data ||
       updateNoteByIdResult.data ||
-      deleteNoteByIdResult.data
+      deleteNoteByIdResult.data ||
+      hardDeleteNoteByIdResult.data
     ) {
       window.location.reload();
     }
@@ -196,15 +245,24 @@ function Notes() {
     deleteFolderByIdResult.data,
     updateNoteByIdResult.data,
     deleteNoteByIdResult.data,
+    hardDeleteNoteByIdResult.data,
   ]);
 
   useEffect(() => {
     if (searchNotesValue) {
+      let type = '';
+      if (currentTab === 'notes') {
+        type = 'notes';
+      } else if (currentTab === 'trash') {
+        type = 'trash';
+      }
+
       getNotes({
         variables: {
           input: {
             users_id: localStorage.getItem('users_id'),
             search_notes_value: searchNotesValue,
+            type: type,
           },
         },
         context: {
@@ -276,7 +334,7 @@ function Notes() {
     window.location.reload();
   };
 
-  const handleNewFolderNameClick = () => {
+  const handleCreateNewFolder = () => {
     if (!newFolderDialogStatus) {
       setNewFolderDialogStatus(true);
     } else {
@@ -300,7 +358,8 @@ function Notes() {
   const handleAddNoteToFolderClick = () => {
     if (
       !addNoteToFolderDialogStatus &&
-      !_.isEmpty(localStorage.getItem('note_id'))
+      !_.isEmpty(localStorage.getItem('note_id')) &&
+      !_.isEmpty(note)
     ) {
       setAddNoteToFolderDialogStatus(true);
     } else {
@@ -409,9 +468,19 @@ function Notes() {
       (textarea as any).value = '';
     }
 
-    setTextareaValue('');
+    if (currentView === 'gridView') {
+      if (!showTextarea) {
+        setShowTextarea(true);
+      } else {
+        setShowTextarea(false);
+      }
+    }
+
     localStorage.removeItem('folder_id');
     localStorage.removeItem('note_id');
+    setTextareaValue('');
+    setCurrentTab('');
+    setCurrentNote('');
   };
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -419,8 +488,22 @@ function Notes() {
   };
 
   const handleDeleteNoteById = (id: string) => {
-    if (id) {
+    if (id && currentTab !== 'trash') {
       deleteNoteById({
+        variables: {
+          input: {
+            id: id,
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    } else {
+      hardDeleteNoteById({
         variables: {
           input: {
             id: id,
@@ -472,6 +555,7 @@ function Notes() {
 
   const handleNoteClick = (id: string, content: string) => {
     localStorage.setItem('note_id', id);
+    setCurrentNote(id);
 
     const textarea = document.querySelector('#textarea');
     if (textarea && content) {
@@ -539,6 +623,189 @@ function Notes() {
     return newFoldersView;
   };
 
+  const renderView = (currentView: string) => {
+    let view = null;
+
+    if (currentView === 'listView') {
+      view = (
+        <>
+          <div
+            className="col-sm-3 d-none d-sm-block"
+            style={{ backgroundColor: '#e9e9e9' }}
+          >
+            <div className="d-flex flex-row align-items-center my-4">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search notes"
+                onChange={(e) => handleSearchNotesChange(e)}
+              />
+              <div className="mx-2">
+                <Tooltip title="Create New Note" placement="bottom">
+                  <BorderColorIcon
+                    className="pointer"
+                    onClick={() => handleCreateNotesClick()}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+
+            {renderNotes()}
+          </div>
+          <div className="col-sm-6">
+            <div className="d-flex justify-content-end my-3">
+              <div className="d-flex flex-row mx-1">
+                <div>
+                  <Tooltip title="List View" placement="bottom">
+                    <FormatListBulletedIcon
+                      className="pointer"
+                      onClick={() => handleToggleView('listView')}
+                    />
+                  </Tooltip>
+                </div>
+                <div className="mx-1">
+                  <Tooltip title="Grid View" placement="bottom">
+                    <GridViewIcon
+                      className="pointer"
+                      onClick={() => handleToggleView('gridView')}
+                    />
+                  </Tooltip>
+                </div>
+              </div>
+              <div>
+                <Tooltip title="Create New Folder" placement="bottom">
+                  <CreateNewFolderIcon
+                    className="pointer mx-1"
+                    onClick={() => handleCreateNewFolder()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Edit Folder Name" placement="bottom">
+                  <CreateIcon
+                    className="pointer mx-1"
+                    onClick={() => handleEditFolderNameClick()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Add Note To Folder" placement="bottom">
+                  <AddLinkIcon
+                    className="pointer mx-1"
+                    onClick={() => handleAddNoteToFolderClick()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Logout" placement="bottom">
+                  <LogoutIcon
+                    className="pointer mx-1"
+                    onClick={() => handleLogoutClick()}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+            <textarea
+              id="textarea"
+              className="form-control px-3 py-4"
+              placeholder="Write something..."
+              style={{
+                width: '100vw',
+                height: '100vh',
+                border: 'none',
+                outline: 'none',
+                boxShadow: 'none',
+                resize: 'none',
+              }}
+              onChange={(e) => handleTextareaChange(e)}
+            ></textarea>
+          </div>
+        </>
+      );
+    } else if (currentView === 'gridView') {
+      view = (
+        <div className="col-sm-9">
+          <div className="d-flex justify-content-end align-items-center my-3">
+            <div className="d-flex flex-row mx-1">
+              <div>
+                <Tooltip title="List View" placement="bottom">
+                  <FormatListBulletedIcon
+                    className="pointer"
+                    onClick={() => handleToggleView('listView')}
+                  />
+                </Tooltip>
+              </div>
+              <div className="mx-1">
+                <Tooltip title="Grid View" placement="bottom">
+                  <GridViewIcon
+                    className="pointer"
+                    onClick={() => handleToggleView('gridView')}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+
+            <div className="d-flex flex-row align-items-center mx-1">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search notes"
+                onChange={(e) => handleSearchNotesChange(e)}
+              />
+              <div className="mx-2">
+                <Tooltip title="Create New Note" placement="bottom">
+                  <BorderColorIcon
+                    className="pointer"
+                    onClick={() => handleCreateNotesClick()}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+
+            <div className="d-flex flex-row">
+              <div>
+                <Tooltip title="Create New Folder" placement="bottom">
+                  <CreateNewFolderIcon
+                    className="pointer mx-1"
+                    onClick={() => handleCreateNewFolder()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Edit Folder Name" placement="bottom">
+                  <CreateIcon
+                    className="pointer mx-1"
+                    onClick={() => handleEditFolderNameClick()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Add Note To Folder" placement="bottom">
+                  <AddLinkIcon
+                    className="pointer mx-1"
+                    onClick={() => handleAddNoteToFolderClick()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Logout" placement="bottom">
+                  <LogoutIcon
+                    className="pointer mx-1"
+                    onClick={() => handleLogoutClick()}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+          </div>
+
+          <div className="row p-4">{renderNotesGridView()}</div>
+        </div>
+      );
+    }
+
+    return view;
+  };
+
   const handleFolderItemClick = (currentTab: string) => {
     localStorage.removeItem('folder_id');
     setCurrentTab(currentTab);
@@ -556,22 +823,36 @@ function Notes() {
           },
         },
       });
-
-      setTimeout(() => {
-        getFolders({
-          variables: {
-            input: {
-              users_id: localStorage.getItem('users_id'),
-            },
+    } else if (currentTab === 'trash') {
+      getTrashs({
+        variables: {
+          input: {
+            users_id: localStorage.getItem('users_id'),
           },
-          context: {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-        });
-      }, 1000);
+        },
+      });
+      setNotes(trashs);
     }
+
+    setTimeout(() => {
+      getFolders({
+        variables: {
+          input: {
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }, 1000);
   };
 
   const handleMouseEnter = (
@@ -586,13 +867,17 @@ function Notes() {
     (e.target as any).classList.remove('bg-white', 'bg-opacity-25');
   };
 
+  const handleToggleView = (view: string) => {
+    setCurrentView(view);
+  };
+
   const renderSelectDropdown = () => {
-    let selectDropdown = null;
+    const selectDropdown: any[] = [<option value="">Select folder</option>];
 
     if (folders) {
-      selectDropdown = folders.map((folder: any, i) => {
+      folders.forEach((folder: any, i) => {
         const item = <option value={folder.id}>{folder.name}</option>;
-        return item;
+        selectDropdown.push(item);
       });
     }
 
@@ -614,13 +899,24 @@ function Notes() {
 
         const now = dayjs();
         const minuteDiff = now.diff(note.updated_at, 'minute');
-        const minuteDiffStr =
-          minuteDiff < 1 ? 'just now' : `${minuteDiff} minutes ago`;
+
+        let diffStr = '';
+        if (minuteDiff < 60) {
+          diffStr = minuteDiff < 1 ? 'just now' : `${minuteDiff} minutes ago`;
+        } else {
+          const hourDiff = now.diff(note.updated_at, 'hour');
+          diffStr =
+            hourDiff > 1 ? `${hourDiff} hours ago` : `${hourDiff} hour ago`;
+        }
 
         return (
           <div
             key={i}
-            className="card pointer my-4"
+            className={`${
+              currentNote === note.id
+                ? 'card pointer bg-info bg-opacity-10 my-4'
+                : 'card pointer my-4'
+            }`}
             onClick={() => handleNoteClick(note.id, note.content)}
           >
             <div className="card-body">
@@ -638,7 +934,7 @@ function Notes() {
                   ? content
                   : content.substring(0, 100) + '...'}
               </p>
-              <div>{minuteDiffStr}</div>
+              <div>{diffStr}</div>
             </div>
           </div>
         );
@@ -646,6 +942,85 @@ function Notes() {
     }
 
     return notesView;
+  };
+
+  const renderNotesGridView = () => {
+    let notesGridView = null;
+
+    if (notes && !showTextarea) {
+      notesGridView = notes.map((note: any, i) => {
+        const cardTitle = note.content.substring(0, note.content.indexOf('\n'));
+        // console.log('cardTitle = ', cardTitle);
+
+        const content = note.content
+          .substring(note.content.indexOf('\n'))
+          .trim();
+        // console.log('content = ', content);
+
+        const now = dayjs();
+        const minuteDiff = now.diff(note.updated_at, 'minute');
+
+        let diffStr = '';
+        if (minuteDiff < 60) {
+          diffStr = minuteDiff < 1 ? 'just now' : `${minuteDiff} minutes ago`;
+        } else {
+          const hourDiff = now.diff(note.updated_at, 'hour');
+          diffStr =
+            hourDiff > 1 ? `${hourDiff} hours ago` : `${hourDiff} hour ago`;
+        }
+
+        return (
+          <div className="col-sm-4">
+            <div
+              key={i}
+              className={`${
+                currentNote === note.id
+                  ? 'card pointer bg-info bg-opacity-10 my-4'
+                  : 'card pointer my-4'
+              }`}
+              onClick={() => handleNoteClick(note.id, note.content)}
+            >
+              <div className="card-body">
+                <div className="d-flex justify-content-end">
+                  <ClearIcon
+                    className="pointer"
+                    onClick={() => handleDeleteNoteById(note.id)}
+                  />
+                </div>
+                <h5 className="card-title">
+                  <b>{cardTitle || note.content}</b>
+                </h5>
+                <p className="card-text">
+                  {content.length < 100
+                    ? content
+                    : content.substring(0, 100) + '...'}
+                </p>
+                <div>{diffStr}</div>
+              </div>
+            </div>
+          </div>
+        );
+      });
+    } else {
+      notesGridView = (
+        <textarea
+          id="textarea"
+          className="form-control px-3 py-4"
+          placeholder="Write something..."
+          style={{
+            width: '100vw',
+            height: '100vh',
+            border: 'none',
+            outline: 'none',
+            boxShadow: 'none',
+            resize: 'none',
+          }}
+          onChange={(e) => handleTextareaChange(e)}
+        ></textarea>
+      );
+    }
+
+    return notesGridView;
   };
 
   return (
@@ -674,16 +1049,12 @@ function Notes() {
             onMouseLeave={(e) => handleMouseLeave(e)}
           >
             <div>
-              <FolderIcon />
+              <NoteIcon />
             </div>
             <div>
               <b>Notes</b>
             </div>
-            <div>
-              {getNotesResult.data && getNotesResult.data.notes
-                ? getNotesResult.data.notes.length
-                : 0}
-            </div>
+            <div>{notes ? notes.length : 0}</div>
           </div>
 
           <div
@@ -702,98 +1073,14 @@ function Notes() {
             <div>
               <b>Trash</b>
             </div>
-            <div>0</div>
+            <div>{trashs ? trashs.length : 0}</div>
           </div>
 
           {!_.isEmpty(folders) ? <hr /> : null}
 
           {renderFolders()}
         </div>
-        <div
-          className="col-sm-3 d-none d-sm-block"
-          style={{ backgroundColor: '#e9e9e9' }}
-        >
-          <div className="d-flex justify-content-end my-3">
-            <div>
-              <LogoutIcon
-                className="pointer"
-                onClick={() => handleLogoutClick()}
-              />
-            </div>
-          </div>
-
-          <div className="d-flex flex-row my-3">
-            <div>
-              <FormatListBulletedIcon className="pointer" />
-            </div>
-            <div className="mx-1">
-              <GridViewIcon className="pointer" />
-            </div>
-          </div>
-
-          <div>
-            <Button
-              variant="outlined"
-              startIcon={<AddCircleOutlineIcon />}
-              onClick={() => handleNewFolderNameClick()}
-            >
-              New folder
-            </Button>
-          </div>
-
-          <div className="my-3">
-            <Button
-              variant="outlined"
-              startIcon={<CreateIcon />}
-              onClick={() => handleEditFolderNameClick()}
-            >
-              Edit folder name
-            </Button>
-          </div>
-
-          <div className="my-3">
-            <Button
-              variant="outlined"
-              startIcon={<AddLinkIcon />}
-              onClick={() => handleAddNoteToFolderClick()}
-            >
-              Add note to folder
-            </Button>
-          </div>
-
-          <div className="d-flex flex-row align-items-center my-4">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search notes"
-              onChange={(e) => handleSearchNotesChange(e)}
-            />
-            <div className="mx-2">
-              <BorderColorIcon
-                className="pointer"
-                onClick={() => handleCreateNotesClick()}
-              />
-            </div>
-          </div>
-
-          {renderNotes()}
-        </div>
-        <div className="col-sm-6">
-          <textarea
-            id="textarea"
-            className="form-control px-3 py-4"
-            placeholder="Write something..."
-            style={{
-              width: '100vw',
-              height: '100vh',
-              border: 'none',
-              outline: 'none',
-              boxShadow: 'none',
-              resize: 'none',
-            }}
-            onChange={(e) => handleTextareaChange(e)}
-          ></textarea>
-        </div>
+        {renderView(currentView)}
       </div>
 
       <Dialog

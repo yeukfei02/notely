@@ -38,18 +38,20 @@ model folder {
 }
 
 model note {
-  id         String   @id @default(uuid()) @db.Uuid
+  id         String    @id @default(uuid()) @db.Uuid
   content    String
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @db.Timestamptz(6)
-  users_id   String?  @db.Uuid
-  folder_id  String?  @db.Uuid
-  folder     folder?  @relation(fields: [folder_id], references: [id])
-  users      users?   @relation(fields: [users_id], references: [id])
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime  @default(now()) @db.Timestamptz(6)
+  users_id   String?   @db.Uuid
+  folder_id  String?   @db.Uuid
+  deleted_at DateTime? @db.Timestamptz(6)
+  folder     folder?   @relation(fields: [folder_id], references: [id])
+  users      users?    @relation(fields: [users_id], references: [id])
 
   @@index([content], map: "index_note_on_content")
   @@index([users_id], map: "index_note_on_users_id")
   @@index([folder_id], map: "index_note_on_folder_id")
   @@index([created_at], map: "index_note_on_created_at")
   @@index([updated_at], map: "index_note_on_updated_at")
+  @@index([deleted_at], map: "index_note_on_deleted_at")
 }
