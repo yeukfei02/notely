@@ -60,6 +60,7 @@ function Notes() {
   const [currentNote, setCurrentNote] = useState('');
   const [searchNotesValue, setSearchNotesValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
+  const [showTextarea, setShowTextarea] = useState(false);
 
   const [newFolderName, setNewFolderName] = useState('');
   const [editFolderName, setEditFolderName] = useState('');
@@ -467,6 +468,14 @@ function Notes() {
       (textarea as any).value = '';
     }
 
+    if (currentView === 'gridView') {
+      if (!showTextarea) {
+        setShowTextarea(true);
+      } else {
+        setShowTextarea(false);
+      }
+    }
+
     localStorage.removeItem('folder_id');
     localStorage.removeItem('note_id');
     setTextareaValue('');
@@ -624,25 +633,6 @@ function Notes() {
             className="col-sm-3 d-none d-sm-block"
             style={{ backgroundColor: '#e9e9e9' }}
           >
-            <div className="d-flex flex-row my-3">
-              <div>
-                <Tooltip title="List View" placement="bottom">
-                  <FormatListBulletedIcon
-                    className="pointer"
-                    onClick={() => handleToggleView('listView')}
-                  />
-                </Tooltip>
-              </div>
-              <div className="mx-1">
-                <Tooltip title="Grid View" placement="bottom">
-                  <GridViewIcon
-                    className="pointer"
-                    onClick={() => handleToggleView('gridView')}
-                  />
-                </Tooltip>
-              </div>
-            </div>
-
             <div className="d-flex flex-row align-items-center my-4">
               <input
                 type="text"
@@ -664,6 +654,24 @@ function Notes() {
           </div>
           <div className="col-sm-6">
             <div className="d-flex justify-content-end my-3">
+              <div className="d-flex flex-row mx-1">
+                <div>
+                  <Tooltip title="List View" placement="bottom">
+                    <FormatListBulletedIcon
+                      className="pointer"
+                      onClick={() => handleToggleView('listView')}
+                    />
+                  </Tooltip>
+                </div>
+                <div className="mx-1">
+                  <Tooltip title="Grid View" placement="bottom">
+                    <GridViewIcon
+                      className="pointer"
+                      onClick={() => handleToggleView('gridView')}
+                    />
+                  </Tooltip>
+                </div>
+              </div>
               <div>
                 <Tooltip title="Create New Folder" placement="bottom">
                   <CreateNewFolderIcon
@@ -939,7 +947,7 @@ function Notes() {
   const renderNotesGridView = () => {
     let notesGridView = null;
 
-    if (notes) {
+    if (notes && !showTextarea) {
       notesGridView = notes.map((note: any, i) => {
         const cardTitle = note.content.substring(0, note.content.indexOf('\n'));
         // console.log('cardTitle = ', cardTitle);
@@ -993,6 +1001,23 @@ function Notes() {
           </div>
         );
       });
+    } else {
+      notesGridView = (
+        <textarea
+          id="textarea"
+          className="form-control px-3 py-4"
+          placeholder="Write something..."
+          style={{
+            width: '100vw',
+            height: '100vh',
+            border: 'none',
+            outline: 'none',
+            boxShadow: 'none',
+            resize: 'none',
+          }}
+          onChange={(e) => handleTextareaChange(e)}
+        ></textarea>
+      );
     }
 
     return notesGridView;
