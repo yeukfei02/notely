@@ -1,38 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import logo from '../../../images/logo.png';
-
-const SIGNUP = gql`
-  mutation signup($input: SignupInput!) {
-    signup(input: $input) {
-      created_at
-      email
-      id
-      password
-      updated_at
-    }
-  }
-`;
-
-const LOGIN = gql`
-  mutation login($input: LoginInput!) {
-    login(input: $input) {
-      token
-      users {
-        created_at
-        email
-        id
-        password
-        updated_at
-      }
-      users_id
-    }
-  }
-`;
+import { SIGNUP, LOGIN } from '../../../helpers/gqlHelper';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -41,11 +14,12 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-function SignupAndLogin() {
+function Signup() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const [signup, signupResult] = useMutation(SIGNUP);
   const [login, loginResult] = useMutation(LOGIN);
@@ -68,6 +42,15 @@ function SignupAndLogin() {
   }, [signupResult.data]);
 
   useEffect(() => {
+    if (signupResult.data) {
+      setOpenSignupSuccess(true);
+      setTimeout(() => {
+        navigate('/login');
+      }, 1000);
+    }
+  }, [signupResult.data, navigate]);
+
+  useEffect(() => {
     if (loginResult.data) {
       localStorage.setItem('token', loginResult.data.login.token);
       localStorage.setItem('users_id', loginResult.data.login.users_id);
@@ -88,8 +71,14 @@ function SignupAndLogin() {
     setPassword(e.target.value);
   };
 
+  const handleConfirmPasswordInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setConfirmPassword(e.target.value);
+  };
+
   const handleSignupClick = () => {
-    if (email && password) {
+    if (email && password && password === confirmPassword) {
       signup({
         variables: {
           input: {
@@ -101,17 +90,12 @@ function SignupAndLogin() {
     }
   };
 
-  const handleLoginClick = () => {
-    if (email && password) {
-      login({
-        variables: {
-          input: {
-            email: email,
-            password: password,
-          },
-        },
-      });
-    }
+  const handleSignupSuccessClose = () => {
+    setOpenSignupSuccess(false);
+  };
+
+  const handleLoginSuccessClose = () => {
+    setOpenLoginSuccess(false);
   };
 
   const handleJoinAsAGuestClick = () => {
@@ -125,20 +109,9 @@ function SignupAndLogin() {
     });
   };
 
-  const handleSignupSuccessClose = () => {
-    setOpenSignupSuccess(false);
-  };
-
-  const handleLoginSuccessClose = () => {
-    setOpenLoginSuccess(false);
-  };
-
   return (
-    <div className="d-flex justify-content-center">
-      <div
-        className="container my-5"
-        style={{ width: window.innerWidth > 1000 ? '25%' : '50%' }}
-      >
+    <div className="container d-flex justify-content-center w-50 my-4">
+      <div>
         <div className="d-flex justify-content-center">
           <img src={logo} alt="" width="55%" height="55%" />
         </div>
@@ -161,14 +134,14 @@ function SignupAndLogin() {
               onChange={(e) => handlePasswordInputChange(e)}
             />
           </div>
-          <Button
-            className="w-100 my-2"
-            variant="contained"
-            color="primary"
-            onClick={() => handleLoginClick()}
-          >
-            Login
-          </Button>
+          <div className="my-3">
+            <label className="form-label">Confirm Password</label>
+            <input
+              type="password"
+              className="form-control"
+              onChange={(e) => handleConfirmPasswordInputChange(e)}
+            />
+          </div>
           <Button
             className="w-100 my-2"
             variant="outlined"
@@ -177,6 +150,9 @@ function SignupAndLogin() {
           >
             Signup
           </Button>
+          <div className="my-3">
+            Already have an account? <a href="/login">Login</a>
+          </div>
         </div>
 
         <hr />
@@ -226,4 +202,4 @@ function SignupAndLogin() {
   );
 }
 
-export default SignupAndLogin;
+export default Signup;

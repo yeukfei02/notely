@@ -10,6 +10,8 @@ import {
 } from '@apollo/client';
 import { getUrl } from './helpers/helpers';
 import App from './app/app';
+import Signup from './app/components/signup/signup';
+import Login from './app/components/login/login';
 import Notes from './app/components/notes/notes';
 
 const theme = createTheme({
@@ -52,6 +54,8 @@ root.render(
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<App />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/notes" element={<Notes />} />
           </Routes>
         </BrowserRouter>

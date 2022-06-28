@@ -1,5 +1,33 @@
 import { gql } from '@apollo/client';
 
+export const SIGNUP = gql`
+  mutation signup($input: SignupInput!) {
+    signup(input: $input) {
+      created_at
+      email
+      id
+      password
+      updated_at
+    }
+  }
+`;
+
+export const LOGIN = gql`
+  mutation login($input: LoginInput!) {
+    login(input: $input) {
+      token
+      users {
+        created_at
+        email
+        id
+        password
+        updated_at
+      }
+      users_id
+    }
+  }
+`;
+
 export const CREATE_FOLDER = gql`
   mutation createFolder($input: CreateFolderInput!) {
     createFolder(input: $input) {
