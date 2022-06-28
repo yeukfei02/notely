@@ -1130,7 +1130,7 @@ function Notes() {
             onClick={() => handleNoteClick(note.id, note.content)}
             onContextMenu={(e) => handleContextMenu(e, note.id)}
           >
-            <div className="card-body">
+            <div className="card-body p-4">
               <div className="d-flex justify-content-end">
                 <ClearIcon
                   className="pointer"
@@ -1181,18 +1181,18 @@ function Notes() {
         }
 
         return (
-          <div className="col-sm-4">
+          <div className="col-sm-4 d-flex align-items-stretch">
             <div
               key={i}
               className={`${
                 currentNote === note.id
-                  ? 'card pointer bg-info bg-opacity-10 my-4'
-                  : 'card pointer my-4'
+                  ? 'card w-100 pointer bg-info bg-opacity-10 my-4'
+                  : 'card w-100 pointer my-4'
               }`}
               onClick={() => handleNoteClick(note.id, note.content)}
               onContextMenu={(e) => handleContextMenu(e, note.id)}
             >
-              <div className="card-body">
+              <div className="card-body p-4">
                 <div className="d-flex justify-content-end">
                   <ClearIcon
                     className="pointer"
