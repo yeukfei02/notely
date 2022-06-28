@@ -717,54 +717,76 @@ function Notes() {
     } else if (currentView === 'gridView') {
       view = (
         <div className="col-sm-9">
-          <div className="d-flex justify-content-end my-3">
-            <div>
-              <Tooltip title="List View" placement="bottom">
-                <FormatListBulletedIcon
-                  className="pointer"
-                  onClick={() => handleToggleView('listView')}
-                />
-              </Tooltip>
+          <div className="d-flex justify-content-end align-items-center my-3">
+            <div className="d-flex flex-row mx-1">
+              <div>
+                <Tooltip title="List View" placement="bottom">
+                  <FormatListBulletedIcon
+                    className="pointer"
+                    onClick={() => handleToggleView('listView')}
+                  />
+                </Tooltip>
+              </div>
+              <div className="mx-1">
+                <Tooltip title="Grid View" placement="bottom">
+                  <GridViewIcon
+                    className="pointer"
+                    onClick={() => handleToggleView('gridView')}
+                  />
+                </Tooltip>
+              </div>
             </div>
-            <div className="mx-1">
-              <Tooltip title="Grid View" placement="bottom">
-                <GridViewIcon
-                  className="pointer"
-                  onClick={() => handleToggleView('gridView')}
-                />
-              </Tooltip>
+
+            <div className="d-flex flex-row align-items-center mx-1">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search notes"
+                onChange={(e) => handleSearchNotesChange(e)}
+              />
+              <div className="mx-2">
+                <Tooltip title="Create New Note" placement="bottom">
+                  <BorderColorIcon
+                    className="pointer"
+                    onClick={() => handleCreateNotesClick()}
+                  />
+                </Tooltip>
+              </div>
             </div>
-            <div>
-              <Tooltip title="Create New Folder" placement="bottom">
-                <CreateNewFolderIcon
-                  className="pointer mx-1"
-                  onClick={() => handleCreateNewFolder()}
-                />
-              </Tooltip>
-            </div>
-            <div>
-              <Tooltip title="Edit Folder Name" placement="bottom">
-                <CreateIcon
-                  className="pointer mx-1"
-                  onClick={() => handleEditFolderNameClick()}
-                />
-              </Tooltip>
-            </div>
-            <div>
-              <Tooltip title="Add Note To Folder" placement="bottom">
-                <AddLinkIcon
-                  className="pointer mx-1"
-                  onClick={() => handleAddNoteToFolderClick()}
-                />
-              </Tooltip>
-            </div>
-            <div>
-              <Tooltip title="Logout" placement="bottom">
-                <LogoutIcon
-                  className="pointer mx-1"
-                  onClick={() => handleLogoutClick()}
-                />
-              </Tooltip>
+
+            <div className="d-flex flex-row">
+              <div>
+                <Tooltip title="Create New Folder" placement="bottom">
+                  <CreateNewFolderIcon
+                    className="pointer mx-1"
+                    onClick={() => handleCreateNewFolder()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Edit Folder Name" placement="bottom">
+                  <CreateIcon
+                    className="pointer mx-1"
+                    onClick={() => handleEditFolderNameClick()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Add Note To Folder" placement="bottom">
+                  <AddLinkIcon
+                    className="pointer mx-1"
+                    onClick={() => handleAddNoteToFolderClick()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Logout" placement="bottom">
+                  <LogoutIcon
+                    className="pointer mx-1"
+                    onClick={() => handleLogoutClick()}
+                  />
+                </Tooltip>
+              </div>
             </div>
           </div>
 
