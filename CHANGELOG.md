@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/yeukfei02/notely/compare/v0.1.1...v0.1.2) (2022-06-28)
+
+
+### Features
+
+* 🎸 add .github folder ([cfe00e9](https://github.com/yeukfei02/notely/commit/cfe00e9a8c625071ab25fc087139756be1458c28))
+* 🎸 add badge and add delete folder by id ([bcdf384](https://github.com/yeukfei02/notely/commit/bcdf38436491b52011e82e8ea3364eb03c7c423a))
+* 🎸 add deleteAllNotes api and update ui ([fb94428](https://github.com/yeukfei02/notely/commit/fb9442883f67502f8606d3785ae7e5d1fbceb49d))
+* 🎸 add email checking ([a8ae117](https://github.com/yeukfei02/notely/commit/a8ae117cccc23f2048972293f64dcc791107b498))
+
+
+### Bug Fixes
+
+* 🐛 fix signup and login page ([cbacbcd](https://github.com/yeukfei02/notely/commit/cbacbcdd83eb21352ad73116c27e6fcb69816bb5))
+
 ### 0.1.1 (2022-06-28)
 
 
