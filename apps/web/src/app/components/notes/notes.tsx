@@ -65,7 +65,7 @@ function Notes() {
   const [searchNotesValue, setSearchNotesValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
   const [showTextarea, setShowTextarea] = useState(false);
-  const [contextMenu, setContextMenu] = useState<{
+  const [deleteNoteContextMenu, setDeleteNoteContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
   } | null>(null);
@@ -635,12 +635,12 @@ function Notes() {
     }
   };
 
-  const handleMenuClose = () => {
-    setContextMenu(null);
+  const handleDeleteNoteMenuClose = () => {
+    setDeleteNoteContextMenu(null);
   };
 
-  const handleMenuItemClose = () => {
-    setContextMenu(null);
+  const handleDeleteNoteMenuItemClose = () => {
+    setDeleteNoteContextMenu(null);
 
     const note_id = localStorage.getItem('note_id');
     if (note_id && currentTab !== 'trash') {
@@ -674,13 +674,13 @@ function Notes() {
     }
   };
 
-  const handleContextMenu = (event: React.MouseEvent, id: string) => {
+  const handleDeleteNoteContextMenu = (event: React.MouseEvent, id: string) => {
     localStorage.setItem('note_id', id);
     setCurrentNote(id);
 
     event.preventDefault();
-    setContextMenu(
-      contextMenu === null
+    setDeleteNoteContextMenu(
+      deleteNoteContextMenu === null
         ? {
             mouseX: event.clientX + 2,
             mouseY: event.clientY - 6,
@@ -792,16 +792,19 @@ function Notes() {
             {renderNotes()}
 
             <Menu
-              open={contextMenu !== null}
-              onClose={() => handleMenuClose()}
+              open={deleteNoteContextMenu !== null}
+              onClose={() => handleDeleteNoteMenuClose()}
               anchorReference="anchorPosition"
               anchorPosition={
-                contextMenu !== null
-                  ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+                deleteNoteContextMenu !== null
+                  ? {
+                      top: deleteNoteContextMenu.mouseY,
+                      left: deleteNoteContextMenu.mouseX,
+                    }
                   : undefined
               }
             >
-              <MenuItem onClick={() => handleMenuItemClose()}>
+              <MenuItem onClick={() => handleDeleteNoteMenuItemClose()}>
                 Delete Note
               </MenuItem>
             </Menu>
@@ -955,16 +958,19 @@ function Notes() {
           <div className="row p-4">{renderNotesGridView()}</div>
 
           <Menu
-            open={contextMenu !== null}
-            onClose={() => handleMenuClose()}
+            open={deleteNoteContextMenu !== null}
+            onClose={() => handleDeleteNoteMenuClose()}
             anchorReference="anchorPosition"
             anchorPosition={
-              contextMenu !== null
-                ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+              deleteNoteContextMenu !== null
+                ? {
+                    top: deleteNoteContextMenu.mouseY,
+                    left: deleteNoteContextMenu.mouseX,
+                  }
                 : undefined
             }
           >
-            <MenuItem onClick={() => handleMenuItemClose()}>
+            <MenuItem onClick={() => handleDeleteNoteMenuItemClose()}>
               Delete Note
             </MenuItem>
           </Menu>
@@ -1128,7 +1134,7 @@ function Notes() {
                 : 'card pointer my-4'
             }`}
             onClick={() => handleNoteClick(note.id, note.content)}
-            onContextMenu={(e) => handleContextMenu(e, note.id)}
+            onContextMenu={(e) => handleDeleteNoteContextMenu(e, note.id)}
           >
             <div className="card-body p-4">
               <div className="d-flex justify-content-end">
@@ -1190,7 +1196,7 @@ function Notes() {
                   : 'card w-100 pointer my-4'
               }`}
               onClick={() => handleNoteClick(note.id, note.content)}
-              onContextMenu={(e) => handleContextMenu(e, note.id)}
+              onContextMenu={(e) => handleDeleteNoteContextMenu(e, note.id)}
             >
               <div className="card-body p-4">
                 <div className="d-flex justify-content-end">
