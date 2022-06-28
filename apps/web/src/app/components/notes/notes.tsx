@@ -52,6 +52,7 @@ function Notes() {
   const [notes, setNotes] = useState([]);
   const [note, setNote] = useState({});
 
+  const [currentView, setCurrentView] = useState('listView');
   const [currentTab, setCurrentTab] = useState('');
   const [searchNotesValue, setSearchNotesValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
@@ -541,6 +542,168 @@ function Notes() {
     return newFoldersView;
   };
 
+  const renderView = (currentView: string) => {
+    let view = null;
+
+    if (currentView === 'listView') {
+      view = (
+        <>
+          <div
+            className="col-sm-3 d-none d-sm-block"
+            style={{ backgroundColor: '#e9e9e9' }}
+          >
+            <div className="d-flex flex-row my-3">
+              <div>
+                <Tooltip title="List View" placement="bottom">
+                  <FormatListBulletedIcon
+                    className="pointer"
+                    onClick={() => handleToggleView('listView')}
+                  />
+                </Tooltip>
+              </div>
+              <div className="mx-1">
+                <Tooltip title="Grid View" placement="bottom">
+                  <GridViewIcon
+                    className="pointer"
+                    onClick={() => handleToggleView('gridView')}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+
+            <div className="d-flex flex-row align-items-center my-4">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search notes"
+                onChange={(e) => handleSearchNotesChange(e)}
+              />
+              <div className="mx-2">
+                <Tooltip title="Create New Note" placement="bottom">
+                  <BorderColorIcon
+                    className="pointer"
+                    onClick={() => handleCreateNotesClick()}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+
+            {renderNotes()}
+          </div>
+          <div className="col-sm-6">
+            <div className="d-flex justify-content-end my-3">
+              <div>
+                <Tooltip title="Create New Folder" placement="bottom">
+                  <CreateNewFolderIcon
+                    className="pointer mx-1"
+                    onClick={() => handleCreateNewFolder()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Edit Folder Name" placement="bottom">
+                  <CreateIcon
+                    className="pointer mx-1"
+                    onClick={() => handleEditFolderNameClick()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Add Note To Folder" placement="bottom">
+                  <AddLinkIcon
+                    className="pointer mx-1"
+                    onClick={() => handleAddNoteToFolderClick()}
+                  />
+                </Tooltip>
+              </div>
+              <div>
+                <Tooltip title="Logout" placement="bottom">
+                  <LogoutIcon
+                    className="pointer mx-1"
+                    onClick={() => handleLogoutClick()}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+            <textarea
+              id="textarea"
+              className="form-control px-3 py-4"
+              placeholder="Write something..."
+              style={{
+                width: '100vw',
+                height: '100vh',
+                border: 'none',
+                outline: 'none',
+                boxShadow: 'none',
+                resize: 'none',
+              }}
+              onChange={(e) => handleTextareaChange(e)}
+            ></textarea>
+          </div>
+        </>
+      );
+    } else if (currentView === 'gridView') {
+      view = (
+        <div className="col-sm-9">
+          <div className="d-flex justify-content-end my-3">
+            <div>
+              <Tooltip title="List View" placement="bottom">
+                <FormatListBulletedIcon
+                  className="pointer"
+                  onClick={() => handleToggleView('listView')}
+                />
+              </Tooltip>
+            </div>
+            <div className="mx-1">
+              <Tooltip title="Grid View" placement="bottom">
+                <GridViewIcon
+                  className="pointer"
+                  onClick={() => handleToggleView('gridView')}
+                />
+              </Tooltip>
+            </div>
+            <div>
+              <Tooltip title="Create New Folder" placement="bottom">
+                <CreateNewFolderIcon
+                  className="pointer mx-1"
+                  onClick={() => handleCreateNewFolder()}
+                />
+              </Tooltip>
+            </div>
+            <div>
+              <Tooltip title="Edit Folder Name" placement="bottom">
+                <CreateIcon
+                  className="pointer mx-1"
+                  onClick={() => handleEditFolderNameClick()}
+                />
+              </Tooltip>
+            </div>
+            <div>
+              <Tooltip title="Add Note To Folder" placement="bottom">
+                <AddLinkIcon
+                  className="pointer mx-1"
+                  onClick={() => handleAddNoteToFolderClick()}
+                />
+              </Tooltip>
+            </div>
+            <div>
+              <Tooltip title="Logout" placement="bottom">
+                <LogoutIcon
+                  className="pointer mx-1"
+                  onClick={() => handleLogoutClick()}
+                />
+              </Tooltip>
+            </div>
+          </div>
+
+          <div className="row p-4">{renderNotesGridView()}</div>
+        </div>
+      );
+    }
+
+    return view;
+  };
+
   const handleFolderItemClick = (currentTab: string) => {
     localStorage.removeItem('folder_id');
     setCurrentTab(currentTab);
@@ -586,6 +749,10 @@ function Notes() {
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     (e.target as any).classList.remove('bg-white', 'bg-opacity-25');
+  };
+
+  const handleToggleView = (view: string) => {
+    setCurrentView(view);
   };
 
   const renderSelectDropdown = () => {
@@ -657,6 +824,64 @@ function Notes() {
     return notesView;
   };
 
+  const renderNotesGridView = () => {
+    let notesGridView = null;
+
+    if (notes) {
+      notesGridView = notes.map((note: any, i) => {
+        const cardTitle = note.content.substring(0, note.content.indexOf('\n'));
+        // console.log('cardTitle = ', cardTitle);
+
+        const content = note.content
+          .substring(note.content.indexOf('\n'))
+          .trim();
+        // console.log('content = ', content);
+
+        const now = dayjs();
+        const minuteDiff = now.diff(note.updated_at, 'minute');
+
+        let diffStr = '';
+        if (minuteDiff < 60) {
+          diffStr = minuteDiff < 1 ? 'just now' : `${minuteDiff} minutes ago`;
+        } else {
+          const hourDiff = now.diff(note.updated_at, 'hour');
+          diffStr =
+            hourDiff > 1 ? `${hourDiff} hours ago` : `${hourDiff} hour ago`;
+        }
+
+        return (
+          <div className="col-sm-4">
+            <div
+              key={i}
+              className="card pointer my-4"
+              onClick={() => handleNoteClick(note.id, note.content)}
+            >
+              <div className="card-body">
+                <div className="d-flex justify-content-end">
+                  <ClearIcon
+                    className="pointer"
+                    onClick={() => handleDeleteNoteById(note.id)}
+                  />
+                </div>
+                <h5 className="card-title">
+                  <b>{cardTitle || note.content}</b>
+                </h5>
+                <p className="card-text">
+                  {content.length < 100
+                    ? content
+                    : content.substring(0, 100) + '...'}
+                </p>
+                <div>{diffStr}</div>
+              </div>
+            </div>
+          </div>
+        );
+      });
+    }
+
+    return notesGridView;
+  };
+
   return (
     <div>
       <div
@@ -718,88 +943,7 @@ function Notes() {
 
           {renderFolders()}
         </div>
-        <div
-          className="col-sm-3 d-none d-sm-block"
-          style={{ backgroundColor: '#e9e9e9' }}
-        >
-          <div className="d-flex flex-row my-3">
-            <div>
-              <FormatListBulletedIcon className="pointer" />
-            </div>
-            <div className="mx-1">
-              <GridViewIcon className="pointer" />
-            </div>
-          </div>
-
-          <div className="d-flex flex-row align-items-center my-4">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search notes"
-              onChange={(e) => handleSearchNotesChange(e)}
-            />
-            <div className="mx-2">
-              <Tooltip title="Create New Note" placement="bottom">
-                <BorderColorIcon
-                  className="pointer"
-                  onClick={() => handleCreateNotesClick()}
-                />
-              </Tooltip>
-            </div>
-          </div>
-
-          {renderNotes()}
-        </div>
-        <div className="col-sm-6">
-          <div className="d-flex justify-content-end my-3">
-            <div>
-              <Tooltip title="Create New Folder" placement="bottom">
-                <CreateNewFolderIcon
-                  className="pointer mx-1"
-                  onClick={() => handleCreateNewFolder()}
-                />
-              </Tooltip>
-            </div>
-            <div>
-              <Tooltip title="Edit Folder Name" placement="bottom">
-                <CreateIcon
-                  className="pointer mx-1"
-                  onClick={() => handleEditFolderNameClick()}
-                />
-              </Tooltip>
-            </div>
-            <div>
-              <Tooltip title="Add Note To Folder" placement="bottom">
-                <AddLinkIcon
-                  className="pointer mx-1"
-                  onClick={() => handleAddNoteToFolderClick()}
-                />
-              </Tooltip>
-            </div>
-            <div>
-              <Tooltip title="Logout" placement="bottom">
-                <LogoutIcon
-                  className="pointer mx-1"
-                  onClick={() => handleLogoutClick()}
-                />
-              </Tooltip>
-            </div>
-          </div>
-          <textarea
-            id="textarea"
-            className="form-control px-3 py-4"
-            placeholder="Write something..."
-            style={{
-              width: '100vw',
-              height: '100vh',
-              border: 'none',
-              outline: 'none',
-              boxShadow: 'none',
-              resize: 'none',
-            }}
-            onChange={(e) => handleTextareaChange(e)}
-          ></textarea>
-        </div>
+        {renderView(currentView)}
       </div>
 
       <Dialog
