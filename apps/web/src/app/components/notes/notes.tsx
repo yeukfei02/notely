@@ -65,6 +65,10 @@ function Notes() {
   const [searchNotesValue, setSearchNotesValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
   const [showTextarea, setShowTextarea] = useState(false);
+  const [newFolderContextMenu, setNewFolderContextMenu] = useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
   const [deleteNoteContextMenu, setDeleteNoteContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
@@ -319,6 +323,11 @@ function Notes() {
         content: textareaValue,
         users_id: localStorage.getItem('users_id'),
       };
+
+      const folderId = localStorage.getItem('folder_id');
+      if (!_.isEmpty(folderId)) {
+        input['folder_id'] = folderId;
+      }
 
       const noteId = localStorage.getItem('note_id');
 
@@ -715,6 +724,27 @@ function Notes() {
         });
       }, 1000);
     }
+  };
+
+  const handleNewFolderMenuClose = () => {
+    setNewFolderContextMenu(null);
+  };
+
+  const handleNewFolderMenuItemClose = () => {
+    setNewFolderContextMenu(null);
+    setNewFolderDialogStatus(true);
+  };
+
+  const handleNewFolderContextMenu = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setNewFolderContextMenu(
+      newFolderContextMenu === null
+        ? {
+            mouseX: event.clientX + 2,
+            mouseY: event.clientY - 6,
+          }
+        : null
+    );
   };
 
   const renderFolders = () => {
@@ -1255,6 +1285,7 @@ function Notes() {
         <div
           className="col-sm-3 d-none d-sm-block p-0"
           style={{ backgroundColor: '#fb9698' }}
+          onContextMenu={(e) => handleNewFolderContextMenu(e)}
         >
           <div
             className={`${
@@ -1309,6 +1340,24 @@ function Notes() {
           {!_.isEmpty(folders) ? <hr /> : null}
 
           {renderFolders()}
+
+          <Menu
+            open={newFolderContextMenu !== null}
+            onClose={() => handleNewFolderMenuClose()}
+            anchorReference="anchorPosition"
+            anchorPosition={
+              newFolderContextMenu !== null
+                ? {
+                    top: newFolderContextMenu.mouseY,
+                    left: newFolderContextMenu.mouseX,
+                  }
+                : undefined
+            }
+          >
+            <MenuItem onClick={() => handleNewFolderMenuItemClose()}>
+              New Folder
+            </MenuItem>
+          </Menu>
         </div>
         {renderView(currentView)}
       </div>
