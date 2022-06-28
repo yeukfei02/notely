@@ -5,6 +5,7 @@ import { GetNotesInput } from './dto/get-notes.dto';
 import { GetTrashsInput } from './dto/get-trashs.dto';
 import { UpdateNoteByIdInput } from './dto/update-note-by-id.dto';
 import { DeleteNoteByIdInput } from './dto/delete-note-by-id.dto';
+import { DeleteAllNotesInput } from './dto/delete-all-notes.dto';
 
 @Injectable()
 export class NoteService {
@@ -175,6 +176,21 @@ export class NoteService {
 
     const notes = await this.prisma.note.deleteMany({
       where: where,
+    });
+    return notes;
+  }
+
+  async hardDeleteAllNotes(deleteAllNotesInput: DeleteAllNotesInput) {
+    const notes = await this.prisma.note.deleteMany({
+      where: {
+        id: {
+          in: deleteAllNotesInput.ids,
+        },
+        users_id: deleteAllNotesInput.users_id,
+        deleted_at: {
+          lte: new Date(),
+        },
+      },
     });
     return notes;
   }

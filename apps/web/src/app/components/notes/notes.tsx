@@ -38,6 +38,7 @@ import {
   UPDATE_NOTE_BY_ID,
   DELETE_NOTE_BY_ID,
   HARD_DELETE_NOTE_BY_ID,
+  HARD_DELETE_ALL_NOTES,
 } from '../../../helpers/gqlHelper';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -89,6 +90,9 @@ function Notes() {
   const [deleteNoteById, deleteNoteByIdResult] = useMutation(DELETE_NOTE_BY_ID);
   const [hardDeleteNoteById, hardDeleteNoteByIdResult] = useMutation(
     HARD_DELETE_NOTE_BY_ID
+  );
+  const [hardDeleteAllNotes, hardDeleteAllNotesResult] = useMutation(
+    HARD_DELETE_ALL_NOTES
   );
 
   console.log('createFolderResult.data = ', createFolderResult.data);
@@ -152,6 +156,19 @@ function Notes() {
   console.log(
     'hardDeleteNoteByIdResult.error = ',
     hardDeleteNoteByIdResult.error
+  );
+
+  console.log(
+    'hardDeleteAllNotesResult.data = ',
+    hardDeleteAllNotesResult.data
+  );
+  console.log(
+    'hardDeleteAllNotesResult.loading = ',
+    hardDeleteAllNotesResult.loading
+  );
+  console.log(
+    'hardDeleteAllNotesResult.error = ',
+    hardDeleteAllNotesResult.error
   );
 
   useEffect(() => {
@@ -235,7 +252,8 @@ function Notes() {
       deleteFolderByIdResult.data ||
       updateNoteByIdResult.data ||
       deleteNoteByIdResult.data ||
-      hardDeleteNoteByIdResult.data
+      hardDeleteNoteByIdResult.data ||
+      hardDeleteAllNotesResult.data
     ) {
       window.location.reload();
     }
@@ -247,6 +265,7 @@ function Notes() {
     updateNoteByIdResult.data,
     deleteNoteByIdResult.data,
     hardDeleteNoteByIdResult.data,
+    hardDeleteAllNotesResult.data,
   ]);
 
   useEffect(() => {
@@ -680,6 +699,8 @@ function Notes() {
               </div>
             </div>
 
+            {renderDeleteAllNotes()}
+
             {renderNotes()}
           </div>
           <div className="col-sm-6">
@@ -912,6 +933,47 @@ function Notes() {
     }
 
     return selectDropdown;
+  };
+
+  const renderDeleteAllNotes = () => {
+    let deleteAllNotesView = null;
+
+    if (currentTab === 'trash' && !_.isEmpty(notes)) {
+      deleteAllNotesView = (
+        <div className="my-4">
+          <Button
+            className="w-100"
+            variant="outlined"
+            onClick={() => handleDeleteAllNotes()}
+          >
+            Delete All Notes
+          </Button>
+        </div>
+      );
+    }
+
+    return deleteAllNotesView;
+  };
+
+  const handleDeleteAllNotes = () => {
+    if (notes) {
+      const notesIds = notes.map((note: any) => {
+        return note.id;
+      });
+      hardDeleteAllNotes({
+        variables: {
+          input: {
+            ids: notesIds,
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }
   };
 
   const renderNotes = () => {

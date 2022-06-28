@@ -18,6 +18,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input DeleteAllNotesInput {
+  ids: [String!]!
+  users_id: String!
+}
+
 input DeleteFolderByIdInput {
   id: String!
   users_id: String!
@@ -69,6 +74,7 @@ type Mutation {
   createNote(input: CreateNoteInput!): Note!
   deleteFolderById(input: DeleteFolderByIdInput!): Int!
   deleteNoteById(input: DeleteNoteByIdInput!): Int!
+  hardDeleteAllNotes(input: DeleteAllNotesInput!): Int!
   hardDeleteNoteById(input: DeleteNoteByIdInput!): Int!
   login(input: LoginInput!): Login!
   signup(input: SignupInput!): User!

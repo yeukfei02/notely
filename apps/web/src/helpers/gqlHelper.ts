@@ -1211,3 +1211,9 @@ export const HARD_DELETE_NOTE_BY_ID = gql`
     hardDeleteNoteById(input: $input)
   }
 `;
+
+export const HARD_DELETE_ALL_NOTES = gql`
+  mutation hardDeleteAllNotes($input: DeleteAllNotesInput!) {
+    hardDeleteAllNotes(input: $input)
+  }
+`;

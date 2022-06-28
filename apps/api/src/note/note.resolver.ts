@@ -6,6 +6,7 @@ import { GetNotesInput } from './dto/get-notes.dto';
 import { GetTrashsInput } from './dto/get-trashs.dto';
 import { UpdateNoteByIdInput } from './dto/update-note-by-id.dto';
 import { DeleteNoteByIdInput } from './dto/delete-note-by-id.dto';
+import { DeleteAllNotesInput } from './dto/delete-all-notes.dto';
 import { authorize } from '../helpers/helpers';
 
 @Resolver()
@@ -130,6 +131,29 @@ export class NoteResolver {
 
     if (authorizeStatus) {
       notes = await this.noteService.hardDeleteNoteById(deleteNoteByIdInput);
+    }
+
+    console.log('notes = ', notes);
+
+    let result = 0;
+    if (notes && notes.count > 0) {
+      result = notes.count;
+    }
+
+    return result;
+  }
+
+  @Mutation(() => Int)
+  async hardDeleteAllNotes(
+    @Args('input') deleteAllNotesInput: DeleteAllNotesInput,
+    @Context() context
+  ): Promise<number> {
+    const authorizeStatus = authorize(context.token);
+
+    let notes = null;
+
+    if (authorizeStatus) {
+      notes = await this.noteService.hardDeleteAllNotes(deleteAllNotesInput);
     }
 
     console.log('notes = ', notes);
