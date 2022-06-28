@@ -1,9 +1,9 @@
-import SignupAndLogin from './components/signupAndLogin/signupAndLogin';
+import Login from './components/login/login';
 import Notes from './components/notes/notes';
 
 function App() {
   const renderView = () => {
-    let view = <SignupAndLogin />;
+    let view = <Login />;
 
     const token = localStorage.getItem('token');
     const users_id = localStorage.getItem('users_id');
