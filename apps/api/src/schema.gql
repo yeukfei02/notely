@@ -45,6 +45,11 @@ input GetFoldersInput {
 input GetNotesInput {
   folder_id: String
   search_notes_value: String
+  type: String
+  users_id: String!
+}
+
+input GetTrashsInput {
   users_id: String!
 }
 
@@ -64,6 +69,7 @@ type Mutation {
   createNote(input: CreateNoteInput!): Note!
   deleteFolderById(input: DeleteFolderByIdInput!): Int!
   deleteNoteById(input: DeleteNoteByIdInput!): Int!
+  hardDeleteNoteById(input: DeleteNoteByIdInput!): Int!
   login(input: LoginInput!): Login!
   signup(input: SignupInput!): User!
   updateFolderById(input: UpdateFolderByIdInput!): Int!
@@ -84,6 +90,7 @@ type Query {
   folders(input: GetFoldersInput!): [Folder!]
   note(id: String!): Note
   notes(input: GetNotesInput!): [Note!]
+  trashs(input: GetTrashsInput!): [Note!]
   users: [User!]
 }
 

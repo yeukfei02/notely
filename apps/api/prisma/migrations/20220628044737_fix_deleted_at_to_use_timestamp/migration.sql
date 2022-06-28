@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "note" ALTER COLUMN "deleted_at" SET DATA TYPE TIMESTAMPTZ(6);

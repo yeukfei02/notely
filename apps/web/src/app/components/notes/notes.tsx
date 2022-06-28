@@ -32,9 +32,11 @@ import {
   UPDATE_FOLDER_BY_ID,
   DELETE_FOLDER_BY_ID,
   GET_NOTES,
+  GET_TRASHS,
   GET_NOTES_BY_ID,
   UPDATE_NOTE_BY_ID,
   DELETE_NOTE_BY_ID,
+  HARD_DELETE_NOTE_BY_ID,
 } from '../../../helpers/gqlHelper';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -50,6 +52,7 @@ function Notes() {
   const [folders, setFolders] = useState([]);
   const [folder, setFolder] = useState({});
   const [notes, setNotes] = useState([]);
+  const [trashs, setTrashs] = useState([]);
   const [note, setNote] = useState({});
 
   const [currentView, setCurrentView] = useState('listView');
@@ -78,9 +81,13 @@ function Notes() {
   const [deleteFolderById, deleteFolderByIdResult] =
     useMutation(DELETE_FOLDER_BY_ID);
   const [getNotes, getNotesResult] = useLazyQuery(GET_NOTES);
+  const [getTrashs, getTrashsResult] = useLazyQuery(GET_TRASHS);
   const [getNoteById, getNoteByIdResult] = useLazyQuery(GET_NOTES_BY_ID);
   const [updateNoteById, updateNoteByIdResult] = useMutation(UPDATE_NOTE_BY_ID);
   const [deleteNoteById, deleteNoteByIdResult] = useMutation(DELETE_NOTE_BY_ID);
+  const [hardDeleteNoteById, hardDeleteNoteByIdResult] = useMutation(
+    HARD_DELETE_NOTE_BY_ID
+  );
 
   console.log('createFolderResult.data = ', createFolderResult.data);
   console.log('createFolderResult.loading = ', createFolderResult.loading);
@@ -116,6 +123,10 @@ function Notes() {
   console.log('getNotesResult.loading = ', getNotesResult.loading);
   console.log('getNotesResult.error = ', getNotesResult.error);
 
+  console.log('getTrashsResult.data = ', getTrashsResult.data);
+  console.log('getTrashsResult.loading = ', getTrashsResult.loading);
+  console.log('getTrashsResult.error = ', getTrashsResult.error);
+
   console.log('getNoteByIdResult.data = ', getNoteByIdResult.data);
   console.log('getNoteByIdResult.loading = ', getNoteByIdResult.loading);
   console.log('getNoteByIdResult.error = ', getNoteByIdResult.error);
@@ -128,8 +139,34 @@ function Notes() {
   console.log('deleteNoteByIdResult.loading = ', deleteNoteByIdResult.loading);
   console.log('deleteNoteByIdResult.error = ', deleteNoteByIdResult.error);
 
+  console.log(
+    'hardDeleteNoteByIdResult.data = ',
+    hardDeleteNoteByIdResult.data
+  );
+  console.log(
+    'hardDeleteNoteByIdResult.loading = ',
+    hardDeleteNoteByIdResult.loading
+  );
+  console.log(
+    'hardDeleteNoteByIdResult.error = ',
+    hardDeleteNoteByIdResult.error
+  );
+
   useEffect(() => {
     getNotes({
+      variables: {
+        input: {
+          users_id: localStorage.getItem('users_id'),
+        },
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    });
+
+    getTrashs({
       variables: {
         input: {
           users_id: localStorage.getItem('users_id'),
@@ -156,7 +193,7 @@ function Notes() {
         },
       });
     }, 1000);
-  }, [getNotes, getFolders]);
+  }, [getNotes, getTrashs, getFolders]);
 
   useEffect(() => {
     if (getFoldersResult.data) {
@@ -177,6 +214,12 @@ function Notes() {
   }, [getNotesResult.data]);
 
   useEffect(() => {
+    if (getTrashsResult.data) {
+      setTrashs(getTrashsResult.data.trashs);
+    }
+  }, [getTrashsResult.data]);
+
+  useEffect(() => {
     if (getNoteByIdResult.data) {
       setNote(getNoteByIdResult.data.note);
     }
@@ -189,7 +232,8 @@ function Notes() {
       updateFolderByIdResult.data ||
       deleteFolderByIdResult.data ||
       updateNoteByIdResult.data ||
-      deleteNoteByIdResult.data
+      deleteNoteByIdResult.data ||
+      hardDeleteNoteByIdResult.data
     ) {
       window.location.reload();
     }
@@ -200,15 +244,24 @@ function Notes() {
     deleteFolderByIdResult.data,
     updateNoteByIdResult.data,
     deleteNoteByIdResult.data,
+    hardDeleteNoteByIdResult.data,
   ]);
 
   useEffect(() => {
     if (searchNotesValue) {
+      let type = '';
+      if (currentTab === 'notes') {
+        type = 'notes';
+      } else if (currentTab === 'trash') {
+        type = 'trash';
+      }
+
       getNotes({
         variables: {
           input: {
             users_id: localStorage.getItem('users_id'),
             search_notes_value: searchNotesValue,
+            type: type,
           },
         },
         context: {
@@ -304,7 +357,8 @@ function Notes() {
   const handleAddNoteToFolderClick = () => {
     if (
       !addNoteToFolderDialogStatus &&
-      !_.isEmpty(localStorage.getItem('note_id'))
+      !_.isEmpty(localStorage.getItem('note_id')) &&
+      !_.isEmpty(note)
     ) {
       setAddNoteToFolderDialogStatus(true);
     } else {
@@ -425,8 +479,22 @@ function Notes() {
   };
 
   const handleDeleteNoteById = (id: string) => {
-    if (id) {
+    if (id && currentTab !== 'trash') {
       deleteNoteById({
+        variables: {
+          input: {
+            id: id,
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    } else {
+      hardDeleteNoteById({
         variables: {
           input: {
             id: id,
@@ -725,22 +793,36 @@ function Notes() {
           },
         },
       });
-
-      setTimeout(() => {
-        getFolders({
-          variables: {
-            input: {
-              users_id: localStorage.getItem('users_id'),
-            },
+    } else if (currentTab === 'trash') {
+      getTrashs({
+        variables: {
+          input: {
+            users_id: localStorage.getItem('users_id'),
           },
-          context: {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-        });
-      }, 1000);
+        },
+      });
+      setNotes(trashs);
     }
+
+    setTimeout(() => {
+      getFolders({
+        variables: {
+          input: {
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }, 1000);
   };
 
   const handleMouseEnter = (
@@ -925,11 +1007,7 @@ function Notes() {
             <div>
               <b>Notes</b>
             </div>
-            <div>
-              {getNotesResult.data && getNotesResult.data.notes
-                ? getNotesResult.data.notes.length
-                : 0}
-            </div>
+            <div>{notes ? notes.length : 0}</div>
           </div>
 
           <div
@@ -948,7 +1026,7 @@ function Notes() {
             <div>
               <b>Trash</b>
             </div>
-            <div>0</div>
+            <div>{trashs ? trashs.length : 0}</div>
           </div>
 
           {!_.isEmpty(folders) ? <hr /> : null}

@@ -828,6 +828,189 @@ export const GET_NOTES = gql`
   }
 `;
 
+export const GET_TRASHS = gql`
+  query trashs($input: GetTrashsInput!) {
+    trashs(input: $input) {
+      content
+      created_at
+      folder {
+        created_at
+        id
+        name
+        notes {
+          content
+          created_at
+          folder {
+            created_at
+            id
+            name
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          updated_at
+          users {
+            created_at
+            email
+            folders {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            password
+            updated_at
+          }
+        }
+        updated_at
+        users {
+          created_at
+          email
+          folders {
+            created_at
+            id
+            name
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          notes {
+            content
+            created_at
+            folder {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          password
+          updated_at
+        }
+      }
+      id
+      updated_at
+      users {
+        created_at
+        email
+        folders {
+          created_at
+          id
+          name
+          notes {
+            content
+            created_at
+            folder {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          updated_at
+          users {
+            created_at
+            email
+            id
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            password
+            updated_at
+          }
+        }
+        id
+        notes {
+          content
+          created_at
+          folder {
+            created_at
+            id
+            name
+            notes {
+              content
+              created_at
+              id
+              updated_at
+            }
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          updated_at
+          users {
+            created_at
+            email
+            folders {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            password
+            updated_at
+          }
+        }
+        password
+        updated_at
+      }
+    }
+  }
+`;
+
 export const GET_NOTES_BY_ID = gql`
   query note($id: String!) {
     note(id: $id) {
@@ -1020,5 +1203,11 @@ export const UPDATE_NOTE_BY_ID = gql`
 export const DELETE_NOTE_BY_ID = gql`
   mutation deleteNoteById($input: DeleteNoteByIdInput!) {
     deleteNoteById(input: $input)
+  }
+`;
+
+export const HARD_DELETE_NOTE_BY_ID = gql`
+  mutation hardDeleteNoteById($input: DeleteNoteByIdInput!) {
+    hardDeleteNoteById(input: $input)
   }
 `;

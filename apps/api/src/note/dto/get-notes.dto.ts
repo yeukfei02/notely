@@ -13,4 +13,8 @@ export class GetNotesInput {
   @Field({ nullable: true })
   @IsOptional()
   search_notes_value?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  type?: string;
 }
