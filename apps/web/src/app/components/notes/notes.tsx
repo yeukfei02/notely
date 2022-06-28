@@ -11,6 +11,8 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import NoteIcon from '@mui/icons-material/Note';
 import FolderIcon from '@mui/icons-material/Folder';
 import Badge from '@mui/material/Badge';
@@ -63,6 +65,10 @@ function Notes() {
   const [searchNotesValue, setSearchNotesValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
   const [showTextarea, setShowTextarea] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
 
   const [newFolderName, setNewFolderName] = useState('');
   const [editFolderName, setEditFolderName] = useState('');
@@ -629,6 +635,88 @@ function Notes() {
     }
   };
 
+  const handleMenuClose = () => {
+    setContextMenu(null);
+  };
+
+  const handleMenuItemClose = () => {
+    setContextMenu(null);
+
+    const note_id = localStorage.getItem('note_id');
+    if (note_id && currentTab !== 'trash') {
+      deleteNoteById({
+        variables: {
+          input: {
+            id: note_id,
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    } else {
+      hardDeleteNoteById({
+        variables: {
+          input: {
+            id: note_id,
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }
+  };
+
+  const handleContextMenu = (event: React.MouseEvent, id: string) => {
+    localStorage.setItem('note_id', id);
+    setCurrentNote(id);
+
+    event.preventDefault();
+    setContextMenu(
+      contextMenu === null
+        ? {
+            mouseX: event.clientX + 2,
+            mouseY: event.clientY - 6,
+          }
+        : null
+    );
+
+    if (id) {
+      getNoteById({
+        variables: {
+          id: id,
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+
+      setTimeout(() => {
+        getFolders({
+          variables: {
+            input: {
+              users_id: localStorage.getItem('users_id'),
+            },
+          },
+          context: {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
+        });
+      }, 1000);
+    }
+  };
+
   const renderFolders = () => {
     let newFoldersView = null;
 
@@ -702,6 +790,21 @@ function Notes() {
             {renderDeleteAllNotes()}
 
             {renderNotes()}
+
+            <Menu
+              open={contextMenu !== null}
+              onClose={() => handleMenuClose()}
+              anchorReference="anchorPosition"
+              anchorPosition={
+                contextMenu !== null
+                  ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+                  : undefined
+              }
+            >
+              <MenuItem onClick={() => handleMenuItemClose()}>
+                Delete Note
+              </MenuItem>
+            </Menu>
           </div>
           <div className="col-sm-6">
             <div className="d-flex justify-content-end my-3">
@@ -850,6 +953,21 @@ function Notes() {
           </div>
 
           <div className="row p-4">{renderNotesGridView()}</div>
+
+          <Menu
+            open={contextMenu !== null}
+            onClose={() => handleMenuClose()}
+            anchorReference="anchorPosition"
+            anchorPosition={
+              contextMenu !== null
+                ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+                : undefined
+            }
+          >
+            <MenuItem onClick={() => handleMenuItemClose()}>
+              Delete Note
+            </MenuItem>
+          </Menu>
         </div>
       );
     }
@@ -1010,6 +1128,7 @@ function Notes() {
                 : 'card pointer my-4'
             }`}
             onClick={() => handleNoteClick(note.id, note.content)}
+            onContextMenu={(e) => handleContextMenu(e, note.id)}
           >
             <div className="card-body">
               <div className="d-flex justify-content-end">
@@ -1071,6 +1190,7 @@ function Notes() {
                   : 'card pointer my-4'
               }`}
               onClick={() => handleNoteClick(note.id, note.content)}
+              onContextMenu={(e) => handleContextMenu(e, note.id)}
             >
               <div className="card-body">
                 <div className="d-flex justify-content-end">
