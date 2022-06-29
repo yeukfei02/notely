@@ -1043,6 +1043,7 @@ export const GET_TAGS = gql`
   query tags($input: GetTagsInput!) {
     tags(input: $input) {
       content
+      count
       created_at
       folder {
         created_at

@@ -610,14 +610,14 @@ function Notes() {
     }
   };
 
-  const handleTagClick = (name: string) => {
-    setCurrentTab(name);
+  const handleTagClick = (tag: string) => {
+    setCurrentTab(tag);
 
-    if (name) {
+    if (tag) {
       getNotes({
         variables: {
           input: {
-            tag: name,
+            tag: tag,
             users_id: localStorage.getItem('users_id'),
           },
         },
@@ -811,7 +811,7 @@ function Notes() {
           <div
             key={i}
             className={`${
-              currentTab === tag.name
+              currentTab === tag.tag
                 ? 'd-flex flex-row align-items-center justify-content-around pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
                 : 'd-flex flex-row align-items-center justify-content-around pointer w-full p-2 m-4 rounded'
             }`}
@@ -820,7 +820,7 @@ function Notes() {
             onMouseLeave={(e) => handleMouseLeave(e)}
           >
             <div>
-              <Badge badgeContent={0} color="info" showZero>
+              <Badge badgeContent={tag.count} color="info" showZero>
                 <TagIcon />
               </Badge>
             </div>

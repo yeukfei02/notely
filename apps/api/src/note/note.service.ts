@@ -134,21 +134,46 @@ export class NoteService {
     };
     console.log('where = ', where);
 
-    const notes = await this.prisma.note.findMany({
+    const notes = await this.prisma.note.groupBy({
+      by: ['tag'],
       where: where,
-      orderBy: [
-        {
-          updated_at: 'desc',
+      _count: {
+        tag: true,
+      },
+      orderBy: {
+        _count: {
+          tag: 'desc',
         },
-        {
-          created_at: 'desc',
-        },
-      ],
-      include: {
-        users: true,
       },
     });
-    return notes;
+
+    const formattedNotes = [];
+    for (let index = 0; index < notes.length; index++) {
+      const item: any = notes[index];
+
+      const note = await this.prisma.note.findFirst({
+        where: {
+          tag: item.tag,
+        },
+        include: {
+          users: true,
+          folder: true,
+        },
+      });
+      item.id = note.id;
+      item.content = note.content;
+      item.count = item._count.tag || 0;
+      item.created_at = note.created_at;
+      item.updated_at = note.updated_at;
+      item.users = note.users;
+      item.folder = note.folder;
+
+      delete item._count;
+
+      formattedNotes.push(item);
+    }
+
+    return formattedNotes;
   }
 
   async getNoteById(id: string) {

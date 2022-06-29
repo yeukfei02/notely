@@ -1,6 +1,7 @@
 import { Resolver, Mutation, Query, Args, Context, Int } from '@nestjs/graphql';
 import { NoteService } from './note.service';
 import { Note } from './model/note.model';
+import { Tag } from './model/tag.model';
 import { CreateNoteInput } from './dto/create-note.dto';
 import { GetNotesInput } from './dto/get-notes.dto';
 import { GetTrashsInput } from './dto/get-trashs.dto';
@@ -62,20 +63,20 @@ export class NoteResolver {
     return notes;
   }
 
-  @Query(() => [Note], { nullable: true })
+  @Query(() => [Tag], { nullable: true })
   async tags(
     @Args('input') getTagsInput: GetTagsInput,
     @Context() context
-  ): Promise<Note[]> {
+  ): Promise<Tag[]> {
     const authorizeStatus = authorize(context.token);
 
-    let notes = [];
+    let tags = [];
 
     if (authorizeStatus) {
-      notes = await this.noteService.getTags(getTagsInput);
+      tags = await this.noteService.getTags(getTagsInput);
     }
 
-    return notes;
+    return tags;
   }
 
   @Query(() => Note, { nullable: true })
