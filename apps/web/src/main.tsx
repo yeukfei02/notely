@@ -13,6 +13,7 @@ import App from './app/app';
 import Signup from './app/components/signup/signup';
 import Login from './app/components/login/login';
 import Notes from './app/components/notes/notes';
+import PrivateRoute from './app/components/privateRoute/privateRoute';
 
 const theme = createTheme({
   palette: {
@@ -56,7 +57,14 @@ root.render(
             <Route path="/" element={<App />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/notes" element={<Notes />} />
+            <Route
+              path="/notes"
+              element={
+                <PrivateRoute>
+                  <Notes />
+                </PrivateRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
       </ApolloProvider>
