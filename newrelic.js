@@ -15,7 +15,7 @@ exports.config = {
    */
   license_key: process.env.NEW_RELIC_LICENSE_KEY
     ? process.env.NEW_RELIC_LICENSE_KEY
-    : '',
+    : '1ce8a7910ac0fe20c1032483edcee791e3faNRAL',
 
   logging: {
     /**
