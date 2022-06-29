@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/yeukfei02/notely/compare/v0.1.2...v0.1.3) (2022-06-29)
+
+
+### Features
+
+* 🎸 add new folder menu ([16ed6b6](https://github.com/yeukfei02/notely/commit/16ed6b62894e8aab0dedfb4c24d9cde3039e6f8c))
+* 🎸 add privateRoute ([b22353f](https://github.com/yeukfei02/notely/commit/b22353fe0bbd6bb5ae54b4edd7cd6bf9680c4ed3))
+* 🎸 add right click menu ([9094e36](https://github.com/yeukfei02/notely/commit/9094e36cbffe01715937877fe5ac47b23b45e269))
+
+
+### Bug Fixes
+
+* 🐛 fix folder notes api and add func for notes ui ([fe1e183](https://github.com/yeukfei02/notely/commit/fe1e1835370ca1ae9429ac911044302eef85706a))
+* 🐛 fix signup and login button ([c26e4ab](https://github.com/yeukfei02/notely/commit/c26e4abb5926a001c692b0005d2693fefbea343e))
+* 🐛 remove not used api req ([0c7777a](https://github.com/yeukfei02/notely/commit/0c7777a3b621a88471a1faa042871b8bc2f4fa27))
+* 🐛 rename delete note menu var and func ([ec69887](https://github.com/yeukfei02/notely/commit/ec69887a61fc7f6027689005148f8f1b3fef6277))
+* 🐛 update card style ([e72dea7](https://github.com/yeukfei02/notely/commit/e72dea789881df7db6cff893db7a44d52819ba04))
+
 ### [0.1.2](https://github.com/yeukfei02/notely/compare/v0.1.1...v0.1.2) (2022-06-28)
 
 
