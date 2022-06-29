@@ -208,20 +208,18 @@ function Notes() {
       },
     });
 
-    setTimeout(() => {
-      getFolders({
-        variables: {
-          input: {
-            users_id: localStorage.getItem('users_id'),
-          },
+    getFolders({
+      variables: {
+        input: {
+          users_id: localStorage.getItem('users_id'),
         },
-        context: {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-      });
-    }, 1000);
+      },
+    });
   }, [getNotes, getTrashs, getFolders]);
 
   useEffect(() => {
@@ -511,10 +509,8 @@ function Notes() {
       }
     }
 
-    localStorage.removeItem('folder_id');
     localStorage.removeItem('note_id');
     setTextareaValue('');
-    setCurrentTab('');
     setCurrentNote('');
   };
 
@@ -559,6 +555,17 @@ function Notes() {
     setCurrentTab(name);
 
     if (id) {
+      getFolderById({
+        variables: {
+          id: id,
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+
       getNotes({
         variables: {
           input: {
@@ -572,19 +579,6 @@ function Notes() {
           },
         },
       });
-
-      setTimeout(() => {
-        getFolderById({
-          variables: {
-            id: id,
-          },
-          context: {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          },
-        });
-      }, 1000);
     }
   };
 
@@ -608,21 +602,6 @@ function Notes() {
           },
         },
       });
-
-      setTimeout(() => {
-        getFolders({
-          variables: {
-            input: {
-              users_id: localStorage.getItem('users_id'),
-            },
-          },
-          context: {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          },
-        });
-      }, 1000);
     }
   };
 
@@ -708,21 +687,6 @@ function Notes() {
           },
         },
       });
-
-      setTimeout(() => {
-        getFolders({
-          variables: {
-            input: {
-              users_id: localStorage.getItem('users_id'),
-            },
-          },
-          context: {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          },
-        });
-      }, 1000);
     }
   };
 
@@ -1043,21 +1007,6 @@ function Notes() {
       });
       setNotes(trashs);
     }
-
-    setTimeout(() => {
-      getFolders({
-        variables: {
-          input: {
-            users_id: localStorage.getItem('users_id'),
-          },
-        },
-        context: {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        },
-      });
-    }, 1000);
   };
 
   const handleMouseEnter = (
