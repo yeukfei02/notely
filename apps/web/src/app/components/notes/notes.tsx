@@ -60,7 +60,7 @@ function Notes() {
   const [note, setNote] = useState({});
 
   const [currentView, setCurrentView] = useState('listView');
-  const [currentTab, setCurrentTab] = useState('');
+  const [currentTab, setCurrentTab] = useState('notes');
   const [currentNote, setCurrentNote] = useState('');
   const [searchNotesValue, setSearchNotesValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
@@ -1005,7 +1005,6 @@ function Notes() {
           },
         },
       });
-      setNotes(trashs);
     }
   };
 
@@ -1041,7 +1040,7 @@ function Notes() {
   const renderDeleteAllNotes = () => {
     let deleteAllNotesView = null;
 
-    if (currentTab === 'trash' && !_.isEmpty(notes)) {
+    if (currentTab === 'trash' && !_.isEmpty(trashs)) {
       deleteAllNotesView = (
         <div className="my-4">
           <Button
@@ -1059,14 +1058,14 @@ function Notes() {
   };
 
   const handleDeleteAllNotes = () => {
-    if (notes) {
-      const notesIds = notes.map((note: any) => {
+    if (trashs) {
+      const trashsIds = trashs.map((note: any) => {
         return note.id;
       });
       hardDeleteAllNotes({
         variables: {
           input: {
-            ids: notesIds,
+            ids: trashsIds,
             users_id: localStorage.getItem('users_id'),
           },
         },
@@ -1080,37 +1079,133 @@ function Notes() {
   };
 
   const renderNotes = () => {
-    let notesView = null;
+    let view = null;
 
-    if (notes) {
-      notesView = notes.map((note: any, i) => {
-        const cardTitle = note.content.substring(0, note.content.indexOf('\n'));
-        // console.log('cardTitle = ', cardTitle);
+    if (currentTab === 'notes') {
+      if (notes) {
+        view = renderCardListView(notes);
+      }
+    } else if (currentTab === 'trash') {
+      if (trashs) {
+        view = renderCardListView(trashs);
+      }
+    } else {
+      if (notes) {
+        view = renderCardListView(notes);
+      }
+    }
 
-        const content = note.content
-          .substring(note.content.indexOf('\n'))
-          .trim();
-        // console.log('content = ', content);
+    return view;
+  };
 
-        const now = dayjs();
-        const minuteDiff = now.diff(note.updated_at, 'minute');
+  const renderCardListView = (dataList: any[]) => {
+    const cardListView = dataList.map((note: any, i) => {
+      const cardTitle = note.content.substring(0, note.content.indexOf('\n'));
+      // console.log('cardTitle = ', cardTitle);
 
-        let diffStr = '';
-        if (minuteDiff < 60) {
-          diffStr = minuteDiff < 1 ? 'just now' : `${minuteDiff} minutes ago`;
-        } else {
-          const hourDiff = now.diff(note.updated_at, 'hour');
-          diffStr =
-            hourDiff > 1 ? `${hourDiff} hours ago` : `${hourDiff} hour ago`;
-        }
+      const content = note.content.substring(note.content.indexOf('\n')).trim();
+      // console.log('content = ', content);
 
-        return (
+      const now = dayjs();
+      const minuteDiff = now.diff(note.updated_at, 'minute');
+
+      let diffStr = '';
+      if (minuteDiff < 60) {
+        diffStr = minuteDiff < 1 ? 'just now' : `${minuteDiff} minutes ago`;
+      } else {
+        const hourDiff = now.diff(note.updated_at, 'hour');
+        diffStr =
+          hourDiff > 1 ? `${hourDiff} hours ago` : `${hourDiff} hour ago`;
+      }
+
+      return (
+        <div
+          key={i}
+          className={`${
+            currentNote === note.id
+              ? 'card pointer bg-info bg-opacity-10 my-4'
+              : 'card pointer my-4'
+          }`}
+          onClick={() => handleNoteClick(note.id, note.content)}
+          onContextMenu={(e) => handleDeleteNoteContextMenu(e, note.id)}
+        >
+          <div className="card-body p-4">
+            <div className="d-flex justify-content-end">
+              <ClearIcon
+                className="pointer"
+                onClick={() => handleDeleteNoteById(note.id)}
+              />
+            </div>
+            <h5 className="card-title">
+              <b>{cardTitle || note.content}</b>
+            </h5>
+            <p className="card-text">
+              {content.length < 100
+                ? content
+                : content.substring(0, 100) + '...'}
+            </p>
+            <div>{diffStr}</div>
+          </div>
+        </div>
+      );
+    });
+    return cardListView;
+  };
+
+  const renderNotesGridView = () => {
+    let view = null;
+
+    if (currentTab === 'notes') {
+      if (notes && !showTextarea) {
+        view = renderCardGridView(notes);
+      } else {
+        view = renderNotesGridViewTextarea();
+      }
+    } else if (currentTab === 'trash') {
+      if (trashs && !showTextarea) {
+        view = renderCardGridView(trashs);
+      } else {
+        view = renderNotesGridViewTextarea();
+      }
+    } else {
+      if (notes && !showTextarea) {
+        view = renderCardGridView(notes);
+      } else {
+        view = renderNotesGridViewTextarea();
+      }
+    }
+
+    return view;
+  };
+
+  const renderCardGridView = (dataList: any[]) => {
+    const cardGridView = dataList.map((note: any, i) => {
+      const cardTitle = note.content.substring(0, note.content.indexOf('\n'));
+      // console.log('cardTitle = ', cardTitle);
+
+      const content = note.content.substring(note.content.indexOf('\n')).trim();
+      // console.log('content = ', content);
+
+      const now = dayjs();
+      const minuteDiff = now.diff(note.updated_at, 'minute');
+
+      let diffStr = '';
+      if (minuteDiff < 60) {
+        diffStr = minuteDiff < 1 ? 'just now' : `${minuteDiff} minutes ago`;
+      } else {
+        const hourDiff = now.diff(note.updated_at, 'hour');
+        diffStr =
+          hourDiff > 1 ? `${hourDiff} hours ago` : `${hourDiff} hour ago`;
+      }
+
+      return (
+        <div className="col-sm-4 d-flex align-items-stretch">
           <div
             key={i}
             className={`${
               currentNote === note.id
-                ? 'card pointer bg-info bg-opacity-10 my-4'
-                : 'card pointer my-4'
+                ? 'card w-100 pointer bg-info bg-opacity-10 my-4'
+                : 'card w-100 pointer my-4'
             }`}
             onClick={() => handleNoteClick(note.id, note.content)}
             onContextMenu={(e) => handleDeleteNoteContextMenu(e, note.id)}
@@ -1133,91 +1228,30 @@ function Notes() {
               <div>{diffStr}</div>
             </div>
           </div>
-        );
-      });
-    }
-
-    return notesView;
+        </div>
+      );
+    });
+    return cardGridView;
   };
 
-  const renderNotesGridView = () => {
-    let notesGridView = null;
-
-    if (notes && !showTextarea) {
-      notesGridView = notes.map((note: any, i) => {
-        const cardTitle = note.content.substring(0, note.content.indexOf('\n'));
-        // console.log('cardTitle = ', cardTitle);
-
-        const content = note.content
-          .substring(note.content.indexOf('\n'))
-          .trim();
-        // console.log('content = ', content);
-
-        const now = dayjs();
-        const minuteDiff = now.diff(note.updated_at, 'minute');
-
-        let diffStr = '';
-        if (minuteDiff < 60) {
-          diffStr = minuteDiff < 1 ? 'just now' : `${minuteDiff} minutes ago`;
-        } else {
-          const hourDiff = now.diff(note.updated_at, 'hour');
-          diffStr =
-            hourDiff > 1 ? `${hourDiff} hours ago` : `${hourDiff} hour ago`;
-        }
-
-        return (
-          <div className="col-sm-4 d-flex align-items-stretch">
-            <div
-              key={i}
-              className={`${
-                currentNote === note.id
-                  ? 'card w-100 pointer bg-info bg-opacity-10 my-4'
-                  : 'card w-100 pointer my-4'
-              }`}
-              onClick={() => handleNoteClick(note.id, note.content)}
-              onContextMenu={(e) => handleDeleteNoteContextMenu(e, note.id)}
-            >
-              <div className="card-body p-4">
-                <div className="d-flex justify-content-end">
-                  <ClearIcon
-                    className="pointer"
-                    onClick={() => handleDeleteNoteById(note.id)}
-                  />
-                </div>
-                <h5 className="card-title">
-                  <b>{cardTitle || note.content}</b>
-                </h5>
-                <p className="card-text">
-                  {content.length < 100
-                    ? content
-                    : content.substring(0, 100) + '...'}
-                </p>
-                <div>{diffStr}</div>
-              </div>
-            </div>
-          </div>
-        );
-      });
-    } else {
-      notesGridView = (
-        <textarea
-          id="textarea"
-          className="form-control px-3 py-4"
-          placeholder="Write something..."
-          style={{
-            width: '100vw',
-            height: '100vh',
-            border: 'none',
-            outline: 'none',
-            boxShadow: 'none',
-            resize: 'none',
-          }}
-          onChange={(e) => handleTextareaChange(e)}
-        ></textarea>
-      );
-    }
-
-    return notesGridView;
+  const renderNotesGridViewTextarea = () => {
+    const notesGridViewTextarea = (
+      <textarea
+        id="textarea"
+        className="form-control px-3 py-4"
+        placeholder="Write something..."
+        style={{
+          width: '100vw',
+          height: '100vh',
+          border: 'none',
+          outline: 'none',
+          boxShadow: 'none',
+          resize: 'none',
+        }}
+        onChange={(e) => handleTextareaChange(e)}
+      ></textarea>
+    );
+    return notesGridViewTextarea;
   };
 
   return (
