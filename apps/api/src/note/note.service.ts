@@ -7,6 +7,7 @@ import { GetTagsInput } from './dto/get-tags.dto';
 import { UpdateNoteByIdInput } from './dto/update-note-by-id.dto';
 import { DeleteNoteByIdInput } from './dto/delete-note-by-id.dto';
 import { DeleteAllNotesInput } from './dto/delete-all-notes.dto';
+import _ from 'lodash';
 
 @Injectable()
 export class NoteService {
@@ -72,7 +73,7 @@ export class NoteService {
 
     if (getNotesInput.tag) {
       where['tag'] = {
-        contains: getNotesInput.tag,
+        equals: getNotesInput.tag,
         mode: 'insensitive',
       };
     }
@@ -173,7 +174,9 @@ export class NoteService {
       formattedNotes.push(item);
     }
 
-    return formattedNotes;
+    const sortedNotes = _.orderBy(formattedNotes, ['created_at'], ['asc']);
+
+    return sortedNotes;
   }
 
   async getNoteById(id: string) {

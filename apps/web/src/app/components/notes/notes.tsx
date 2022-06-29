@@ -820,7 +820,7 @@ function Notes() {
             onMouseLeave={(e) => handleMouseLeave(e)}
           >
             <div>
-              <Badge badgeContent={tag.count} color="info" showZero>
+              <Badge badgeContent={tag.count} color="error" showZero>
                 <TagIcon />
               </Badge>
             </div>
