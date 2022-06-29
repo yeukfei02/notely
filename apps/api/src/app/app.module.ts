@@ -11,6 +11,7 @@ import { RavenModule } from 'nest-raven';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), '/apps/api/src/schema.gql'),
@@ -27,7 +28,6 @@ import { RavenModule } from 'nest-raven';
     UserModule,
     FolderModule,
     NoteModule,
-    ConfigModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'web'),
       exclude: ['/api*'],
