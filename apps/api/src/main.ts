@@ -8,6 +8,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import * as Sentry from '@sentry/node';
 import '@sentry/tracing';
+import { NewrelicInterceptor } from './newrelic.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -20,6 +21,9 @@ async function bootstrap() {
     // for finer control
     tracesSampleRate: 1.0,
   });
+
+  // newrelic
+  app.useGlobalInterceptors(new NewrelicInterceptor());
 
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);

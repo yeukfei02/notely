@@ -5,6 +5,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserModule } from '../user/user.module';
 import { FolderModule } from '../folder/folder.module';
 import { NoteModule } from '../note/note.module';
+import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { RavenModule } from 'nest-raven';
 
@@ -26,6 +27,7 @@ import { RavenModule } from 'nest-raven';
     UserModule,
     FolderModule,
     NoteModule,
+    ConfigModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'web'),
       exclude: ['/api*'],
