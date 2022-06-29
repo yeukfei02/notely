@@ -675,6 +675,17 @@ function Notes() {
     setDeleteNoteContextMenu(null);
   };
 
+  const handleAddNoteToFolderMenuItemClose = () => {
+    setDeleteNoteContextMenu(null);
+    if (
+      !addNoteToFolderDialogStatus &&
+      !_.isEmpty(localStorage.getItem('note_id')) &&
+      !_.isEmpty(note)
+    ) {
+      setAddNoteToFolderDialogStatus(true);
+    }
+  };
+
   const handleDeleteNoteMenuItemClose = () => {
     setDeleteNoteContextMenu(null);
 
@@ -884,6 +895,11 @@ function Notes() {
                   : undefined
               }
             >
+              {currentTab !== 'trash' ? (
+                <MenuItem onClick={() => handleAddNoteToFolderMenuItemClose()}>
+                  Add note to folder
+                </MenuItem>
+              ) : null}
               <MenuItem onClick={() => handleDeleteNoteMenuItemClose()}>
                 Delete Note
               </MenuItem>
@@ -1050,6 +1066,11 @@ function Notes() {
                 : undefined
             }
           >
+            {currentTab !== 'trash' ? (
+              <MenuItem onClick={() => handleAddNoteToFolderMenuItemClose()}>
+                Add note to folder
+              </MenuItem>
+            ) : null}
             <MenuItem onClick={() => handleDeleteNoteMenuItemClose()}>
               Delete Note
             </MenuItem>
