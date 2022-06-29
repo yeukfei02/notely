@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/yeukfei02/notely/compare/v0.1.4...v0.1.5) (2022-06-29)
+
+
+### Features
+
+* 🎸 add newrelic ([9cd883d](https://github.com/yeukfei02/notely/commit/9cd883d797a511fc6666ddfc315947530a6a270c))
+* 🎸 add sentry ([83335df](https://github.com/yeukfei02/notely/commit/83335df3e6b8b96ec658f62805440724138eec42))
+
+
+### Bug Fixes
+
+* 🐛 add persistedQueries to false ([f63e8bb](https://github.com/yeukfei02/notely/commit/f63e8bbbecf661b2d6dcb76991628b6743b35ffb))
+* 🐛 fix ConfigModule ([0175206](https://github.com/yeukfei02/notely/commit/0175206d2a4ba4f8f4ef0087f79a0412f0d4346f))
+* 🐛 fix getTags and fix ui ([a504c15](https://github.com/yeukfei02/notely/commit/a504c15745f6000b64a6e48a059e5f3827c45ab2))
+* 🐛 fix newrelic.js ([82aa082](https://github.com/yeukfei02/notely/commit/82aa082a5ef7a5b5c6c2116d7bf805885424ac73))
+* 🐛 fix sorting ([301a1d3](https://github.com/yeukfei02/notely/commit/301a1d390e4a430bd157cf58a9e37ac31581305a))
+* 🐛 update NEW_RELIC_LICENSE_KEY ([7505b32](https://github.com/yeukfei02/notely/commit/7505b32f20319bc5525fc17db34f42ed39666429))
+
 ### [0.1.4](https://github.com/yeukfei02/notely/compare/v0.1.3...v0.1.4) (2022-06-29)
 
 
