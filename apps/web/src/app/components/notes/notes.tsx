@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Chip from '@mui/material/Chip';
 import NoteIcon from '@mui/icons-material/Note';
 import FolderIcon from '@mui/icons-material/Folder';
 import Badge from '@mui/material/Badge';
@@ -1106,6 +1107,10 @@ function Notes() {
       const content = note.content.substring(note.content.indexOf('\n')).trim();
       // console.log('content = ', content);
 
+      const tag = note.content.includes('#')
+        ? note.content.substring(note.content.indexOf('#') + 1)
+        : '';
+
       const now = dayjs();
       const minuteDiff = now.diff(note.updated_at, 'minute');
 
@@ -1144,7 +1149,12 @@ function Notes() {
                 ? content
                 : content.substring(0, 100) + '...'}
             </p>
-            <div>{diffStr}</div>
+            <div>
+              {tag ? (
+                <Chip label={`# ${tag}`} color="error" variant="outlined" />
+              ) : null}
+            </div>
+            <div className="mt-3">{diffStr}</div>
           </div>
         </div>
       );
@@ -1186,6 +1196,10 @@ function Notes() {
       const content = note.content.substring(note.content.indexOf('\n')).trim();
       // console.log('content = ', content);
 
+      const tag = note.content.includes('#')
+        ? note.content.substring(note.content.indexOf('#') + 1)
+        : '';
+
       const now = dayjs();
       const minuteDiff = now.diff(note.updated_at, 'minute');
 
@@ -1225,7 +1239,12 @@ function Notes() {
                   ? content
                   : content.substring(0, 100) + '...'}
               </p>
-              <div>{diffStr}</div>
+              <div>
+                {tag ? (
+                  <Chip label={`# ${tag}`} color="error" variant="outlined" />
+                ) : null}
+              </div>
+              <div className="mt-3">{diffStr}</div>
             </div>
           </div>
         </div>
