@@ -24,6 +24,7 @@ import { RavenModule } from 'nest-raven';
         };
         return data;
       },
+      persistedQueries: false,
     }),
     UserModule,
     FolderModule,
