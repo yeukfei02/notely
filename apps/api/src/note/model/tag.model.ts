@@ -1,17 +1,20 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, Int } from '@nestjs/graphql';
 import { User } from '../../user/model/user.model';
 import { Folder } from '../../folder/model/folder.model';
 
 @ObjectType()
-export class Note {
+export class Tag {
   @Field()
   id: string;
 
   @Field()
   content: string;
 
-  @Field({ nullable: true })
-  tag?: string;
+  @Field()
+  tag: string;
+
+  @Field(() => Int)
+  count: number;
 
   @Field()
   created_at: Date;

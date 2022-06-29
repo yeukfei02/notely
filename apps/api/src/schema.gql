@@ -50,7 +50,12 @@ input GetFoldersInput {
 input GetNotesInput {
   folder_id: String
   search_notes_value: String
+  tag: String
   type: String
+  users_id: String!
+}
+
+input GetTagsInput {
   users_id: String!
 }
 
@@ -87,6 +92,7 @@ type Note {
   created_at: DateTime!
   folder: Folder
   id: String!
+  tag: String
   updated_at: DateTime!
   users: User
 }
@@ -96,6 +102,7 @@ type Query {
   folders(input: GetFoldersInput!): [Folder!]
   note(id: String!): Note
   notes(input: GetNotesInput!): [Note!]
+  tags(input: GetTagsInput!): [Tag!]
   trashs(input: GetTrashsInput!): [Note!]
   users: [User!]
 }
@@ -103,6 +110,17 @@ type Query {
 input SignupInput {
   email: String!
   password: String!
+}
+
+type Tag {
+  content: String!
+  count: Int!
+  created_at: DateTime!
+  folder: Folder
+  id: String!
+  tag: String!
+  updated_at: DateTime!
+  users: User
 }
 
 input UpdateFolderByIdInput {

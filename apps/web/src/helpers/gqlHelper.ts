@@ -1039,6 +1039,199 @@ export const GET_TRASHS = gql`
   }
 `;
 
+export const GET_TAGS = gql`
+  query tags($input: GetTagsInput!) {
+    tags(input: $input) {
+      content
+      count
+      created_at
+      folder {
+        created_at
+        id
+        name
+        notes {
+          content
+          created_at
+          folder {
+            created_at
+            id
+            name
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          tag
+          updated_at
+          users {
+            created_at
+            email
+            folders {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            notes {
+              content
+              created_at
+              id
+              tag
+              updated_at
+            }
+            password
+            updated_at
+          }
+        }
+        updated_at
+        users {
+          created_at
+          email
+          folders {
+            created_at
+            id
+            name
+            notes {
+              content
+              created_at
+              id
+              tag
+              updated_at
+            }
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          notes {
+            content
+            created_at
+            folder {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            tag
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          password
+          updated_at
+        }
+      }
+      id
+      tag
+      updated_at
+      users {
+        created_at
+        email
+        folders {
+          created_at
+          id
+          name
+          notes {
+            content
+            created_at
+            folder {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            tag
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          updated_at
+          users {
+            created_at
+            email
+            id
+            notes {
+              content
+              created_at
+              id
+              tag
+              updated_at
+            }
+            password
+            updated_at
+          }
+        }
+        id
+        notes {
+          content
+          created_at
+          folder {
+            created_at
+            id
+            name
+            notes {
+              content
+              created_at
+              id
+              tag
+              updated_at
+            }
+            updated_at
+            users {
+              created_at
+              email
+              id
+              password
+              updated_at
+            }
+          }
+          id
+          tag
+          updated_at
+          users {
+            created_at
+            email
+            folders {
+              created_at
+              id
+              name
+              updated_at
+            }
+            id
+            password
+            updated_at
+          }
+        }
+        password
+        updated_at
+      }
+    }
+  }
+`;
+
 export const GET_NOTES_BY_ID = gql`
   query note($id: String!) {
     note(id: $id) {
