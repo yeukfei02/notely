@@ -20,7 +20,11 @@ export class FolderService {
         },
         include: {
           users: true,
-          notes: true,
+          notes: {
+            where: {
+              deleted_at: null,
+            },
+          },
         },
       });
     }
@@ -38,7 +42,11 @@ export class FolderService {
       },
       include: {
         users: true,
-        notes: true,
+        notes: {
+          where: {
+            deleted_at: null,
+          },
+        },
       },
     });
     return folders;
@@ -51,7 +59,11 @@ export class FolderService {
       },
       include: {
         users: true,
-        notes: true,
+        notes: {
+          where: {
+            deleted_at: null,
+          },
+        },
       },
     });
     return folder;
