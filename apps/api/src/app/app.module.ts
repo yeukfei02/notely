@@ -6,6 +6,7 @@ import { UserModule } from '../user/user.module';
 import { FolderModule } from '../folder/folder.module';
 import { NoteModule } from '../note/note.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { RavenModule } from 'nest-raven';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       rootPath: join(__dirname, '..', 'web'),
       exclude: ['/api*'],
     }),
+    RavenModule,
   ],
 })
 export class AppModule {}
