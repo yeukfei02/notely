@@ -39,3 +39,4 @@ testem.log
 Thumbs.db
 
 .env
+newrelic_agent.log
