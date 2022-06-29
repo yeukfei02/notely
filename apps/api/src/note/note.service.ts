@@ -174,7 +174,11 @@ export class NoteService {
       formattedNotes.push(item);
     }
 
-    const sortedNotes = _.orderBy(formattedNotes, ['created_at'], ['asc']);
+    const sortedNotes = _.orderBy(
+      formattedNotes,
+      ['count', 'created_at'],
+      ['desc', 'asc']
+    );
 
     return sortedNotes;
   }

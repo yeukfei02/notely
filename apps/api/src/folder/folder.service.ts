@@ -4,6 +4,7 @@ import { CreateFolderInput } from './dto/create-folder.dto';
 import { GetFoldersInput } from './dto/get-folders.dto';
 import { UpdateFolderByIdInput } from './dto/update-folder-by-id.dto';
 import { DeleteFolderByIdInput } from './dto/delete-folder-by-id.dto';
+import _ from 'lodash';
 
 @Injectable()
 export class FolderService {
@@ -49,7 +50,14 @@ export class FolderService {
         },
       },
     });
-    return folders;
+
+    const sortedFolders = _.orderBy(
+      folders,
+      ['notes', 'created_at'],
+      ['desc', 'asc']
+    );
+
+    return sortedFolders;
   }
 
   async getFolderById(id: string) {
