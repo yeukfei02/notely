@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/yeukfei02/notely/compare/v0.1.3...v0.1.4) (2022-06-29)
+
+
+### Features
+
+* 🎸 add getTags api ([5e36a97](https://github.com/yeukfei02/notely/commit/5e36a9779eeb01e0156069b5a6ced4b8178cf23c))
+* 🎸 add tag in card ([a4bffd2](https://github.com/yeukfei02/notely/commit/a4bffd27c760044a28ad007c1676bb03e1b28e1f))
+* 🎸 add tag in note model ([959571a](https://github.com/yeukfei02/notely/commit/959571a7c38b1fc3a079e0b919a691f6829b4bec))
+* 🎸 add tags in ui ([9a3d139](https://github.com/yeukfei02/notely/commit/9a3d139fb704fe44cf15fc8b2b997327c059b56d))
+
 ### [0.1.3](https://github.com/yeukfei02/notely/compare/v0.1.2...v0.1.3) (2022-06-29)
 
 
