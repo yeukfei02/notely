@@ -4,6 +4,7 @@ import { Note } from './model/note.model';
 import { CreateNoteInput } from './dto/create-note.dto';
 import { GetNotesInput } from './dto/get-notes.dto';
 import { GetTrashsInput } from './dto/get-trashs.dto';
+import { GetTagsInput } from './dto/get-tags.dto';
 import { UpdateNoteByIdInput } from './dto/update-note-by-id.dto';
 import { DeleteNoteByIdInput } from './dto/delete-note-by-id.dto';
 import { DeleteAllNotesInput } from './dto/delete-all-notes.dto';
@@ -56,6 +57,22 @@ export class NoteResolver {
 
     if (authorizeStatus) {
       notes = await this.noteService.getTrashs(getTrashsInput);
+    }
+
+    return notes;
+  }
+
+  @Query(() => [Note], { nullable: true })
+  async tags(
+    @Args('input') getTagsInput: GetTagsInput,
+    @Context() context
+  ): Promise<Note[]> {
+    const authorizeStatus = authorize(context.token);
+
+    let notes = [];
+
+    if (authorizeStatus) {
+      notes = await this.noteService.getTags(getTagsInput);
     }
 
     return notes;

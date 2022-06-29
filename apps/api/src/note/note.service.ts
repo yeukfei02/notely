@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { CreateNoteInput } from './dto/create-note.dto';
 import { GetNotesInput } from './dto/get-notes.dto';
 import { GetTrashsInput } from './dto/get-trashs.dto';
+import { GetTagsInput } from './dto/get-tags.dto';
 import { UpdateNoteByIdInput } from './dto/update-note-by-id.dto';
 import { DeleteNoteByIdInput } from './dto/delete-note-by-id.dto';
 import { DeleteAllNotesInput } from './dto/delete-all-notes.dto';
@@ -68,6 +69,14 @@ export class NoteService {
         mode: 'insensitive',
       };
     }
+
+    if (getNotesInput.tag) {
+      where['tag'] = {
+        contains: getNotesInput.tag,
+        mode: 'insensitive',
+      };
+    }
+
     console.log('where = ', where);
 
     const notes = await this.prisma.note.findMany({
@@ -110,6 +119,33 @@ export class NoteService {
       include: {
         users: true,
         folder: true,
+      },
+    });
+    return notes;
+  }
+
+  async getTags(getTagsInput: GetTagsInput) {
+    const where = {
+      users_id: getTagsInput.users_id,
+      tag: {
+        not: '',
+      },
+      deleted_at: null,
+    };
+    console.log('where = ', where);
+
+    const notes = await this.prisma.note.findMany({
+      where: where,
+      orderBy: [
+        {
+          updated_at: 'desc',
+        },
+        {
+          created_at: 'desc',
+        },
+      ],
+      include: {
+        users: true,
       },
     });
     return notes;

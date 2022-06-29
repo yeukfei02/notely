@@ -50,7 +50,12 @@ input GetFoldersInput {
 input GetNotesInput {
   folder_id: String
   search_notes_value: String
+  tag: String
   type: String
+  users_id: String!
+}
+
+input GetTagsInput {
   users_id: String!
 }
 
@@ -97,6 +102,7 @@ type Query {
   folders(input: GetFoldersInput!): [Folder!]
   note(id: String!): Note
   notes(input: GetNotesInput!): [Note!]
+  tags(input: GetTagsInput!): [Note!]
   trashs(input: GetTrashsInput!): [Note!]
   users: [User!]
 }

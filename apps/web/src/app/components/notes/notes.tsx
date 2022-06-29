@@ -26,6 +26,7 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddLinkIcon from '@mui/icons-material/AddLink';
+import TagIcon from '@mui/icons-material/Tag';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import {
@@ -37,6 +38,7 @@ import {
   DELETE_FOLDER_BY_ID,
   GET_NOTES,
   GET_TRASHS,
+  GET_TAGS,
   GET_NOTES_BY_ID,
   UPDATE_NOTE_BY_ID,
   DELETE_NOTE_BY_ID,
@@ -58,6 +60,7 @@ function Notes() {
   const [folder, setFolder] = useState({});
   const [notes, setNotes] = useState([]);
   const [trashs, setTrashs] = useState([]);
+  const [tags, setTags] = useState([]);
   const [note, setNote] = useState({});
 
   const [currentView, setCurrentView] = useState('listView');
@@ -96,6 +99,7 @@ function Notes() {
     useMutation(DELETE_FOLDER_BY_ID);
   const [getNotes, getNotesResult] = useLazyQuery(GET_NOTES);
   const [getTrashs, getTrashsResult] = useLazyQuery(GET_TRASHS);
+  const [getTags, getTagsResult] = useLazyQuery(GET_TAGS);
   const [getNoteById, getNoteByIdResult] = useLazyQuery(GET_NOTES_BY_ID);
   const [updateNoteById, updateNoteByIdResult] = useMutation(UPDATE_NOTE_BY_ID);
   const [deleteNoteById, deleteNoteByIdResult] = useMutation(DELETE_NOTE_BY_ID);
@@ -143,6 +147,10 @@ function Notes() {
   console.log('getTrashsResult.data = ', getTrashsResult.data);
   console.log('getTrashsResult.loading = ', getTrashsResult.loading);
   console.log('getTrashsResult.error = ', getTrashsResult.error);
+
+  console.log('getTagsResult.data = ', getTagsResult.data);
+  console.log('getTagsResult.loading = ', getTagsResult.loading);
+  console.log('getTagsResult.error = ', getTagsResult.error);
 
   console.log('getNoteByIdResult.data = ', getNoteByIdResult.data);
   console.log('getNoteByIdResult.loading = ', getNoteByIdResult.loading);
@@ -209,6 +217,19 @@ function Notes() {
       },
     });
 
+    getTags({
+      variables: {
+        input: {
+          users_id: localStorage.getItem('users_id'),
+        },
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    });
+
     getFolders({
       variables: {
         input: {
@@ -221,7 +242,7 @@ function Notes() {
         },
       },
     });
-  }, [getNotes, getTrashs, getFolders]);
+  }, [getNotes, getTrashs, getTags, getFolders]);
 
   useEffect(() => {
     if (getFoldersResult.data) {
@@ -246,6 +267,12 @@ function Notes() {
       setTrashs(getTrashsResult.data.trashs);
     }
   }, [getTrashsResult.data]);
+
+  useEffect(() => {
+    if (getTagsResult.data) {
+      setTags(getTagsResult.data.tags);
+    }
+  }, [getTagsResult.data]);
 
   useEffect(() => {
     if (getNoteByIdResult.data) {
@@ -583,6 +610,26 @@ function Notes() {
     }
   };
 
+  const handleTagClick = (name: string) => {
+    setCurrentTab(name);
+
+    if (name) {
+      getNotes({
+        variables: {
+          input: {
+            tag: name,
+            users_id: localStorage.getItem('users_id'),
+          },
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      });
+    }
+  };
+
   const handleNoteClick = (id: string, content: string) => {
     localStorage.setItem('note_id', id);
     setCurrentNote(id);
@@ -713,10 +760,10 @@ function Notes() {
   };
 
   const renderFolders = () => {
-    let newFoldersView = null;
+    let foldersView = null;
 
     if (folders) {
-      newFoldersView = folders.map((folder: any, i) => {
+      foldersView = folders.map((folder: any, i) => {
         return (
           <div
             key={i}
@@ -752,7 +799,45 @@ function Notes() {
       });
     }
 
-    return newFoldersView;
+    return foldersView;
+  };
+
+  const renderTags = () => {
+    let tagsView = null;
+
+    if (tags) {
+      tagsView = tags.map((tag: any, i) => {
+        return (
+          <div
+            key={i}
+            className={`${
+              currentTab === tag.name
+                ? 'd-flex flex-row align-items-center justify-content-around pointer bg-light bg-opacity-50 w-full p-2 m-4 rounded'
+                : 'd-flex flex-row align-items-center justify-content-around pointer w-full p-2 m-4 rounded'
+            }`}
+            onClick={() => handleTagClick(tag.tag)}
+            onMouseEnter={(e) => handleMouseEnter(e)}
+            onMouseLeave={(e) => handleMouseLeave(e)}
+          >
+            <div>
+              <Badge badgeContent={0} color="info" showZero>
+                <TagIcon />
+              </Badge>
+            </div>
+            <div>
+              <b>
+                {tag.tag && tag.tag.length < 20
+                  ? tag.tag
+                  : tag.tag.substring(0, 20) + '...'}
+              </b>
+            </div>
+            <div></div>
+          </div>
+        );
+      });
+    }
+
+    return tagsView;
   };
 
   const renderView = (currentView: string) => {
@@ -1342,6 +1427,10 @@ function Notes() {
           {!_.isEmpty(folders) ? <hr /> : null}
 
           {renderFolders()}
+
+          {!_.isEmpty(tags) ? <hr /> : null}
+
+          {renderTags()}
 
           <Menu
             open={newFolderContextMenu !== null}
