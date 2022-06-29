@@ -10,6 +10,9 @@ export class Note {
   @Field()
   content: string;
 
+  @Field({ nullable: true })
+  tag?: string;
+
   @Field()
   created_at: Date;
 

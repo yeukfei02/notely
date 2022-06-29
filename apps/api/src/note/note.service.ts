@@ -17,6 +17,11 @@ export class NoteService {
     if (createNoteInput.content && createNoteInput.users_id) {
       const data = {
         content: createNoteInput.content,
+        tag: createNoteInput.content.includes('#')
+          ? createNoteInput.content
+              .substring(createNoteInput.content.indexOf('#') + 1)
+              .trim()
+          : '',
         users_id: createNoteInput.users_id,
       };
       if (createNoteInput.folder_id) {
@@ -135,6 +140,11 @@ export class NoteService {
       where: where,
       data: {
         content: updateNoteByIdInput.content,
+        tag: updateNoteByIdInput.content.includes('#')
+          ? updateNoteByIdInput.content
+              .substring(updateNoteByIdInput.content.indexOf('#') + 1)
+              .trim()
+          : '',
         folder_id: updateNoteByIdInput.folder_id,
         updated_at: new Date(),
       },

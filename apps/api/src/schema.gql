@@ -87,6 +87,7 @@ type Note {
   created_at: DateTime!
   folder: Folder
   id: String!
+  tag: String
   updated_at: DateTime!
   users: User
 }
