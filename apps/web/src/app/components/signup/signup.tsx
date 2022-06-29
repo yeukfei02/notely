@@ -92,6 +92,10 @@ function Signup() {
     }
   };
 
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+
   const handleSignupSuccessClose = () => {
     setOpenSignupSuccess(false);
   };
@@ -153,7 +157,14 @@ function Signup() {
             Signup
           </Button>
           <div className="my-3">
-            Already have an account? <a href="/login">Login</a>
+            Already have an account?
+            <button
+              type="button"
+              className="btn btn-link p-0 mx-2"
+              onClick={() => handleLoginClick()}
+            >
+              Login
+            </button>
           </div>
         </div>
 

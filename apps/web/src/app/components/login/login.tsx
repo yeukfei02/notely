@@ -50,6 +50,10 @@ function Login() {
     setPassword(e.target.value);
   };
 
+  const handleSignupClick = () => {
+    navigate('/signup');
+  };
+
   const handleLoginClick = () => {
     const isEmailValid = EmailValidator.validate(email);
     if (email && password && isEmailValid) {
@@ -113,7 +117,14 @@ function Login() {
             Login
           </Button>
           <div className="my-3">
-            Don't have an account? <a href="/signup">Signup</a>
+            Don't have an account?
+            <button
+              type="button"
+              className="btn btn-link p-0 mx-2"
+              onClick={() => handleSignupClick()}
+            >
+              Signup
+            </button>
           </div>
         </div>
 
