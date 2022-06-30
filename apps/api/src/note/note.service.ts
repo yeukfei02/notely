@@ -46,19 +46,8 @@ export class NoteService {
   async getNotes(getNotesInput: GetNotesInput) {
     const where = {
       users_id: getNotesInput.users_id,
+      deleted_at: null,
     };
-
-    if (getNotesInput.type) {
-      if (getNotesInput.type === 'notes') {
-        where['deleted_at'] = null;
-      } else if (getNotesInput.type === 'trash') {
-        where['deleted_at'] = {
-          lte: new Date(),
-        };
-      }
-    } else {
-      where['deleted_at'] = null;
-    }
 
     if (getNotesInput.folder_id) {
       where['folder_id'] = getNotesInput.folder_id;
@@ -105,6 +94,14 @@ export class NoteService {
         lte: new Date(),
       },
     };
+
+    if (getTrashsInput.search_notes_value) {
+      where['content'] = {
+        contains: getTrashsInput.search_notes_value,
+        mode: 'insensitive',
+      };
+    }
+
     console.log('where = ', where);
 
     const notes = await this.prisma.note.findMany({

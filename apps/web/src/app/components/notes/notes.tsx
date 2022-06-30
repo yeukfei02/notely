@@ -291,6 +291,15 @@ function Notes() {
       hardDeleteNoteByIdResult.data ||
       hardDeleteAllNotesResult.data
     ) {
+      const textarea = document.querySelector('#textarea');
+      if (textarea) {
+        (textarea as any).value = '';
+      }
+
+      localStorage.removeItem('note_id');
+      setTextareaValue('');
+      setCurrentNote('');
+
       window.location.reload();
     }
   }, [
@@ -305,21 +314,18 @@ function Notes() {
   ]);
 
   useEffect(() => {
-    if (searchNotesValue) {
-      let type = '';
-      if (currentTab === 'notes') {
-        type = 'notes';
-      } else if (currentTab === 'trash') {
-        type = 'trash';
-      }
+    const input: any = {
+      users_id: localStorage.getItem('users_id'),
+    };
 
-      getNotes({
+    if (searchNotesValue) {
+      input['search_notes_value'] = searchNotesValue;
+    }
+
+    if (currentTab === 'trash') {
+      getTrashs({
         variables: {
-          input: {
-            users_id: localStorage.getItem('users_id'),
-            search_notes_value: searchNotesValue,
-            type: type,
-          },
+          input: input,
         },
         context: {
           headers: {
@@ -330,9 +336,7 @@ function Notes() {
     } else {
       getNotes({
         variables: {
-          input: {
-            users_id: localStorage.getItem('users_id'),
-          },
+          input: input,
         },
         context: {
           headers: {
@@ -341,7 +345,7 @@ function Notes() {
         },
       });
     }
-  }, [searchNotesValue, getNotes]);
+  }, [searchNotesValue, getNotes, getTrashs]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -529,6 +533,10 @@ function Notes() {
       (textarea as any).value = '';
     }
 
+    localStorage.removeItem('note_id');
+    setTextareaValue('');
+    setCurrentNote('');
+
     if (currentView === 'gridView') {
       if (!showTextarea) {
         setShowTextarea(true);
@@ -536,10 +544,6 @@ function Notes() {
         setShowTextarea(false);
       }
     }
-
-    localStorage.removeItem('note_id');
-    setTextareaValue('');
-    setCurrentNote('');
   };
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
