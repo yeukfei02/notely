@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.6](https://github.com/yeukfei02/notely/compare/v0.1.5...v0.1.6) (2022-06-30)
+
+
+### Features
+
+* 🎸 add Add note to folder menu item ([5bd9e23](https://github.com/yeukfei02/notely/commit/5bd9e23d76c76042c0278f077a0c5478e4166822))
+* 🎸 add google analytic ([5096df5](https://github.com/yeukfei02/notely/commit/5096df53e8d49db97fcfcd5392bbd85d96db88f2))
+
+
+### Bug Fixes
+
+* 🐛 fix api and ui logic ([97505da](https://github.com/yeukfei02/notely/commit/97505dac5959637f6a9ddd20a4730e1fa2f8f7ba))
+* 🐛 fix seed.ts ([26e9fae](https://github.com/yeukfei02/notely/commit/26e9fae5ad286145c339dce9fba822afcab34992))
+* 🐛 fix seed.ts ([7cd6298](https://github.com/yeukfei02/notely/commit/7cd6298bc6936b8681224ccc60cfad7bf8c1f467))
+* 🐛 update seed.ts ([6b5da8f](https://github.com/yeukfei02/notely/commit/6b5da8f7cf85ba2edac744eabd18d8f3b4db7b04))
+
 ### [0.1.5](https://github.com/yeukfei02/notely/compare/v0.1.4...v0.1.5) (2022-06-29)
 
 
