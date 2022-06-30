@@ -17,8 +17,4 @@ export class GetNotesInput {
   @Field({ nullable: true })
   @IsOptional()
   tag?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  type?: string;
 }

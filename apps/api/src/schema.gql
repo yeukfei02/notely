@@ -51,7 +51,6 @@ input GetNotesInput {
   folder_id: String
   search_notes_value: String
   tag: String
-  type: String
   users_id: String!
 }
 
@@ -60,6 +59,7 @@ input GetTagsInput {
 }
 
 input GetTrashsInput {
+  search_notes_value: String
   users_id: String!
 }
 
