@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.7](https://github.com/yeukfei02/notely/compare/v0.1.6...v0.1.7) (2022-06-30)
+
+
+### Features
+
+* 🎸 add codeEditor ([1ebf2f1](https://github.com/yeukfei02/notely/commit/1ebf2f1523e3778d62074bd2616841777747c828))
+* 🎸 add handleFolderChipClick ([a29d618](https://github.com/yeukfei02/notely/commit/a29d618f7e1b8b455c30e797b4383a2deedc208c))
+* 🎸 add type, normal text and markdown api and ui ([345daf7](https://github.com/yeukfei02/notely/commit/345daf7fe33e51ee9d71cd0712b511cd52e17797))
+
+
+### Bug Fixes
+
+* 🐛 fix gql query and mutation ([1196101](https://github.com/yeukfei02/notely/commit/1196101ca4bcabd801a3959dd56778548a9995a1))
+* 🐛 fix to use renderTextarea func ([71bdeb7](https://github.com/yeukfei02/notely/commit/71bdeb7269c9df46a3feb076f9586146d7b8e8eb))
+* 🐛 fix ui and update var ([f711820](https://github.com/yeukfei02/notely/commit/f711820fc74093ce83e82731ce6c584ed66f81e7))
+
 ### [0.1.6](https://github.com/yeukfei02/notely/compare/v0.1.5...v0.1.6) (2022-06-30)
 
 
