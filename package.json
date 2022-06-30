@@ -103,7 +103,7 @@
     "start": "node ./dist/apps/api/main.js",
     "prebuild": "rimraf ./dist",
     "build": "yarn run build:api && yarn run build:web",
-    "build:api": "nx build api && cp ./apps/api/prisma/schema.prisma ./dist/apps/api",
+    "build:api": "nx build api && yarn run prisma:generate && cp ./apps/api/prisma/schema.prisma ./dist/apps/api",
     "build:web": "nx build web",
     "test": "yarn run test:api && yarn run test:web",
     "test:api": "nx test api",
@@ -120,7 +120,7 @@
     "prisma:studio": "npx prisma studio --schema=./apps/api/prisma/schema.prisma",
     "commit": "git-cz",
     "release": "standard-version",
-    "heroku-postbuild": "yarn run build && yarn run prisma:generate",
+    "heroku-postbuild": "yarn run build",
     "prepare": "husky install"
   },
   "prisma": {
