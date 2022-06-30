@@ -972,20 +972,7 @@ function Notes() {
                 </Tooltip>
               </div>
             </div>
-            <textarea
-              id="textarea"
-              className="form-control px-3 py-4"
-              placeholder="Write something..."
-              style={{
-                width: '100vw',
-                height: '100vh',
-                border: 'none',
-                outline: 'none',
-                boxShadow: 'none',
-                resize: 'none',
-              }}
-              onChange={(e) => handleTextareaChange(e)}
-            ></textarea>
+            {renderTextarea()}
           </div>
         </>
       );
@@ -1308,19 +1295,19 @@ function Notes() {
       if (notes && !showTextarea) {
         view = renderCardGridView(notes);
       } else {
-        view = renderNotesGridViewTextarea();
+        view = renderTextarea();
       }
     } else if (currentTab === 'trash') {
       if (trashs && !showTextarea) {
         view = renderCardGridView(trashs);
       } else {
-        view = renderNotesGridViewTextarea();
+        view = renderTextarea();
       }
     } else {
       if (notes && !showTextarea) {
         view = renderCardGridView(notes);
       } else {
-        view = renderNotesGridViewTextarea();
+        view = renderTextarea();
       }
     }
 
@@ -1404,8 +1391,8 @@ function Notes() {
     return cardGridView;
   };
 
-  const renderNotesGridViewTextarea = () => {
-    const notesGridViewTextarea = (
+  const renderTextarea = () => {
+    const textarea = (
       <textarea
         id="textarea"
         className="form-control px-3 py-4"
@@ -1421,7 +1408,7 @@ function Notes() {
         onChange={(e) => handleTextareaChange(e)}
       ></textarea>
     );
-    return notesGridViewTextarea;
+    return textarea;
   };
 
   return (
