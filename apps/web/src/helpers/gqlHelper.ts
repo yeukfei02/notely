@@ -21,6 +21,7 @@ export const SIGNUP = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -34,6 +35,7 @@ export const SIGNUP = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -50,6 +52,7 @@ export const SIGNUP = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -69,6 +72,7 @@ export const SIGNUP = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -85,6 +89,7 @@ export const SIGNUP = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -111,6 +116,7 @@ export const SIGNUP = gql`
             created_at
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -136,6 +142,7 @@ export const SIGNUP = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -144,6 +151,7 @@ export const SIGNUP = gql`
         }
         id
         tag
+        type
         updated_at
         users {
           created_at
@@ -157,6 +165,7 @@ export const SIGNUP = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -180,6 +189,7 @@ export const SIGNUP = gql`
             }
             id
             tag
+            type
             updated_at
           }
           password
@@ -214,6 +224,7 @@ export const LOGIN = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -233,6 +244,7 @@ export const LOGIN = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -252,6 +264,7 @@ export const LOGIN = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -265,6 +278,7 @@ export const LOGIN = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -306,6 +320,7 @@ export const CREATE_FOLDER = gql`
             created_at
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -331,6 +346,7 @@ export const CREATE_FOLDER = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -339,6 +355,7 @@ export const CREATE_FOLDER = gql`
         }
         id
         tag
+        type
         updated_at
         users {
           created_at
@@ -352,6 +369,7 @@ export const CREATE_FOLDER = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -375,6 +393,7 @@ export const CREATE_FOLDER = gql`
             }
             id
             tag
+            type
             updated_at
           }
           password
@@ -400,6 +419,7 @@ export const CREATE_FOLDER = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -419,6 +439,7 @@ export const CREATE_FOLDER = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -438,6 +459,7 @@ export const CREATE_FOLDER = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -451,6 +473,7 @@ export const CREATE_FOLDER = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -500,6 +523,7 @@ export const CREATE_NOTE = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -516,6 +540,7 @@ export const CREATE_NOTE = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -535,6 +560,7 @@ export const CREATE_NOTE = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -558,6 +584,7 @@ export const CREATE_NOTE = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -573,6 +600,7 @@ export const CREATE_NOTE = gql`
       }
       id
       tag
+      type
       updated_at
       users {
         created_at
@@ -592,6 +620,7 @@ export const CREATE_NOTE = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -611,6 +640,7 @@ export const CREATE_NOTE = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -630,6 +660,7 @@ export const CREATE_NOTE = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -643,6 +674,7 @@ export const CREATE_NOTE = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -683,6 +715,7 @@ export const GET_FOLDERS = gql`
             created_at
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -708,6 +741,7 @@ export const GET_FOLDERS = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -716,6 +750,7 @@ export const GET_FOLDERS = gql`
         }
         id
         tag
+        type
         updated_at
         users {
           created_at
@@ -745,6 +780,7 @@ export const GET_FOLDERS = gql`
             }
             id
             tag
+            type
             updated_at
           }
           password
@@ -770,6 +806,7 @@ export const GET_FOLDERS = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -794,6 +831,7 @@ export const GET_FOLDERS = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -807,6 +845,7 @@ export const GET_FOLDERS = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -858,6 +897,7 @@ export const GET_FOLDER_BY_ID = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -866,6 +906,7 @@ export const GET_FOLDER_BY_ID = gql`
         }
         id
         tag
+        type
         updated_at
         users {
           created_at
@@ -879,6 +920,7 @@ export const GET_FOLDER_BY_ID = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -902,6 +944,7 @@ export const GET_FOLDER_BY_ID = gql`
             }
             id
             tag
+            type
             updated_at
           }
           password
@@ -927,6 +970,7 @@ export const GET_FOLDER_BY_ID = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -946,6 +990,7 @@ export const GET_FOLDER_BY_ID = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -965,12 +1010,14 @@ export const GET_FOLDER_BY_ID = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -1019,6 +1066,7 @@ export const GET_NOTES = gql`
           created_at
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -1035,6 +1083,7 @@ export const GET_NOTES = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -1054,6 +1103,7 @@ export const GET_NOTES = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -1071,6 +1121,7 @@ export const GET_NOTES = gql`
             created_at
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -1086,6 +1137,7 @@ export const GET_NOTES = gql`
       }
       id
       tag
+      type
       updated_at
       users {
         created_at
@@ -1105,6 +1157,7 @@ export const GET_NOTES = gql`
             }
             id
             tag
+            type
             updated_at
           }
           updated_at
@@ -1117,6 +1170,7 @@ export const GET_NOTES = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -1136,6 +1190,7 @@ export const GET_NOTES = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -1149,6 +1204,7 @@ export const GET_NOTES = gql`
           }
           id
           tag
+          type
           updated_at
         }
         password
@@ -1185,6 +1241,7 @@ export const GET_TRASHS = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -1201,6 +1258,7 @@ export const GET_TRASHS = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -1220,6 +1278,7 @@ export const GET_TRASHS = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -1243,6 +1302,7 @@ export const GET_TRASHS = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -1258,6 +1318,7 @@ export const GET_TRASHS = gql`
       }
       id
       tag
+      type
       updated_at
       users {
         created_at
@@ -1277,6 +1338,7 @@ export const GET_TRASHS = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -1296,6 +1358,7 @@ export const GET_TRASHS = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -1315,6 +1378,7 @@ export const GET_TRASHS = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -1328,6 +1392,7 @@ export const GET_TRASHS = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -1378,6 +1443,7 @@ export const GET_TAGS = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -1394,6 +1460,7 @@ export const GET_TAGS = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -1413,6 +1480,7 @@ export const GET_TAGS = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -1436,6 +1504,7 @@ export const GET_TAGS = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -1470,6 +1539,7 @@ export const GET_TAGS = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -1489,6 +1559,7 @@ export const GET_TAGS = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -1508,6 +1579,7 @@ export const GET_TAGS = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -1521,6 +1593,7 @@ export const GET_TAGS = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -1570,6 +1643,7 @@ export const GET_NOTES_BY_ID = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at
@@ -1586,6 +1660,7 @@ export const GET_NOTES_BY_ID = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -1605,6 +1680,7 @@ export const GET_NOTES_BY_ID = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -1628,6 +1704,7 @@ export const GET_NOTES_BY_ID = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -1643,6 +1720,7 @@ export const GET_NOTES_BY_ID = gql`
       }
       id
       tag
+      type
       updated_at
       users {
         created_at
@@ -1662,6 +1740,7 @@ export const GET_NOTES_BY_ID = gql`
             }
             id
             tag
+            type
             updated_at
             users {
               created_at
@@ -1681,6 +1760,7 @@ export const GET_NOTES_BY_ID = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             password
@@ -1700,6 +1780,7 @@ export const GET_NOTES_BY_ID = gql`
               created_at
               id
               tag
+              type
               updated_at
             }
             updated_at
@@ -1713,6 +1794,7 @@ export const GET_NOTES_BY_ID = gql`
           }
           id
           tag
+          type
           updated_at
           users {
             created_at

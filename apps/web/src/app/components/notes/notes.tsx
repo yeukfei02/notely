@@ -17,6 +17,9 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import NoteIcon from '@mui/icons-material/Note';
 import FolderIcon from '@mui/icons-material/Folder';
 import Badge from '@mui/material/Badge';
@@ -33,8 +36,10 @@ import TagIcon from '@mui/icons-material/Tag';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import CodeMirror from '@uiw/react-codemirror';
+import MarkdownPreview from '@uiw/react-markdown-preview';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
+import { Type } from '@prisma/client';
 import {
   CREATE_FOLDER,
   CREATE_NOTE,
@@ -73,6 +78,7 @@ function Notes() {
   const [currentTab, setCurrentTab] = useState('notes');
   const [currentNote, setCurrentNote] = useState('');
   const [searchNotesValue, setSearchNotesValue] = useState('');
+  const [type, setType] = useState<Type>(Type.NORMAL_TEXT);
   const [codeEditorValue, setCodeEditorValue] = useState('');
   const [codeEditorValueChanged, setCodeEditorValueChanged] = useState(false);
   const [showCodeEditor, setShowCodeEditor] = useState(false);
@@ -354,6 +360,7 @@ function Notes() {
     const delayDebounceFn = setTimeout(() => {
       const input: any = {
         content: codeEditorValue,
+        type: type,
         users_id: localStorage.getItem('users_id'),
       };
 
@@ -500,6 +507,7 @@ function Notes() {
         input: {
           id: localStorage.getItem('note_id'),
           content: (note as any).content,
+          type: (note as any).type,
           users_id: localStorage.getItem('users_id'),
           folder_id: moveNoteToFolderId,
         },
@@ -530,6 +538,10 @@ function Notes() {
 
   const handleSearchNotesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchNotesValue(e.target.value);
+  };
+
+  const handleRadioButtonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setType(e.target.value as Type);
   };
 
   const handleCreateNotesClick = () => {
@@ -980,6 +992,26 @@ function Notes() {
                 </Tooltip>
               </div>
             </div>
+            <div className="m-2">
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={type}
+                onChange={(e) => handleRadioButtonChange(e)}
+              >
+                <FormControlLabel
+                  value={Type.NORMAL_TEXT}
+                  control={<Radio />}
+                  label="Normal Text"
+                />
+                <FormControlLabel
+                  value={Type.MARKDOWN}
+                  control={<Radio />}
+                  label="Markdown"
+                />
+              </RadioGroup>
+            </div>
             {renderCodeEditor()}
           </div>
         </>
@@ -1060,7 +1092,7 @@ function Notes() {
             </div>
           </div>
 
-          <div className="row p-4">{renderNotesGridView()}</div>
+          <div className="row px-3">{renderNotesGridView()}</div>
 
           <Menu
             open={deleteNoteContextMenu !== null}
@@ -1231,9 +1263,12 @@ function Notes() {
       const content = note.content.substring(note.content.indexOf('\n')).trim();
       // console.log('content = ', content);
 
-      const tag = note.content.includes('#')
-        ? note.content.substring(note.content.indexOf('#') + 1)
-        : '';
+      let tag = '';
+      if (note.type === Type.NORMAL_TEXT) {
+        tag = note.content.includes('#')
+          ? note.content.substring(note.content.indexOf('#') + 1)
+          : '';
+      }
 
       const now = dayjs();
       const minuteDiff = now.diff(note.updated_at, 'minute');
@@ -1265,14 +1300,22 @@ function Notes() {
                 onClick={() => handleDeleteNoteById(note.id)}
               />
             </div>
-            <h5 className="card-title">
-              <b>{cardTitle || note.content}</b>
-            </h5>
-            <p className="card-text">
-              {content.length < 100
-                ? content
-                : content.substring(0, 100) + '...'}
-            </p>
+            {note.type === Type.NORMAL_TEXT ? (
+              <>
+                <h5 className="card-title">
+                  <b>{cardTitle || note.content}</b>
+                </h5>
+                <p className="card-text">
+                  {content.length < 100
+                    ? content
+                    : content.substring(0, 100) + '...'}
+                </p>
+              </>
+            ) : (
+              <div data-color-mode="light" className="my-3">
+                <MarkdownPreview source={note.content} className="p-3" />
+              </div>
+            )}
             <div className="d-flex flex-row">
               {note.folder ? (
                 <div>
@@ -1316,19 +1359,91 @@ function Notes() {
       if (notes && !showCodeEditor) {
         view = renderCardGridView(notes);
       } else {
-        view = renderCodeEditor();
+        view = (
+          <div>
+            <div className="m-2">
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={type}
+                onChange={(e) => handleRadioButtonChange(e)}
+              >
+                <FormControlLabel
+                  value={Type.NORMAL_TEXT}
+                  control={<Radio />}
+                  label="Normal Text"
+                />
+                <FormControlLabel
+                  value={Type.MARKDOWN}
+                  control={<Radio />}
+                  label="Markdown"
+                />
+              </RadioGroup>
+            </div>
+            {renderCodeEditor()}
+          </div>
+        );
       }
     } else if (currentTab === 'trash') {
       if (trashs && !showCodeEditor) {
         view = renderCardGridView(trashs);
       } else {
-        view = renderCodeEditor();
+        view = (
+          <div>
+            <div className="m-2">
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={type}
+                onChange={(e) => handleRadioButtonChange(e)}
+              >
+                <FormControlLabel
+                  value={Type.NORMAL_TEXT}
+                  control={<Radio />}
+                  label="Normal Text"
+                />
+                <FormControlLabel
+                  value={Type.MARKDOWN}
+                  control={<Radio />}
+                  label="Markdown"
+                />
+              </RadioGroup>
+            </div>
+            {renderCodeEditor()}
+          </div>
+        );
       }
     } else {
       if (notes && !showCodeEditor) {
         view = renderCardGridView(notes);
       } else {
-        view = renderCodeEditor();
+        view = (
+          <div>
+            <div className="m-2">
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={type}
+                onChange={(e) => handleRadioButtonChange(e)}
+              >
+                <FormControlLabel
+                  value={Type.NORMAL_TEXT}
+                  control={<Radio />}
+                  label="Normal Text"
+                />
+                <FormControlLabel
+                  value={Type.MARKDOWN}
+                  control={<Radio />}
+                  label="Markdown"
+                />
+              </RadioGroup>
+            </div>
+            {renderCodeEditor()}
+          </div>
+        );
       }
     }
 
@@ -1343,9 +1458,12 @@ function Notes() {
       const content = note.content.substring(note.content.indexOf('\n')).trim();
       // console.log('content = ', content);
 
-      const tag = note.content.includes('#')
-        ? note.content.substring(note.content.indexOf('#') + 1)
-        : '';
+      let tag = '';
+      if (note.type === Type.NORMAL_TEXT) {
+        tag = note.content.includes('#')
+          ? note.content.substring(note.content.indexOf('#') + 1)
+          : '';
+      }
 
       const now = dayjs();
       const minuteDiff = now.diff(note.updated_at, 'minute');
@@ -1378,14 +1496,22 @@ function Notes() {
                   onClick={() => handleDeleteNoteById(note.id)}
                 />
               </div>
-              <h5 className="card-title">
-                <b>{cardTitle || note.content}</b>
-              </h5>
-              <p className="card-text">
-                {content.length < 100
-                  ? content
-                  : content.substring(0, 100) + '...'}
-              </p>
+              {note.type === Type.NORMAL_TEXT ? (
+                <>
+                  <h5 className="card-title">
+                    <b>{cardTitle || note.content}</b>
+                  </h5>
+                  <p className="card-text">
+                    {content.length < 100
+                      ? content
+                      : content.substring(0, 100) + '...'}
+                  </p>
+                </>
+              ) : (
+                <div data-color-mode="light" className="my-3">
+                  <MarkdownPreview source={note.content} className="p-3" />
+                </div>
+              )}
               <div className="d-flex flex-row">
                 {note.folder ? (
                   <div>
