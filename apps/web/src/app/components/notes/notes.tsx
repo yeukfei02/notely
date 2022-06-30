@@ -39,7 +39,6 @@ import CodeMirror from '@uiw/react-codemirror';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
-import { Type } from '@prisma/client';
 import {
   CREATE_FOLDER,
   CREATE_NOTE,
@@ -78,7 +77,7 @@ function Notes() {
   const [currentTab, setCurrentTab] = useState('notes');
   const [currentNote, setCurrentNote] = useState('');
   const [searchNotesValue, setSearchNotesValue] = useState('');
-  const [type, setType] = useState<Type>(Type.NORMAL_TEXT);
+  const [type, setType] = useState('NORMAL_TEXT');
   const [codeEditorValue, setCodeEditorValue] = useState('');
   const [codeEditorValueChanged, setCodeEditorValueChanged] = useState(false);
   const [showCodeEditor, setShowCodeEditor] = useState(false);
@@ -541,7 +540,7 @@ function Notes() {
   };
 
   const handleRadioButtonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setType(e.target.value as Type);
+    setType(e.target.value);
   };
 
   const handleCreateNotesClick = () => {
@@ -1001,12 +1000,12 @@ function Notes() {
                 onChange={(e) => handleRadioButtonChange(e)}
               >
                 <FormControlLabel
-                  value={Type.NORMAL_TEXT}
+                  value="NORMAL_TEXT"
                   control={<Radio />}
                   label="Normal Text"
                 />
                 <FormControlLabel
-                  value={Type.MARKDOWN}
+                  value="MARKDOWN"
                   control={<Radio />}
                   label="Markdown"
                 />
@@ -1264,7 +1263,7 @@ function Notes() {
       // console.log('content = ', content);
 
       let tag = '';
-      if (note.type === Type.NORMAL_TEXT) {
+      if (note.type === 'NORMAL_TEXT') {
         tag = note.content.includes('#')
           ? note.content.substring(note.content.indexOf('#') + 1)
           : '';
@@ -1300,7 +1299,7 @@ function Notes() {
                 onClick={() => handleDeleteNoteById(note.id)}
               />
             </div>
-            {note.type === Type.NORMAL_TEXT ? (
+            {note.type === 'NORMAL_TEXT' ? (
               <>
                 <h5 className="card-title">
                   <b>{cardTitle || note.content}</b>
@@ -1370,12 +1369,12 @@ function Notes() {
                 onChange={(e) => handleRadioButtonChange(e)}
               >
                 <FormControlLabel
-                  value={Type.NORMAL_TEXT}
+                  value="NORMAL_TEXT"
                   control={<Radio />}
                   label="Normal Text"
                 />
                 <FormControlLabel
-                  value={Type.MARKDOWN}
+                  value="MARKDOWN"
                   control={<Radio />}
                   label="Markdown"
                 />
@@ -1400,12 +1399,12 @@ function Notes() {
                 onChange={(e) => handleRadioButtonChange(e)}
               >
                 <FormControlLabel
-                  value={Type.NORMAL_TEXT}
+                  value="NORMAL_TEXT"
                   control={<Radio />}
                   label="Normal Text"
                 />
                 <FormControlLabel
-                  value={Type.MARKDOWN}
+                  value="MARKDOWN"
                   control={<Radio />}
                   label="Markdown"
                 />
@@ -1430,12 +1429,12 @@ function Notes() {
                 onChange={(e) => handleRadioButtonChange(e)}
               >
                 <FormControlLabel
-                  value={Type.NORMAL_TEXT}
+                  value="NORMAL_TEXT"
                   control={<Radio />}
                   label="Normal Text"
                 />
                 <FormControlLabel
-                  value={Type.MARKDOWN}
+                  value="MARKDOWN"
                   control={<Radio />}
                   label="Markdown"
                 />
@@ -1459,7 +1458,7 @@ function Notes() {
       // console.log('content = ', content);
 
       let tag = '';
-      if (note.type === Type.NORMAL_TEXT) {
+      if (note.type === 'NORMAL_TEXT') {
         tag = note.content.includes('#')
           ? note.content.substring(note.content.indexOf('#') + 1)
           : '';
@@ -1496,7 +1495,7 @@ function Notes() {
                   onClick={() => handleDeleteNoteById(note.id)}
                 />
               </div>
-              {note.type === Type.NORMAL_TEXT ? (
+              {note.type === 'NORMAL_TEXT' ? (
                 <>
                   <h5 className="card-title">
                     <b>{cardTitle || note.content}</b>

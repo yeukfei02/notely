@@ -8,7 +8,6 @@ import { UpdateNoteByIdInput } from './dto/update-note-by-id.dto';
 import { DeleteNoteByIdInput } from './dto/delete-note-by-id.dto';
 import { DeleteAllNotesInput } from './dto/delete-all-notes.dto';
 import _ from 'lodash';
-import { Type } from '@prisma/client';
 
 @Injectable()
 export class NoteService {
@@ -19,7 +18,7 @@ export class NoteService {
 
     if (createNoteInput.content && createNoteInput.users_id) {
       let tag = '';
-      if (createNoteInput.type === Type.NORMAL_TEXT) {
+      if (createNoteInput.type === 'NORMAL_TEXT') {
         tag = createNoteInput.content.includes('#')
           ? createNoteInput.content
               .substring(createNoteInput.content.indexOf('#') + 1)
@@ -29,7 +28,7 @@ export class NoteService {
 
       const data = {
         content: createNoteInput.content,
-        type: createNoteInput.type as Type,
+        type: createNoteInput.type,
         tag: tag,
         users_id: createNoteInput.users_id,
       };
@@ -209,7 +208,7 @@ export class NoteService {
     console.log('where = ', where);
 
     let tag = '';
-    if (updateNoteByIdInput.type === Type.NORMAL_TEXT) {
+    if (updateNoteByIdInput.type === 'NORMAL_TEXT') {
       tag = updateNoteByIdInput.content.includes('#')
         ? updateNoteByIdInput.content
             .substring(updateNoteByIdInput.content.indexOf('#') + 1)
@@ -221,7 +220,7 @@ export class NoteService {
       where: where,
       data: {
         content: updateNoteByIdInput.content,
-        type: updateNoteByIdInput.type as Type,
+        type: updateNoteByIdInput.type,
         tag: tag,
         folder_id: updateNoteByIdInput.folder_id,
         updated_at: new Date(),

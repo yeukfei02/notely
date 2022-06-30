@@ -39,14 +39,14 @@ model folder {
 
 model note {
   id         String    @id @default(uuid()) @db.Uuid
-  content    String    @default("")
+  content    String?   @default("")
   created_at DateTime  @default(now()) @db.Timestamptz(6)
   updated_at DateTime  @default(now()) @db.Timestamptz(6)
   users_id   String?   @db.Uuid
   folder_id  String?   @db.Uuid
   deleted_at DateTime? @db.Timestamptz(6)
-  tag        String    @default("")
-  type       Type      @default(NORMAL_TEXT)
+  tag        String?   @default("")
+  type       String    @default("NORMAL_TEXT")
   folder     folder?   @relation(fields: [folder_id], references: [id])
   users      users?    @relation(fields: [users_id], references: [id])
 
@@ -56,9 +56,4 @@ model note {
   @@index([created_at], map: "index_note_on_created_at")
   @@index([updated_at], map: "index_note_on_updated_at")
   @@index([deleted_at], map: "index_note_on_deleted_at")
-}
-
-enum Type {
-  NORMAL_TEXT
-  MARKDOWN
 }
