@@ -619,6 +619,10 @@ function Notes() {
     }
   };
 
+  const handleFolderChipClick = (id: string, name: string) => {
+    handleFolderClick(id, name);
+  };
+
   const handleTagClick = (tag: string) => {
     setCurrentTab(tag);
 
@@ -909,7 +913,7 @@ function Notes() {
                 <ListItemText>Delete Note</ListItemText>
               </MenuItem>
               {currentTab !== 'trash' ? (
-                <>
+                <div>
                   <Divider />
                   <MenuItem
                     onClick={() => handleMoveNoteToFolderMenuItemClose()}
@@ -919,7 +923,7 @@ function Notes() {
                     </ListItemIcon>
                     <ListItemText>Move note to folder</ListItemText>
                   </MenuItem>
-                </>
+                </div>
               ) : null}
             </Menu>
           </div>
@@ -1078,7 +1082,7 @@ function Notes() {
               <ListItemText>Delete Note</ListItemText>
             </MenuItem>
             {currentTab !== 'trash' ? (
-              <>
+              <div>
                 <Divider />
                 <MenuItem onClick={() => handleMoveNoteToFolderMenuItemClose()}>
                   <ListItemIcon>
@@ -1086,7 +1090,7 @@ function Notes() {
                   </ListItemIcon>
                   <ListItemText>Move note to folder</ListItemText>
                 </MenuItem>
-              </>
+              </div>
             ) : null}
           </Menu>
         </div>
@@ -1277,6 +1281,9 @@ function Notes() {
                     label={note.folder.name}
                     color="info"
                     variant="outlined"
+                    onClick={() =>
+                      handleFolderChipClick(note.folder.id, note.folder.name)
+                    }
                   />
                 </div>
               ) : null}
@@ -1387,6 +1394,9 @@ function Notes() {
                       label={note.folder.name}
                       color="info"
                       variant="outlined"
+                      onClick={() =>
+                        handleFolderChipClick(note.folder.id, note.folder.name)
+                      }
                     />
                   </div>
                 ) : null}
