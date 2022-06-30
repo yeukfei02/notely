@@ -10,6 +10,7 @@ input CreateFolderInput {
 input CreateNoteInput {
   content: String!
   folder_id: String
+  type: String!
   users_id: String!
 }
 
@@ -93,6 +94,7 @@ type Note {
   folder: Folder
   id: String!
   tag: String
+  type: String!
   updated_at: DateTime!
   users: User
 }
@@ -133,6 +135,7 @@ input UpdateNoteByIdInput {
   content: String!
   folder_id: String
   id: String!
+  type: String!
   users_id: String!
 }
 

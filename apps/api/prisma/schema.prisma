@@ -46,14 +46,19 @@ model note {
   folder_id  String?   @db.Uuid
   deleted_at DateTime? @db.Timestamptz(6)
   tag        String    @default("")
+  type       Type      @default(NORMAL_TEXT)
   folder     folder?   @relation(fields: [folder_id], references: [id])
   users      users?    @relation(fields: [users_id], references: [id])
 
-  @@index([content], map: "index_note_on_content")
-  @@index([tag], map: "index_note_on_tag")
+  @@index([type], map: "index_note_on_type")
   @@index([users_id], map: "index_note_on_users_id")
   @@index([folder_id], map: "index_note_on_folder_id")
   @@index([created_at], map: "index_note_on_created_at")
   @@index([updated_at], map: "index_note_on_updated_at")
   @@index([deleted_at], map: "index_note_on_deleted_at")
+}
+
+enum Type {
+  NORMAL_TEXT
+  MARKDOWN
 }

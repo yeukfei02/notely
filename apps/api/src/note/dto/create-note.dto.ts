@@ -7,6 +7,9 @@ export class CreateNoteInput {
   content: string;
 
   @Field()
+  type: string;
+
+  @Field()
   users_id: string;
 
   @Field({ nullable: true })
