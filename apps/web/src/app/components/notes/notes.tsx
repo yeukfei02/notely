@@ -13,7 +13,10 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
 import NoteIcon from '@mui/icons-material/Note';
 import FolderIcon from '@mui/icons-material/Folder';
 import Badge from '@mui/material/Badge';
@@ -25,7 +28,7 @@ import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddLinkIcon from '@mui/icons-material/AddLink';
+import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 import TagIcon from '@mui/icons-material/Tag';
 import _ from 'lodash';
 import dayjs from 'dayjs';
@@ -80,11 +83,11 @@ function Notes() {
 
   const [newFolderName, setNewFolderName] = useState('');
   const [editFolderName, setEditFolderName] = useState('');
-  const [addNoteToFolderId, setAddNoteToFolderId] = useState('');
+  const [moveNoteToFolderId, setMoveNoteToFolderId] = useState('');
 
   const [newFolderDialogStatus, setNewFolderDialogStatus] = useState(false);
   const [editFolderDialogStatus, setEditFolderDialogStatus] = useState(false);
-  const [addNoteToFolderDialogStatus, setAddNoteToFolderDialogStatus] =
+  const [moveNoteToFolderDialogStatus, setMoveNoteToFolderDialogStatus] =
     useState(false);
   const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
   const [errorSnackbarMessage, setErrorSnackbarMessage] = useState('');
@@ -420,15 +423,15 @@ function Notes() {
     }
   };
 
-  const handleAddNoteToFolderClick = () => {
+  const handleMoveNoteToFolderClick = () => {
     if (
-      !addNoteToFolderDialogStatus &&
+      !moveNoteToFolderDialogStatus &&
       !_.isEmpty(localStorage.getItem('note_id')) &&
       !_.isEmpty(note)
     ) {
-      setAddNoteToFolderDialogStatus(true);
+      setMoveNoteToFolderDialogStatus(true);
     } else {
-      setAddNoteToFolderDialogStatus(false);
+      setMoveNoteToFolderDialogStatus(false);
       setOpenErrorSnackbar(true);
       setErrorSnackbarMessage('Please select note');
     }
@@ -484,19 +487,19 @@ function Notes() {
     });
   };
 
-  const handleAddNoteToFolderClose = () => {
-    setAddNoteToFolderDialogStatus(false);
+  const handleMoveNoteToFolderClose = () => {
+    setMoveNoteToFolderDialogStatus(false);
   };
 
-  const handleAddNoteToFolder = () => {
-    setAddNoteToFolderDialogStatus(false);
+  const handleMoveNoteToFolder = () => {
+    setMoveNoteToFolderDialogStatus(false);
     updateNoteById({
       variables: {
         input: {
           id: localStorage.getItem('note_id'),
           content: (note as any).content,
           users_id: localStorage.getItem('users_id'),
-          folder_id: addNoteToFolderId,
+          folder_id: moveNoteToFolderId,
         },
       },
       context: {
@@ -520,7 +523,7 @@ function Notes() {
   const handleSelectDropdownChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setAddNoteToFolderId(e.target.value);
+    setMoveNoteToFolderId(e.target.value);
   };
 
   const handleSearchNotesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -679,14 +682,14 @@ function Notes() {
     setDeleteNoteContextMenu(null);
   };
 
-  const handleAddNoteToFolderMenuItemClose = () => {
+  const handleMoveNoteToFolderMenuItemClose = () => {
     setDeleteNoteContextMenu(null);
     if (
-      !addNoteToFolderDialogStatus &&
+      !moveNoteToFolderDialogStatus &&
       !_.isEmpty(localStorage.getItem('note_id')) &&
       !_.isEmpty(note)
     ) {
-      setAddNoteToFolderDialogStatus(true);
+      setMoveNoteToFolderDialogStatus(true);
     }
   };
 
@@ -899,14 +902,21 @@ function Notes() {
                   : undefined
               }
             >
+              <MenuItem onClick={() => handleDeleteNoteMenuItemClose()}>
+                <ListItemIcon>
+                  <DeleteIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Delete Note</ListItemText>
+              </MenuItem>
+              <Divider />
               {currentTab !== 'trash' ? (
-                <MenuItem onClick={() => handleAddNoteToFolderMenuItemClose()}>
-                  Add note to folder
+                <MenuItem onClick={() => handleMoveNoteToFolderMenuItemClose()}>
+                  <ListItemIcon>
+                    <DriveFileMoveIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>Move note to folder</ListItemText>
                 </MenuItem>
               ) : null}
-              <MenuItem onClick={() => handleDeleteNoteMenuItemClose()}>
-                Delete Note
-              </MenuItem>
             </Menu>
           </div>
           <div className="col-sm-6">
@@ -946,10 +956,10 @@ function Notes() {
                 </Tooltip>
               </div>
               <div>
-                <Tooltip title="Add Note To Folder" placement="bottom">
-                  <AddLinkIcon
+                <Tooltip title="Move note to folder" placement="bottom">
+                  <DriveFileMoveIcon
                     className="pointer mx-1"
-                    onClick={() => handleAddNoteToFolderClick()}
+                    onClick={() => handleMoveNoteToFolderClick()}
                   />
                 </Tooltip>
               </div>
@@ -1037,10 +1047,10 @@ function Notes() {
                 </Tooltip>
               </div>
               <div>
-                <Tooltip title="Add Note To Folder" placement="bottom">
-                  <AddLinkIcon
+                <Tooltip title="Move note to folder" placement="bottom">
+                  <DriveFileMoveIcon
                     className="pointer mx-1"
-                    onClick={() => handleAddNoteToFolderClick()}
+                    onClick={() => handleMoveNoteToFolderClick()}
                   />
                 </Tooltip>
               </div>
@@ -1070,14 +1080,21 @@ function Notes() {
                 : undefined
             }
           >
+            <MenuItem onClick={() => handleDeleteNoteMenuItemClose()}>
+              <ListItemIcon>
+                <DeleteIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Delete Note</ListItemText>
+            </MenuItem>
+            <Divider />
             {currentTab !== 'trash' ? (
-              <MenuItem onClick={() => handleAddNoteToFolderMenuItemClose()}>
-                Add note to folder
+              <MenuItem onClick={() => handleMoveNoteToFolderMenuItemClose()}>
+                <ListItemIcon>
+                  <DriveFileMoveIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Move note to folder</ListItemText>
               </MenuItem>
             ) : null}
-            <MenuItem onClick={() => handleDeleteNoteMenuItemClose()}>
-              Delete Note
-            </MenuItem>
           </Menu>
         </div>
       );
@@ -1259,9 +1276,21 @@ function Notes() {
                 ? content
                 : content.substring(0, 100) + '...'}
             </p>
-            <div>
+            <div className="d-flex flex-row">
+              {note.folder ? (
+                <div>
+                  <Chip
+                    avatar={<FolderIcon />}
+                    label={note.folder.name}
+                    color="info"
+                    variant="outlined"
+                  />
+                </div>
+              ) : null}
               {tag ? (
-                <Chip label={`# ${tag}`} color="error" variant="outlined" />
+                <div className={`${note.folder ? 'mx-2' : ''}`}>
+                  <Chip label={`# ${tag}`} color="error" variant="outlined" />
+                </div>
               ) : null}
             </div>
             <div className="mt-3">{diffStr}</div>
@@ -1349,9 +1378,21 @@ function Notes() {
                   ? content
                   : content.substring(0, 100) + '...'}
               </p>
-              <div>
+              <div className="d-flex flex-row">
+                {note.folder ? (
+                  <div>
+                    <Chip
+                      avatar={<FolderIcon />}
+                      label={note.folder.name}
+                      color="info"
+                      variant="outlined"
+                    />
+                  </div>
+                ) : null}
                 {tag ? (
-                  <Chip label={`# ${tag}`} color="error" variant="outlined" />
+                  <div className={`${note.folder ? 'mx-2' : ''}`}>
+                    <Chip label={`# ${tag}`} color="error" variant="outlined" />
+                  </div>
                 ) : null}
               </div>
               <div className="mt-3">{diffStr}</div>
@@ -1471,7 +1512,10 @@ function Notes() {
             }
           >
             <MenuItem onClick={() => handleNewFolderMenuItemClose()}>
-              New Folder
+              <ListItemIcon>
+                <FolderIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>New Folder</ListItemText>
             </MenuItem>
           </Menu>
         </div>
@@ -1530,15 +1574,15 @@ function Notes() {
       </Dialog>
 
       <Dialog
-        open={addNoteToFolderDialogStatus}
-        onClose={() => handleAddNoteToFolderClose()}
+        open={moveNoteToFolderDialogStatus}
+        onClose={() => handleMoveNoteToFolderClose()}
       >
-        <DialogTitle>Add note to folder</DialogTitle>
+        <DialogTitle>Move note to folder</DialogTitle>
         <DialogContent>
           <DialogContentText>
             {note ? (
               <div>
-                Add note <b>{(note as any).content}</b> to folder below
+                Move note <b>{(note as any).content}</b> to folder below
                 <select
                   className="form-select mt-3"
                   aria-label=""
@@ -1551,8 +1595,8 @@ function Notes() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handleAddNoteToFolderClose()}>Cancel</Button>
-          <Button onClick={() => handleAddNoteToFolder()}>Add</Button>
+          <Button onClick={() => handleMoveNoteToFolderClose()}>Cancel</Button>
+          <Button onClick={() => handleMoveNoteToFolder()}>Move</Button>
         </DialogActions>
       </Dialog>
 
