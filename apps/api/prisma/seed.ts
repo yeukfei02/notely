@@ -66,35 +66,29 @@ async function createNotes() {
 
   const notesList = [
     {
-      content: faker.word.noun(),
-      tag: '# test',
+      content: faker.word.noun() + ' # test',
       users_id: users[0].id,
     },
     {
-      content: faker.word.noun(),
-      tag: '# test',
+      content: faker.word.noun() + ' # test',
       users_id: users[0].id,
     },
     {
-      content: faker.word.noun(),
-      tag: '# test2',
+      content: faker.word.noun() + '# test2',
       users_id: users[1].id,
     },
     {
-      content: faker.word.noun(),
-      tag: '# test',
+      content: faker.word.noun() + '# test',
       users_id: users[0].id,
       folder_id: folders[0].id,
     },
     {
-      content: faker.word.noun(),
-      tag: '# test',
+      content: faker.word.noun() + '# test',
       users_id: users[1].id,
       folder_id: folders[1].id,
     },
     {
-      content: faker.word.noun(),
-      tag: '# test2',
+      content: faker.word.noun() + '# test2',
       users_id: users[0].id,
       folder_id: folders[0].id,
     },
