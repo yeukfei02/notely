@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
+    "@codemirror/lang-markdown": "^6.0.0",
+    "@codemirror/language-data": "^6.1.0",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@mui/icons-material": "^5.8.4",
@@ -25,6 +27,7 @@
     "@sentry/minimal": "^6.19.7",
     "@sentry/node": "^7.3.1",
     "@sentry/tracing": "^7.3.1",
+    "@uiw/react-codemirror": "^4.9.5",
     "apollo-server-express": "^3.9.0",
     "bcryptjs": "^2.4.3",
     "class-validator": "^0.13.2",

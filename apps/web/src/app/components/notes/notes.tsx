@@ -32,6 +32,9 @@ import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 import TagIcon from '@mui/icons-material/Tag';
 import _ from 'lodash';
 import dayjs from 'dayjs';
+import CodeMirror from '@uiw/react-codemirror';
+import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
+import { languages } from '@codemirror/language-data';
 import {
   CREATE_FOLDER,
   CREATE_NOTE,
@@ -70,8 +73,9 @@ function Notes() {
   const [currentTab, setCurrentTab] = useState('notes');
   const [currentNote, setCurrentNote] = useState('');
   const [searchNotesValue, setSearchNotesValue] = useState('');
-  const [textareaValue, setTextareaValue] = useState('');
-  const [showTextarea, setShowTextarea] = useState(false);
+  const [codeEditorValue, setCodeEditorValue] = useState('');
+  const [codeEditorValueChanged, setCodeEditorValueChanged] = useState(false);
+  const [showCodeEditor, setShowCodeEditor] = useState(false);
   const [newFolderContextMenu, setNewFolderContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
@@ -220,19 +224,6 @@ function Notes() {
       },
     });
 
-    getTags({
-      variables: {
-        input: {
-          users_id: localStorage.getItem('users_id'),
-        },
-      },
-      context: {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      },
-    });
-
     getFolders({
       variables: {
         input: {
@@ -245,7 +236,20 @@ function Notes() {
         },
       },
     });
-  }, [getNotes, getTrashs, getTags, getFolders]);
+
+    getTags({
+      variables: {
+        input: {
+          users_id: localStorage.getItem('users_id'),
+        },
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    });
+  }, [getNotes, getTrashs, getFolders, getTags]);
 
   useEffect(() => {
     if (getFoldersResult.data) {
@@ -294,13 +298,9 @@ function Notes() {
       hardDeleteNoteByIdResult.data ||
       hardDeleteAllNotesResult.data
     ) {
-      const textarea = document.querySelector('#textarea');
-      if (textarea) {
-        (textarea as any).value = '';
-      }
-
       localStorage.removeItem('note_id');
-      setTextareaValue('');
+      setCodeEditorValue('');
+      setCodeEditorValueChanged(false);
       setCurrentNote('');
 
       window.location.reload();
@@ -353,7 +353,7 @@ function Notes() {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       const input: any = {
-        content: textareaValue,
+        content: codeEditorValue,
         users_id: localStorage.getItem('users_id'),
       };
 
@@ -364,7 +364,7 @@ function Notes() {
 
       const noteId = localStorage.getItem('note_id');
 
-      if (textareaValue) {
+      if (codeEditorValue) {
         if (_.isEmpty(noteId)) {
           createNote({
             variables: {
@@ -377,24 +377,26 @@ function Notes() {
             },
           });
         } else {
-          input['id'] = noteId;
+          if (codeEditorValueChanged) {
+            input['id'] = noteId;
 
-          updateNoteById({
-            variables: {
-              input: input,
-            },
-            context: {
-              headers: {
-                authorization: `Bearer ${localStorage.getItem('token')}`,
+            updateNoteById({
+              variables: {
+                input: input,
               },
-            },
-          });
+              context: {
+                headers: {
+                  authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+              },
+            });
+          }
         }
       }
     }, 2000);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [textareaValue, createNote, updateNoteById]);
+  }, [codeEditorValue, createNote, updateNoteById]);
 
   const handleLogoutClick = () => {
     localStorage.clear();
@@ -531,26 +533,26 @@ function Notes() {
   };
 
   const handleCreateNotesClick = () => {
-    const textarea = document.querySelector('#textarea');
-    if (textarea) {
-      (textarea as any).value = '';
-    }
-
     localStorage.removeItem('note_id');
-    setTextareaValue('');
+    setCodeEditorValue('');
+    setCodeEditorValueChanged(false);
     setCurrentNote('');
 
     if (currentView === 'gridView') {
-      if (!showTextarea) {
-        setShowTextarea(true);
+      if (!showCodeEditor) {
+        setShowCodeEditor(true);
       } else {
-        setShowTextarea(false);
+        setShowCodeEditor(false);
       }
     }
   };
 
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setTextareaValue(e.target.value);
+  const handleCodeEditorChange = (value: string, viewUpdate: any) => {
+    console.log('value = ', value);
+    console.log('viewUpdate = ', viewUpdate);
+
+    setCodeEditorValue(value);
+    setCodeEditorValueChanged(true);
   };
 
   const handleDeleteNoteById = (id: string) => {
@@ -641,10 +643,8 @@ function Notes() {
     localStorage.setItem('note_id', id);
     setCurrentNote(id);
 
-    const textarea = document.querySelector('#textarea');
-    if (textarea && content) {
-      (textarea as any).value = content;
-    }
+    setCodeEditorValue(content);
+    setCodeEditorValueChanged(false);
 
     if (id) {
       getNoteById({
@@ -908,14 +908,18 @@ function Notes() {
                 </ListItemIcon>
                 <ListItemText>Delete Note</ListItemText>
               </MenuItem>
-              <Divider />
               {currentTab !== 'trash' ? (
-                <MenuItem onClick={() => handleMoveNoteToFolderMenuItemClose()}>
-                  <ListItemIcon>
-                    <DriveFileMoveIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Move note to folder</ListItemText>
-                </MenuItem>
+                <>
+                  <Divider />
+                  <MenuItem
+                    onClick={() => handleMoveNoteToFolderMenuItemClose()}
+                  >
+                    <ListItemIcon>
+                      <DriveFileMoveIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Move note to folder</ListItemText>
+                  </MenuItem>
+                </>
               ) : null}
             </Menu>
           </div>
@@ -972,7 +976,7 @@ function Notes() {
                 </Tooltip>
               </div>
             </div>
-            {renderTextarea()}
+            {renderCodeEditor()}
           </div>
         </>
       );
@@ -1073,14 +1077,16 @@ function Notes() {
               </ListItemIcon>
               <ListItemText>Delete Note</ListItemText>
             </MenuItem>
-            <Divider />
             {currentTab !== 'trash' ? (
-              <MenuItem onClick={() => handleMoveNoteToFolderMenuItemClose()}>
-                <ListItemIcon>
-                  <DriveFileMoveIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Move note to folder</ListItemText>
-              </MenuItem>
+              <>
+                <Divider />
+                <MenuItem onClick={() => handleMoveNoteToFolderMenuItemClose()}>
+                  <ListItemIcon>
+                    <DriveFileMoveIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>Move note to folder</ListItemText>
+                </MenuItem>
+              </>
             ) : null}
           </Menu>
         </div>
@@ -1276,7 +1282,15 @@ function Notes() {
               ) : null}
               {tag ? (
                 <div className={`${note.folder ? 'mx-2' : ''}`}>
-                  <Chip label={`# ${tag}`} color="error" variant="outlined" />
+                  <Chip
+                    label={`# ${
+                      tag.length < 15
+                        ? tag.substring(0, 15)
+                        : tag.substring(0, 15) + '...'
+                    }`}
+                    color="error"
+                    variant="outlined"
+                  />
                 </div>
               ) : null}
             </div>
@@ -1292,22 +1306,22 @@ function Notes() {
     let view = null;
 
     if (currentTab === 'notes') {
-      if (notes && !showTextarea) {
+      if (notes && !showCodeEditor) {
         view = renderCardGridView(notes);
       } else {
-        view = renderTextarea();
+        view = renderCodeEditor();
       }
     } else if (currentTab === 'trash') {
-      if (trashs && !showTextarea) {
+      if (trashs && !showCodeEditor) {
         view = renderCardGridView(trashs);
       } else {
-        view = renderTextarea();
+        view = renderCodeEditor();
       }
     } else {
-      if (notes && !showTextarea) {
+      if (notes && !showCodeEditor) {
         view = renderCardGridView(notes);
       } else {
-        view = renderTextarea();
+        view = renderCodeEditor();
       }
     }
 
@@ -1378,7 +1392,15 @@ function Notes() {
                 ) : null}
                 {tag ? (
                   <div className={`${note.folder ? 'mx-2' : ''}`}>
-                    <Chip label={`# ${tag}`} color="error" variant="outlined" />
+                    <Chip
+                      label={`# ${
+                        tag.length < 15
+                          ? tag.substring(0, 15)
+                          : tag.substring(0, 15) + '...'
+                      }`}
+                      color="error"
+                      variant="outlined"
+                    />
                   </div>
                 ) : null}
               </div>
@@ -1391,24 +1413,21 @@ function Notes() {
     return cardGridView;
   };
 
-  const renderTextarea = () => {
-    const textarea = (
-      <textarea
-        id="textarea"
-        className="form-control px-3 py-4"
-        placeholder="Write something..."
-        style={{
-          width: '100vw',
-          height: '100vh',
-          border: 'none',
-          outline: 'none',
-          boxShadow: 'none',
-          resize: 'none',
-        }}
-        onChange={(e) => handleTextareaChange(e)}
-      ></textarea>
+  const renderCodeEditor = () => {
+    const codeEditor = (
+      <CodeMirror
+        value={codeEditorValue}
+        width="100vw"
+        height="100vh"
+        extensions={[
+          markdown({ base: markdownLanguage, codeLanguages: languages }),
+        ]}
+        onChange={(value, viewUpdate) =>
+          handleCodeEditorChange(value, viewUpdate)
+        }
+      />
     );
-    return textarea;
+    return codeEditor;
   };
 
   return (
