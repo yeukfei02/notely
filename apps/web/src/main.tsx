@@ -13,6 +13,7 @@ import App from './app/app';
 import Signup from './app/components/signup/signup';
 import Login from './app/components/login/login';
 import Notes from './app/components/notes/notes';
+import NotesMarkdownPreview from './app/components/notes/notesMarkdownPreview';
 import PrivateRoute from './app/components/privateRoute/privateRoute';
 
 const theme = createTheme({
@@ -62,6 +63,14 @@ root.render(
               element={
                 <PrivateRoute>
                   <Notes />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/notes/:id/markdown-preview"
+              element={
+                <PrivateRoute>
+                  <NotesMarkdownPreview />
                 </PrivateRoute>
               }
             />

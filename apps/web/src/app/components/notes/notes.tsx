@@ -36,7 +36,6 @@ import TagIcon from '@mui/icons-material/Tag';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import CodeMirror from '@uiw/react-codemirror';
-import MarkdownPreview from '@uiw/react-markdown-preview';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import {
@@ -596,6 +595,10 @@ function Notes() {
         },
       });
     }
+  };
+
+  const handleShowMarkdownPreview = (id: string) => {
+    navigate(`/notes/${id}/markdown-preview`);
   };
 
   const handleFolderClick = (id: string, name: string) => {
@@ -1311,8 +1314,15 @@ function Notes() {
                 </p>
               </>
             ) : (
-              <div data-color-mode="light" className="my-3">
-                <MarkdownPreview source={note.content} className="p-3" />
+              <div className="my-3">
+                <Button
+                  variant="outlined"
+                  color="warning"
+                  size="small"
+                  onClick={() => handleShowMarkdownPreview(note.id)}
+                >
+                  Show markdown preview
+                </Button>
               </div>
             )}
             <div className="d-flex flex-row">
@@ -1507,8 +1517,15 @@ function Notes() {
                   </p>
                 </>
               ) : (
-                <div data-color-mode="light" className="my-3">
-                  <MarkdownPreview source={note.content} className="p-3" />
+                <div className="my-3">
+                  <Button
+                    variant="outlined"
+                    color="warning"
+                    size="small"
+                    onClick={() => handleShowMarkdownPreview(note.id)}
+                  >
+                    Show markdown preview
+                  </Button>
                 </div>
               )}
               <div className="d-flex flex-row">
