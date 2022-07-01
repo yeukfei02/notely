@@ -116,7 +116,7 @@ function Signup() {
   };
 
   return (
-    <div className="container d-flex justify-content-center w-50 my-4">
+    <div className="container d-flex justify-content-center w-75 my-4">
       <div>
         <div className="d-flex justify-content-center">
           <img src={logo} alt="" width="55%" height="55%" />
