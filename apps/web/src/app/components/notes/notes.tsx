@@ -1566,19 +1566,40 @@ function Notes() {
   };
 
   const renderCodeEditor = () => {
-    const codeEditor = (
-      <CodeMirror
-        value={codeEditorValue}
-        width="100vw"
-        height="100vh"
-        extensions={[
-          markdown({ base: markdownLanguage, codeLanguages: languages }),
-        ]}
-        onChange={(value, viewUpdate) =>
-          handleCodeEditorChange(value, viewUpdate)
-        }
-      />
-    );
+    let codeEditor = null;
+
+    if (type === 'NORMAL_TEXT') {
+      codeEditor = (
+        <textarea
+          value={codeEditorValue}
+          className="form-control py-3"
+          placeholder="Write something..."
+          style={{
+            width: '100vw',
+            height: '100vh',
+            border: 'none',
+            outline: 'none',
+            boxShadow: 'none',
+            resize: 'none',
+          }}
+          onChange={(e) => handleCodeEditorChange(e.target.value, null)}
+        ></textarea>
+      );
+    } else if (type === 'MARKDOWN') {
+      codeEditor = (
+        <CodeMirror
+          value={codeEditorValue}
+          width="100vw"
+          height="100vh"
+          extensions={[
+            markdown({ base: markdownLanguage, codeLanguages: languages }),
+          ]}
+          onChange={(value, viewUpdate) =>
+            handleCodeEditorChange(value, viewUpdate)
+          }
+        />
+      );
+    }
     return codeEditor;
   };
 
