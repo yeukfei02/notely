@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.8](https://github.com/yeukfei02/notely/compare/v0.1.7...v0.1.8) (2022-07-01)
+
+
+### Features
+
+* 🎸 add markdown preview page ([923bf91](https://github.com/yeukfei02/notely/commit/923bf91ac31b7d221cc90bf452afaec3269bdf4e))
+
+
+### Bug Fixes
+
+* 🐛 fix build ([cc95202](https://github.com/yeukfei02/notely/commit/cc952026258a798cec9fe9743df55ad3065e73b1))
+* 🐛 fix signup and login style ([768bbbc](https://github.com/yeukfei02/notely/commit/768bbbc74b108e57565cf559388659cca6a0d922))
+* 🐛 remove enum and change type to string ([26edd03](https://github.com/yeukfei02/notely/commit/26edd03f08da3e8b2da9339fdff44b3122d28d28))
+
 ### [0.1.7](https://github.com/yeukfei02/notely/compare/v0.1.6...v0.1.7) (2022-06-30)
 
 
