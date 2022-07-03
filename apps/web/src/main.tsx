@@ -26,7 +26,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: ['Varela Round', 'sans-serif'].join(','),
+    fontFamily: ['Poppins', 'sans-serif'].join(','),
   },
 });
 
