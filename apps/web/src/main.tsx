@@ -25,6 +25,9 @@ const theme = createTheme({
       main: '#f5f5f5',
     },
   },
+  typography: {
+    fontFamily: ['Varela Round', 'sans-serif'].join(','),
+  },
 });
 
 const url = getUrl();
