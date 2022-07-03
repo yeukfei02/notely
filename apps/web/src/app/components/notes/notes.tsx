@@ -1616,7 +1616,7 @@ function Notes() {
       >
         <div
           className="col-sm-3 d-none d-sm-block p-0"
-          style={{ backgroundColor: '#fb9698' }}
+          style={{ backgroundColor: '#fba0a2' }}
           onContextMenu={(e) => handleNewFolderContextMenu(e)}
         >
           <div
