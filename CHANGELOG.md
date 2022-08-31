@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.9](https://github.com/yeukfei02/notely/compare/v0.1.8...v0.1.9) (2022-08-31)
+
+
+### Features
+
+* 🎸 add textarea for normal text ([1db8eaf](https://github.com/yeukfei02/notely/commit/1db8eafc3879d51b3a8a2fe650ef836dda3e9c90))
+
+
+### Bug Fixes
+
+* 🐛 fix style and font family ([309086b](https://github.com/yeukfei02/notely/commit/309086be438d7701e1ace3b43ed826a6c7a0028b))
+* 🐛 update font style ([5279fe1](https://github.com/yeukfei02/notely/commit/5279fe13c828b52a623011d02d1d79f99331d09f))
+* 🐛 update prisma lib ([c67f3b8](https://github.com/yeukfei02/notely/commit/c67f3b8ecfe7691c6c68e0838ac847165ebdeba5))
+* update readme.md ([c689fc6](https://github.com/yeukfei02/notely/commit/c689fc65a5a1748ae56479b21382fda17175786a))
+
 ### [0.1.8](https://github.com/yeukfei02/notely/compare/v0.1.7...v0.1.8) (2022-07-01)
 
 
