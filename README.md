@@ -7,8 +7,6 @@ free, open source notes in web (notes mac app alternative)
 
 documentation: <https://documenter.getpostman.com/view/3827865/UzBsH4d5>
 
-url: <https://notely-web.herokuapp.com/>
-
 ## Tech Stack
 
 - Node.js
