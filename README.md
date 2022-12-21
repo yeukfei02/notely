@@ -96,6 +96,9 @@ $ yarn run prisma:db:push
 // seed data to database
 $ yarn run prisma:db:seed
 
+// validate schema.prisma
+$ yarn run prisma:validate
+
 // format schema.prisma
 $ yarn run prisma:format
 

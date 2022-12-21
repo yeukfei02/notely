@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-yarn run prisma:format && yarn run format
+yarn run prisma:validate && yarn run prisma:format && yarn run format
