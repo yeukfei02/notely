@@ -61,6 +61,9 @@ $ yarn run test:api
 // run test case only web
 $ yarn run test:web
 
+// lint code
+$ yarn run lint
+
 // format code
 $ yarn run format
 ```
