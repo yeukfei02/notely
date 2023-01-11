@@ -49,6 +49,8 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.4.1",
+    "@commitlint/config-conventional": "^17.4.0",
     "@faker-js/faker": "^7.3.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
@@ -94,7 +96,7 @@
     "standard-version": "^9.5.0",
     "ts-jest": "27.1.4",
     "ts-node": "~10.8.0",
-    "typescript": "~4.7.2"
+    "typescript": "4.6.3"
   },
   "scripts": {
     "dev": "nx run-many --target=serve --all",
@@ -105,6 +107,9 @@
     "build": "yarn run build:api && yarn run build:web",
     "build:api": "nx build api && cp ./apps/api/prisma/schema.prisma ./dist/apps/api",
     "build:web": "nx build web",
+    "lint": "yarn run lint:api && yarn run lint:web",
+    "lint:api": "nx lint api",
+    "lint:web": "nx lint web",
     "test": "yarn run test:api && yarn run test:web",
     "test:api": "nx test api",
     "test:web": "nx test web",
