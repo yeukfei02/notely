@@ -22,7 +22,7 @@ documentation: <https://documenter.getpostman.com/view/3827865/UzBsH4d5>
 ## Requirement
 
 - install yarn
-- install node (v14+)
+- install node (v16+)
 - install nx (<https://github.com/nrwl/nx>)
 
 ## Testing and run
