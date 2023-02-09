@@ -23,6 +23,10 @@
   <img src="https://github.com/yeukfei02/notely/blob/main/screenshots/screenshot5.png">
 </p>
 
+<p align="center">
+  <img src="https://github.com/yeukfei02/notely/blob/main/screenshots/screenshot6.png">
+</p>
+
 free, open source notes in web (notes mac app alternative)
 
 documentation: <https://documenter.getpostman.com/view/3827865/UzBsH4d5>
