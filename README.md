@@ -34,13 +34,13 @@ documentation: <https://documenter.getpostman.com/view/3827865/UzBsH4d5>
 ## Tech Stack
 
 - Node.js
-- React
-- Typescript
 - Nestjs
-- Graphql
 - Prisma
 - Postgres
+- Graphql
+- React
 - Apollo Client
+- Typescript
 - Nx workspace
 
 ## Requirement
