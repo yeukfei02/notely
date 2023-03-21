@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.10](https://github.com/yeukfei02/notely/compare/v0.1.9...v0.1.10) (2023-03-21)
+
+
+### Features
+
+* 🎸 add commitlint and lint command ([cd11218](https://github.com/yeukfei02/notely/commit/cd112189134a17f97b505875aee170746956500a))
+* 🎸 update prisma lib ([c3114c0](https://github.com/yeukfei02/notely/commit/c3114c03d928e224af95f6dbc9f70ba89fd65eca))
+
+
+### Bug Fixes
+
+* 🐛 fix to use node 16 and update readme.md ([f23a3da](https://github.com/yeukfei02/notely/commit/f23a3da008debfe0940bcee4caf2b8db02a20a8d))
+* 🐛 update primsa lib and add scripts ([2740e3f](https://github.com/yeukfei02/notely/commit/2740e3f907caf9adc88d04df071fefc53399ffa3))
+* 🐛 update prisma lib ([e7080ba](https://github.com/yeukfei02/notely/commit/e7080ba7e2cc172723b776ce75607eb7bc796c28))
+* 🐛 update prisma lib ([3ef513d](https://github.com/yeukfei02/notely/commit/3ef513d66bb3f37e92f24cadf98a13d6283f8613))
+* 🐛 update prisma lib ([2e9f8b3](https://github.com/yeukfei02/notely/commit/2e9f8b3b00a8356b25ec54ba4b1167d57dd90ed1))
+* 🐛 update readme.md ([e3c4ec3](https://github.com/yeukfei02/notely/commit/e3c4ec31e23c02ee68119aa8b870797619d35ab7))
+* 🐛 update readme.md ([99fa59c](https://github.com/yeukfei02/notely/commit/99fa59c5e6916dd8bba63f3c045fb68e3d4125ae))
+* 🐛 update readme.md ([bb0aff8](https://github.com/yeukfei02/notely/commit/bb0aff882c17ac4b0fdd95aea7d2edcfe5c70949))
+* 🐛 update readme.md ([bd94cf2](https://github.com/yeukfei02/notely/commit/bd94cf2920124dcd587a033cc5c2d4f34aabb8bc))
+
 ### [0.1.9](https://github.com/yeukfei02/notely/compare/v0.1.8...v0.1.9) (2022-08-31)
 
 
