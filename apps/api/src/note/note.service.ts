@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
 import { CreateNoteInput } from './dto/create-note.dto';
 import { GetNotesInput } from './dto/get-notes.dto';
 import { GetTrashsInput } from './dto/get-trashs.dto';
@@ -8,10 +7,11 @@ import { UpdateNoteByIdInput } from './dto/update-note-by-id.dto';
 import { DeleteNoteByIdInput } from './dto/delete-note-by-id.dto';
 import { DeleteAllNotesInput } from './dto/delete-all-notes.dto';
 import _ from 'lodash';
+import { NoteRepository } from './note.repository';
 
 @Injectable()
 export class NoteService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly noteRepository: NoteRepository) {}
 
   async createNote(createNoteInput: CreateNoteInput) {
     let note = null;
@@ -37,13 +37,7 @@ export class NoteService {
       }
       console.log('data = ', data);
 
-      note = await this.prisma.note.create({
-        data: data,
-        include: {
-          users: true,
-          folder: true,
-        },
-      });
+      note = await this.noteRepository.createNote(data);
     }
 
     return note;
@@ -75,21 +69,7 @@ export class NoteService {
 
     console.log('where = ', where);
 
-    const notes = await this.prisma.note.findMany({
-      where: where,
-      orderBy: [
-        {
-          updated_at: 'desc',
-        },
-        {
-          created_at: 'desc',
-        },
-      ],
-      include: {
-        users: true,
-        folder: true,
-      },
-    });
+    const notes = await this.noteRepository.getNotes(where);
     return notes;
   }
 
@@ -110,22 +90,8 @@ export class NoteService {
 
     console.log('where = ', where);
 
-    const notes = await this.prisma.note.findMany({
-      where: where,
-      orderBy: [
-        {
-          updated_at: 'desc',
-        },
-        {
-          created_at: 'desc',
-        },
-      ],
-      include: {
-        users: true,
-        folder: true,
-      },
-    });
-    return notes;
+    const trashs = await this.noteRepository.getTrashs(where);
+    return trashs;
   }
 
   async getTags(getTagsInput: GetTagsInput) {
@@ -138,39 +104,20 @@ export class NoteService {
     };
     console.log('where = ', where);
 
-    const notes = await this.prisma.note.groupBy({
-      by: ['tag'],
-      where: where,
-      _count: {
-        tag: true,
-      },
-      orderBy: {
-        _count: {
-          tag: 'desc',
-        },
-      },
-    });
+    const notes = await this.noteRepository.getGroupByNotes(where);
 
     const formattedNotes = [];
     for (let index = 0; index < notes.length; index++) {
       const item: any = notes[index];
 
-      const note = await this.prisma.note.findFirst({
-        where: {
-          tag: item.tag,
-        },
-        include: {
-          users: true,
-          folder: true,
-        },
-      });
-      item.id = note.id;
-      item.content = note.content;
+      const tag = await this.noteRepository.getTag(item);
+      item.id = tag.id;
+      item.content = tag.content;
       item.count = item._count.tag || 0;
-      item.created_at = note.created_at;
-      item.updated_at = note.updated_at;
-      item.users = note.users;
-      item.folder = note.folder;
+      item.created_at = tag.created_at;
+      item.updated_at = tag.updated_at;
+      item.users = tag.users;
+      item.folder = tag.folder;
 
       delete item._count;
 
@@ -187,16 +134,7 @@ export class NoteService {
   }
 
   async getNoteById(id: string) {
-    const note = await this.prisma.note.findFirst({
-      where: {
-        id: id,
-        deleted_at: null,
-      },
-      include: {
-        users: true,
-        folder: true,
-      },
-    });
+    const note = await this.noteRepository.getNoteById(id);
     return note;
   }
 
@@ -216,17 +154,12 @@ export class NoteService {
         : '';
     }
 
-    const note = await this.prisma.note.updateMany({
-      where: where,
-      data: {
-        content: updateNoteByIdInput.content,
-        type: updateNoteByIdInput.type,
-        tag: tag,
-        folder_id: updateNoteByIdInput.folder_id,
-        updated_at: new Date(),
-      },
-    });
-    return note;
+    const notes = await this.noteRepository.updateNoteById(
+      where,
+      updateNoteByIdInput,
+      tag
+    );
+    return notes;
   }
 
   async deleteNoteById(deleteNoteByIdInput: DeleteNoteByIdInput) {
@@ -239,12 +172,7 @@ export class NoteService {
     }
     console.log('where = ', where);
 
-    const notes = await this.prisma.note.updateMany({
-      where: where,
-      data: {
-        deleted_at: new Date(),
-      },
-    });
+    const notes = await this.noteRepository.updateNoteDeletedAtById(where);
     return notes;
   }
 
@@ -261,24 +189,12 @@ export class NoteService {
     }
     console.log('where = ', where);
 
-    const notes = await this.prisma.note.deleteMany({
-      where: where,
-    });
+    const notes = await this.noteRepository.deleteNoteById(where);
     return notes;
   }
 
   async hardDeleteAllNotes(deleteAllNotesInput: DeleteAllNotesInput) {
-    const notes = await this.prisma.note.deleteMany({
-      where: {
-        id: {
-          in: deleteAllNotesInput.ids,
-        },
-        users_id: deleteAllNotesInput.users_id,
-        deleted_at: {
-          lte: new Date(),
-        },
-      },
-    });
+    const notes = await this.noteRepository.deleteAllNotes(deleteAllNotesInput);
     return notes;
   }
 }
